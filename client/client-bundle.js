@@ -101,94 +101,6 @@ function findDefinitionsElement(injector) {
 
 /***/ }),
 
-/***/ "./client/properties-panel/custom/MultiSelectEntry.js":
-/*!************************************************************!*\
-  !*** ./client/properties-panel/custom/MultiSelectEntry.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ MultiSelectEntry)
-/* harmony export */ });
-/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
-/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
-/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
-// Use Preact explicitamente para evitar erro "React is not defined"
-
-
-
-function MultiSelectEntry(props) {
-  const {
-    element,
-    id,
-    description,
-    label,
-    getValue,
-    setValue,
-    getOptions,
-    disabled,
-    onFocus,
-    onBlur,
-    tooltip
-  } = props;
-  const options = getOptions(element);
-
-  // Corrige: sempre retorna array de strings, mesmo se vier undefined ou string vazia
-  let rawValue = getValue(element);
-  let value;
-  if (Array.isArray(rawValue)) {
-    value = rawValue;
-  } else if (typeof rawValue === 'string') {
-    value = rawValue.split(',').map(v => v.trim()).filter(Boolean);
-  } else if (rawValue == null) {
-    value = [];
-  } else {
-    value = [String(rawValue)];
-  }
-  const handleChange = event => {
-    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
-    setValue(selected);
-  };
-
-  // Corrige: sempre passa value como array (mesmo se vazio)
-  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('div', {
-    class: classnames__WEBPACK_IMPORTED_MODULE_2___default()('bio-properties-panel-entry'),
-    'data-entry-id': id
-  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('label', {
-    for: id,
-    class: 'bio-properties-panel-label'
-  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.Tooltip, {
-    value: tooltip,
-    forId: id,
-    element: element
-  }, label)), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('select', {
-    id,
-    name: id,
-    class: 'bio-properties-panel-input',
-    multiple: true,
-    onInput: handleChange,
-    onFocus,
-    onBlur,
-    value: value.length ? value : [''],
-    disabled
-  }, options.map((option, idx) => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('option', {
-    key: idx,
-    value: option.value,
-    disabled: option.disabled,
-    selected: value.includes(option.value)
-  }, option.label))), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.Description, {
-    forId: id,
-    element: element,
-    value: description
-  }));
-}
-
-/***/ }),
-
 /***/ "./client/properties-panel/custom/RadioEntry.js":
 /*!******************************************************!*\
   !*** ./client/properties-panel/custom/RadioEntry.js ***!
@@ -505,251 +417,314 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
 /* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helper/fixed-properties-helper */ "./client/properties-panel/helper/fixed-properties-helper.js");
-/* harmony import */ var _custom_MultiSelectEntry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../custom/MultiSelectEntry */ "./client/properties-panel/custom/MultiSelectEntry.js");
-/* harmony import */ var _custom_RadioEntry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../custom/RadioEntry */ "./client/properties-panel/custom/RadioEntry.js");
+/* harmony import */ var _generic_entries__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generic-entries */ "./client/properties-panel/props/generic-entries.js");
 
 
 
-
-
-
-// Componente para "Periodicidade"
-function PeriodicityEntry(props) {
-  const {
-    element,
-    id
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-  const propertyName = 'processo:periodicidade';
-  const getValue = () => {
-    return (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, propertyName);
-  };
-  const setValue = value => {
-    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory);
-  };
-  const getOptions = () => {
-    return [{
-      value: 'diaria',
-      label: translate('Diária')
-    }, {
-      value: 'semanal',
-      label: translate('Semanal')
-    }, {
-      value: 'quinzenal',
-      label: translate('Quinzenal')
-    }, {
-      value: 'mensal',
-      label: translate('Mensal')
-    }, {
-      value: 'bimestral',
-      label: translate('Bimestral')
-    }, {
-      value: 'trimestral',
-      label: translate('Trimestral')
-    }, {
-      value: 'quadrimestral',
-      label: translate('Quadrimestral')
-    }, {
-      value: 'semestral',
-      label: translate('Semestral')
-    }, {
-      value: 'anual',
-      label: translate('Anual')
-    }, {
-      value: 'sob_demanda',
-      label: translate('Por demanda')
-    }, {
-      value: 'outro',
-      label: translate('Outro')
-    }];
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.SelectEntry)({
-    element,
-    id: id + '-periodicity',
-    label: translate('Periodicidade'),
-    getValue,
-    setValue,
-    getOptions,
-    debounce
-  });
-}
-
-// Função para criar as entradas de tempo de execução
-function createTimeExecutionEntries(element) {
-  return [{
-    id: 'time-execution',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-        ...props,
-        element,
-        label: translate('Tempo de execução do processo'),
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:tempoExecucao'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:tempoExecucao', value, modeling, bpmnFactory),
-        debounce
-      });
-    }
-  }, {
-    id: 'time-execution-type',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_custom_RadioEntry__WEBPACK_IMPORTED_MODULE_4__["default"])({
-        ...props,
-        element,
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:tempoExecucaoTipo'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:tempoExecucaoTipo', value, modeling, bpmnFactory),
-        getOptions: () => [{
-          value: 'estimado',
-          label: translate('Estimado')
-        }, {
-          value: 'mensurado',
-          label: translate('Mensurado')
-        }]
-      });
-    }
-  }];
-}
-function createQtdDemandsEntries(element) {
-  return [{
-    id: 'demands',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-        ...props,
-        element,
-        label: translate('Quantidade de demandas recebidas'),
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:quantidadeDemandas'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:quantidadeDemandas', value, modeling, bpmnFactory),
-        debounce
-      });
-    }
-  }, {
-    id: 'demands-type',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_custom_RadioEntry__WEBPACK_IMPORTED_MODULE_4__["default"])({
-        ...props,
-        element,
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:quantidadeDemandasTipo'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:quantidadeDemandasTipo', value, modeling, bpmnFactory),
-        getOptions: () => [{
-          value: 'estimado',
-          label: translate('Estimado')
-        }, {
-          value: 'mensurado',
-          label: translate('Mensurado')
-        }]
-      });
-    }
-  }];
-}
-function createCapacityEntries(element) {
-  return [{
-    id: 'capacity',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-        ...props,
-        element,
-        label: translate('Capacidade aproximada de execução do processo'),
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:capacidadeExecucao'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:capacidadeExecucao', value, modeling, bpmnFactory),
-        debounce
-      });
-    }
-  }, {
-    id: 'capacity-type',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_custom_RadioEntry__WEBPACK_IMPORTED_MODULE_4__["default"])({
-        ...props,
-        element,
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:capacidadeExecucaoTipo'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:capacidadeExecucaoTipo', value, modeling, bpmnFactory),
-        getOptions: () => [{
-          value: 'estimado',
-          label: translate('Estimado')
-        }, {
-          value: 'mensurado',
-          label: translate('Mensurado')
-        }]
-      });
-    }
-  }];
-}
-function createExecutorsEntries(element) {
-  return [{
-    id: 'executors-quantity',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-        ...props,
-        element,
-        label: translate('Quantidade de executores do processo'),
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:quantidadeExecutores'),
-        setValue: value => {
-          // Garante que só aceita números inteiros ou vazio
-          const intValue = value.replace(/\D/g, '');
-          (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:quantidadeExecutores', intValue, modeling, bpmnFactory);
-        },
-        debounce
-      });
-    }
-  }, {
-    id: 'executors-profile',
-    component: function (props) {
-      const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-      const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-      const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-      const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-      return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextAreaEntry)({
-        ...props,
-        element,
-        label: translate('Perfil'),
-        getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, 'processo:perfilExecutores'),
-        setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, 'processo:perfilExecutores', value, modeling, bpmnFactory),
-        debounce
-      });
-    }
-  }];
-}
+// Entradas do grupo
 function CurrentSituationGroup(element, injector) {
   const translate = injector.get('translate');
   const entries = [{
     id: 'process-periodicity',
-    component: PeriodicityEntry,
-    element
-  }, ...createTimeExecutionEntries(element), ...createQtdDemandsEntries(element), ...createCapacityEntries(element), ...createExecutorsEntries(element)];
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericSelectEntry)({
+      ...props,
+      element,
+      id: 'process-periodicity',
+      propertyName: 'processo:periodicidade',
+      label: 'Periodicidade',
+      options: [{
+        value: 'diaria',
+        label: 'Diária'
+      }, {
+        value: 'semanal',
+        label: 'Semanal'
+      }, {
+        value: 'quinzenal',
+        label: 'Quinzenal'
+      }, {
+        value: 'mensal',
+        label: 'Mensal'
+      }, {
+        value: 'bimestral',
+        label: 'Bimestral'
+      }, {
+        value: 'trimestral',
+        label: 'Trimestral'
+      }, {
+        value: 'quadrimestral',
+        label: 'Quadrimestral'
+      }, {
+        value: 'semestral',
+        label: 'Semestral'
+      }, {
+        value: 'anual',
+        label: 'Anual'
+      }, {
+        value: 'sob_demanda',
+        label: 'Por demanda'
+      }, {
+        value: 'outro',
+        label: 'Outro'
+      }]
+    })
+  }, {
+    id: 'time-execution',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'time-execution',
+      propertyName: 'processo:tempoExecucao',
+      label: 'Tempo de execução do processo'
+    })
+  }, {
+    id: 'time-execution-type',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
+      ...props,
+      element,
+      id: 'time-execution-type',
+      propertyName: 'processo:tempoExecucaoTipo',
+      options: [{
+        value: 'estimado',
+        label: 'Estimado'
+      }, {
+        value: 'mensurado',
+        label: 'Mensurado'
+      }]
+    })
+  }, {
+    id: 'demands',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'demands',
+      propertyName: 'processo:quantidadeDemandas',
+      label: 'Quantidade de demandas recebidas'
+    })
+  }, {
+    id: 'demands-type',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
+      ...props,
+      element,
+      id: 'demands-type',
+      propertyName: 'processo:quantidadeDemandasTipo',
+      options: [{
+        value: 'estimado',
+        label: 'Estimado'
+      }, {
+        value: 'mensurado',
+        label: 'Mensurado'
+      }]
+    })
+  }, {
+    id: 'capacity',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'capacity',
+      propertyName: 'processo:capacidadeExecucao',
+      label: 'Capacidade aproximada de execução do processo'
+    })
+  }, {
+    id: 'capacity-type',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
+      ...props,
+      element,
+      id: 'capacity-type',
+      propertyName: 'processo:capacidadeExecucaoTipo',
+      options: [{
+        value: 'estimado',
+        label: 'Estimado'
+      }, {
+        value: 'mensurado',
+        label: 'Mensurado'
+      }]
+    })
+  }, {
+    id: 'executors-quantity',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'executors-quantity',
+      propertyName: 'processo:quantidadeExecutores',
+      label: 'Quantidade de executores do processo',
+      onlyInt: true
+    })
+  }, {
+    id: 'executors-profile',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'executors-profile',
+      propertyName: 'processo:perfilExecutores',
+      label: 'Perfil'
+    })
+  }, {
+    id: 'activities-manual',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'activities-manual',
+      propertyName: 'processo:atividadeManualQtd',
+      label: 'Atividade manual (Qtd)'
+    })
+  }, {
+    id: 'activities-user',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'activities-user',
+      propertyName: 'processo:atividadeUsuarioQtd',
+      label: 'Atividade de usuário (Qtd)'
+    })
+  }, {
+    id: 'activities-automated',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'activities-automated',
+      propertyName: 'processo:atividadeAutomatizadaQtd',
+      label: 'Atividade automatizada (Qtd)'
+    })
+  }, {
+    id: 'performance-indicator',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
+      ...props,
+      element,
+      id: 'performance-indicator',
+      propertyName: 'processo:possuiIndicador',
+      label: 'O processo possui indicador de desempenho?',
+      options: [{
+        value: 'sim',
+        label: 'Sim'
+      }, {
+        value: 'nao',
+        label: 'Não'
+      }]
+    })
+  }];
   return {
     id: 'current-situation',
     label: translate('Dados da situação atual'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.Group,
     entries
   };
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/props/generic-entries.js":
+/*!**********************************************************!*\
+  !*** ./client/properties-panel/props/generic-entries.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GenericRadioEntry: () => (/* binding */ GenericRadioEntry),
+/* harmony export */   GenericSelectEntry: () => (/* binding */ GenericSelectEntry),
+/* harmony export */   GenericTextAreaEntry: () => (/* binding */ GenericTextAreaEntry),
+/* harmony export */   GenericTextFieldEntry: () => (/* binding */ GenericTextFieldEntry)
+/* harmony export */ });
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _custom_RadioEntry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../custom/RadioEntry */ "./client/properties-panel/custom/RadioEntry.js");
+/* harmony import */ var _helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../helper/fixed-properties-helper */ "./client/properties-panel/helper/fixed-properties-helper.js");
+
+
+
+
+function GenericTextFieldEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  onlyInt
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => {
+      let v = value;
+      if (onlyInt) v = value.replace(/\D/g, '');
+      (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, v, modeling, bpmnFactory);
+    },
+    debounce
+  });
+}
+function GenericTextAreaEntry({
+  element,
+  id,
+  propertyName,
+  label
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextAreaEntry)({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
+    debounce
+  });
+}
+function GenericRadioEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  options
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_custom_RadioEntry__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    element,
+    id,
+    label: label ? translate(label) : '',
+    // <-- Evita erro se label for undefined
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
+    getOptions: () => options.map(opt => ({
+      value: opt.value,
+      label: translate(opt.label)
+    }))
+  });
+}
+function GenericSelectEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  options
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.SelectEntry)({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
+    getOptions: () => options.map(opt => ({
+      value: opt.value,
+      label: translate(opt.label)
+    })),
+    debounce
+  });
 }
 
 /***/ }),
@@ -767,244 +742,147 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
 /* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helper/fixed-properties-helper */ "./client/properties-panel/helper/fixed-properties-helper.js");
+/* harmony import */ var _generic_entries__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generic-entries */ "./client/properties-panel/props/generic-entries.js");
 // client/properties-panel/props/process-documentation-props.js
- // Group para agrupar as entradas
 
 
-
-// Generic Text Field Entry Component
-function GenericTextFieldEntry(props) {
-  const {
-    element,
-    id,
-    propertyName,
-    label
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-    element,
-    id,
-    label: translate(label),
-    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, propertyName),
-    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
-    debounce
-  });
-}
-
-// Generic Text Area Entry Component
-function GenericTextAreaEntry(props) {
-  const {
-    element,
-    id,
-    propertyName,
-    label
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextAreaEntry)({
-    element,
-    id,
-    label: translate(label),
-    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, propertyName),
-    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
-    debounce
-  });
-}
-
-// Componente para "Código do Processo"
-function ProcessCodeEntry(props) {
-  const {
-    element,
-    id
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-  const propertyName = 'processo:codigo'; // Nome da propriedade no XML
-
-  const getValue = () => {
-    return (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, propertyName);
-  };
-  const setValue = value => {
-    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory);
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-    element: element,
-    // O elemento do diagrama, não a propriedade moddle diretamente
-    id: id + '-processCode',
-    label: translate('Código do Processo'),
-    getValue,
-    setValue,
-    debounce
-  });
-}
-
-// Componente para "Nome do Processo"
-function ProcessNameEntry(props) {
-  const {
-    element,
-    id
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-  const propertyName = 'processo:nome';
-  const getValue = () => {
-    return (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, propertyName);
-  };
-  const setValue = value => {
-    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory);
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-    element: element,
-    id: id + '-processName',
-    label: translate('Nome do Processo'),
-    getValue,
-    setValue,
-    debounce
-  });
-}
-
-// Componente para "Objetivo do Processo"
-function ProcessObjectiveEntry(props) {
-  const {
-    element,
-    id
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
-  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
-  const propertyName = 'processo:objetivo';
-  const getValue = () => {
-    return (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.getFixedProperty)(element, propertyName);
-  };
-  const setValue = value => {
-    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_2__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory);
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
-    element: element,
-    id: id + '-processObjective',
-    label: translate('Objetivo do Processo'),
-    getValue,
-    setValue,
-    debounce
-    // Se quiser um campo de texto maior:
-    // component: TextAreaEntry // Importar TextAreaEntry de @bpmn-io/properties-panel
-  });
-}
-
-// Função que cria o grupo
 function ProcessDocumentationGroup(element, injector) {
   const translate = injector.get('translate');
-  console.log('Creating group with element:', element); // DEBUG
-
-  // Garantir que temos o elemento definitions
   if (!element || element.$type !== 'bpmn:Definitions') {
-    console.warn('Invalid element type for documentation group:', element && element.$type);
     return null;
   }
   const entries = [{
     id: 'process-code',
-    component: ProcessCodeEntry,
-    element: element // Passando o elemento definitions
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'process-code',
+      propertyName: 'processo:codigo',
+      label: 'Código do Processo'
+    })
   }, {
     id: 'process-name',
-    component: ProcessNameEntry,
-    element: element // Passando o elemento definitions
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'process-name',
+      propertyName: 'processo:nome',
+      label: 'Nome do Processo'
+    })
   }, {
     id: 'definitions-prop-entrada',
-    component: GenericTextFieldEntry,
-    element,
-    propertyName: 'processo:entradaInsumo',
-    label: 'Entrada do processo (Insumo)'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-entrada',
+      propertyName: 'processo:entradaInsumo',
+      label: 'Entrada do processo (Insumo)'
+    })
   }, {
     id: 'definitions-prop-fornecedores',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:fornecedores',
-    label: 'Fornecedores'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-fornecedores',
+      propertyName: 'processo:fornecedores',
+      label: 'Fornecedores'
+    })
   }, {
     id: 'process-objective',
-    component: ProcessObjectiveEntry,
-    element: element // Passando o elemento definitions
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'process-objective',
+      propertyName: 'processo:objetivo',
+      label: 'Objetivo do Processo'
+    })
   }, {
     id: 'definitions-prop-saida',
-    component: GenericTextFieldEntry,
-    element,
-    propertyName: 'processo:saidaResultado',
-    label: 'Saída do processo (Resultado / Produto)'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-saida',
+      propertyName: 'processo:saidaResultado',
+      label: 'Saída do processo (Resultado / Produto)'
+    })
   }, {
     id: 'definitions-prop-clientes',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:clientes',
-    label: 'Clientes'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-clientes',
+      propertyName: 'processo:clientes',
+      label: 'Clientes'
+    })
   }, {
     id: 'definitions-prop-interface',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:interfaceProcessos',
-    label: 'Interface com outros processos'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-interface',
+      propertyName: 'processo:interfaceProcessos',
+      label: 'Interface com outros processos'
+    })
   }, {
     id: 'definitions-prop-regras',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:regrasNegocio',
-    label: 'Principais regras de negócio do processo'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-regras',
+      propertyName: 'processo:regrasNegocio',
+      label: 'Principais regras de negócio do processo'
+    })
   }, {
     id: 'definitions-prop-donoArea',
-    component: GenericTextFieldEntry,
-    element,
-    propertyName: 'processo:donoProcessoArea',
-    label: 'Dono do processo (Área)'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-donoArea',
+      propertyName: 'processo:donoProcessoArea',
+      label: 'Dono do processo (Área)'
+    })
   }, {
     id: 'definitions-prop-donoGestor',
-    component: GenericTextFieldEntry,
-    element,
-    propertyName: 'processo:donoProcessoGestor',
-    label: 'Dono do processo (Gestor(a))'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-donoGestor',
+      propertyName: 'processo:donoProcessoGestor',
+      label: 'Dono do processo (Gestor(a))'
+    })
   }, {
     id: 'definitions-prop-atores',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:atoresEnvolvidos',
-    label: 'Atores envolvidos'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-atores',
+      propertyName: 'processo:atoresEnvolvidos',
+      label: 'Atores envolvidos'
+    })
   }, {
     id: 'definitions-prop-sistemas',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:sistemasUtilizados',
-    label: 'Sistemas utilizados'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-sistemas',
+      propertyName: 'processo:sistemasUtilizados',
+      label: 'Sistemas utilizados'
+    })
   }, {
     id: 'definitions-prop-legislacao',
-    component: GenericTextAreaEntry,
-    element,
-    propertyName: 'processo:legislacaoNormativos',
-    label: 'Legislação / Normativos aplicáveis'
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-legislacao',
+      propertyName: 'processo:legislacaoNormativos',
+      label: 'Legislação / Normativos aplicáveis'
+    })
   }];
-
-  // Só retorna o grupo se houver entradas (boa prática)
-  if (!entries.length) {
-    return null;
-  }
   return {
     id: 'process-documentation',
-    // ID único para o grupo
     label: translate('Documentação do Processo'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.Group,
-    // Usando o componente Group para encapsular as entradas
-    entries: entries
+    entries
   };
 }
 
