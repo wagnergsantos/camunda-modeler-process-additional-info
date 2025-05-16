@@ -12,5 +12,13 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   plugins: [
     new CamundaModelerWebpackPlugin()
-  ]
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+    ]
+  }
 };

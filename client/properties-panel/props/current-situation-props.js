@@ -1,10 +1,12 @@
 import { Group } from '@bpmn-io/properties-panel';
+import { h } from 'preact';
 import {
   GenericTextFieldEntry,
   GenericTextAreaEntry,
   GenericRadioEntry,
   GenericSelectEntry
 } from './generic-entries';
+import CombinedInputRadioEntry from '../custom/CombinedInputRadioEntry';
 
 // Entradas do grupo
 
@@ -43,80 +45,68 @@ export function CurrentSituationGroup(element, injector) {
         ]
       })
     },
-    // Tempo de execução do processo (campo texto)
+    // Tempo de execução do processo (input + radio)
     {
-      id: 'time-execution',
-      component: props => GenericTextFieldEntry({
-        ...props,
-        element,
-        id: 'time-execution',
-        propertyName: 'processo:tempoExecucao',
-        label: 'Tempo de execução do processo'
-      })
+      id: 'time-execution-combined',
+      component: props => (
+        h(CombinedInputRadioEntry, {
+          ...props,
+          element: element,
+          id: "time-execution-combined-entry",
+          label: "Tempo de execução do processo",
+          textFieldId: "time-execution-textfield",
+          textFieldPropertyName: "processo:tempoExecucao",
+          radioId: "time-execution-type-radio",
+          radioPropertyName: "processo:tempoExecucaoTipo",
+          radioOptions: [
+            { value: 'estimado', label: 'Estimado' },
+            { value: 'mensurado', label: 'Mensurado' }
+          ],
+          injector: injector
+        })
+      ),
     },
-    // Tipo do tempo de execução (radio)
+    // Quantidade de demandas recebidas (input + radio)
     {
-      id: 'time-execution-type',
-      component: props => GenericRadioEntry({
-        ...props,
-        element,
-        id: 'time-execution-type',
-        propertyName: 'processo:tempoExecucaoTipo',
-        options: [
-          { value: 'estimado', label: 'Estimado' },
-          { value: 'mensurado', label: 'Mensurado' }
-        ]
-      })
+      id: 'demands-combined',
+      component: props => (
+        h(CombinedInputRadioEntry, {
+          ...props,
+          element: element,
+          id: "demands-combined-entry",
+          label: "Quantidade de demandas recebidas",
+          textFieldId: "demands-textfield",
+          textFieldPropertyName: "processo:quantidadeDemandas",
+          radioId: "demands-type-radio",
+          radioPropertyName: "processo:quantidadeDemandasTipo",
+          radioOptions: [
+            { value: 'estimado', label: 'Estimado' },
+            { value: 'mensurado', label: 'Mensurado' }
+          ],
+          injector: injector
+        })
+      ),
     },
-    // Quantidade de demandas recebidas (campo texto)
+    // Capacidade aproximada de execução (input + radio)
     {
-      id: 'demands',
-      component: props => GenericTextFieldEntry({
-        ...props,
-        element,
-        id: 'demands',
-        propertyName: 'processo:quantidadeDemandas',
-        label: 'Quantidade de demandas recebidas'
-      })
-    },
-    // Tipo da quantidade de demandas (radio)
-    {
-      id: 'demands-type',
-      component: props => GenericRadioEntry({
-        ...props,
-        element,
-        id: 'demands-type',
-        propertyName: 'processo:quantidadeDemandasTipo',
-        options: [
-          { value: 'estimado', label: 'Estimado' },
-          { value: 'mensurado', label: 'Mensurado' }
-        ]
-      })
-    },
-    // Capacidade aproximada de execução (campo texto)
-    {
-      id: 'capacity',
-      component: props => GenericTextFieldEntry({
-        ...props,
-        element,
-        id: 'capacity',
-        propertyName: 'processo:capacidadeExecucao',
-        label: 'Capacidade aproximada de execução do processo'
-      })
-    },
-    // Tipo da capacidade de execução (radio)
-    {
-      id: 'capacity-type',
-      component: props => GenericRadioEntry({
-        ...props,
-        element,
-        id: 'capacity-type',
-        propertyName: 'processo:capacidadeExecucaoTipo',
-        options: [
-          { value: 'estimado', label: 'Estimado' },
-          { value: 'mensurado', label: 'Mensurado' }
-        ]
-      })
+      id: 'capacity-combined',
+      component: props => (
+        h(CombinedInputRadioEntry, {
+          ...props,
+          element: element,
+          id: "capacity-combined-entry",
+          label: "Capacidade aproximada de execução do processo",
+          textFieldId: "capacity-textfield",
+          textFieldPropertyName: "processo:capacidadeExecucao",
+          radioId: "capacity-type-radio",
+          radioPropertyName: "processo:capacidadeExecucaoTipo",
+          radioOptions: [
+            { value: 'estimado', label: 'Estimado' },
+            { value: 'mensurado', label: 'Mensurado' }
+          ],
+          injector: injector
+        })
+      ),
     },
     // Quantidade de executores (campo texto, apenas inteiros)
     {
