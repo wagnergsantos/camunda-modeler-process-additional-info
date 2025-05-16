@@ -7,15 +7,24 @@ import {
   GenericSelectEntry
 } from './generic-entries';
 
-
+/**
+ * Cria o grupo de propriedades "Documentação do Processo" para o painel de propriedades.
+ * Este grupo só é exibido para elementos do tipo 'bpmn:Definitions'.
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Object} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {Object|null} Grupo de propriedades configurado para o painel, ou null se não aplicável.
+ */
 export function ProcessDocumentationGroup(element, injector) {
   const translate = injector.get('translate');
 
+  // Só exibe o grupo se o elemento for do tipo Definitions (processo raiz)
   if (!element || element.$type !== 'bpmn:Definitions') {
     return null;
   }
 
+  // Lista de entradas (fields) exibidas no grupo "Documentação do Processo"
   const entries = [
+    // Código do Processo
     {
       id: 'process-code',
       component: props => GenericTextFieldEntry({
@@ -26,6 +35,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Código do Processo'
       })
     },
+    // Nome do Processo
     {
       id: 'process-name',
       component: props => GenericTextFieldEntry({
@@ -36,6 +46,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Nome do Processo'
       })
     },
+    // Entrada do processo (Insumo)
     {
       id: 'definitions-prop-entrada',
       component: props => GenericTextFieldEntry({
@@ -46,6 +57,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Entrada do processo (Insumo)'
       })
     },
+    // Fornecedores (área de texto)
     {
       id: 'definitions-prop-fornecedores',
       component: props => GenericTextAreaEntry({
@@ -56,6 +68,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Fornecedores'
       })
     },
+    // Objetivo do Processo
     {
       id: 'process-objective',
       component: props => GenericTextFieldEntry({
@@ -66,6 +79,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Objetivo do Processo'
       })
     },
+    // Saída do processo (Resultado / Produto)
     {
       id: 'definitions-prop-saida',
       component: props => GenericTextFieldEntry({
@@ -76,6 +90,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Saída do processo (Resultado / Produto)'
       })
     },
+    // Clientes (área de texto)
     {
       id: 'definitions-prop-clientes',
       component: props => GenericTextAreaEntry({
@@ -86,6 +101,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Clientes'
       })
     },
+    // Interface com outros processos (área de texto)
     {
       id: 'definitions-prop-interface',
       component: props => GenericTextAreaEntry({
@@ -96,6 +112,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Interface com outros processos'
       })
     },
+    // Principais regras de negócio do processo (área de texto)
     {
       id: 'definitions-prop-regras',
       component: props => GenericTextAreaEntry({
@@ -106,6 +123,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Principais regras de negócio do processo'
       })
     },
+    // Dono do processo (Área)
     {
       id: 'definitions-prop-donoArea',
       component: props => GenericTextFieldEntry({
@@ -116,6 +134,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Dono do processo (Área)'
       })
     },
+    // Dono do processo (Gestor(a))
     {
       id: 'definitions-prop-donoGestor',
       component: props => GenericTextFieldEntry({
@@ -126,6 +145,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Dono do processo (Gestor(a))'
       })
     },
+    // Atores envolvidos (área de texto)
     {
       id: 'definitions-prop-atores',
       component: props => GenericTextAreaEntry({
@@ -136,6 +156,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Atores envolvidos'
       })
     },
+    // Sistemas utilizados (área de texto)
     {
       id: 'definitions-prop-sistemas',
       component: props => GenericTextAreaEntry({
@@ -146,6 +167,7 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Sistemas utilizados'
       })
     },
+    // Legislação / Normativos aplicáveis (área de texto)
     {
       id: 'definitions-prop-legislacao',
       component: props => GenericTextAreaEntry({
@@ -158,6 +180,7 @@ export function ProcessDocumentationGroup(element, injector) {
     }
   ];
 
+  // Retorna o grupo configurado para ser exibido no painel de propriedades
   return {
     id: 'process-documentation',
     label: translate('Documentação do Processo'),

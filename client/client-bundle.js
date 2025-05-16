@@ -422,9 +422,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // Entradas do grupo
+
+/**
+ * Cria o grupo de propriedades "Dados da situação atual" para o painel de propriedades.
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Object} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {Object} Grupo de propriedades configurado para o painel.
+ */
 function CurrentSituationGroup(element, injector) {
   const translate = injector.get('translate');
-  const entries = [{
+
+  // Lista de entradas (fields) exibidas no grupo "Dados da situação atual"
+  const entries = [
+  // Periodicidade do processo (dropdown)
+  {
     id: 'process-periodicity',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericSelectEntry)({
       ...props,
@@ -467,7 +478,9 @@ function CurrentSituationGroup(element, injector) {
         label: 'Outro'
       }]
     })
-  }, {
+  },
+  // Tempo de execução do processo (campo texto)
+  {
     id: 'time-execution',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -476,7 +489,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:tempoExecucao',
       label: 'Tempo de execução do processo'
     })
-  }, {
+  },
+  // Tipo do tempo de execução (radio)
+  {
     id: 'time-execution-type',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
       ...props,
@@ -491,7 +506,9 @@ function CurrentSituationGroup(element, injector) {
         label: 'Mensurado'
       }]
     })
-  }, {
+  },
+  // Quantidade de demandas recebidas (campo texto)
+  {
     id: 'demands',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -500,7 +517,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:quantidadeDemandas',
       label: 'Quantidade de demandas recebidas'
     })
-  }, {
+  },
+  // Tipo da quantidade de demandas (radio)
+  {
     id: 'demands-type',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
       ...props,
@@ -515,7 +534,9 @@ function CurrentSituationGroup(element, injector) {
         label: 'Mensurado'
       }]
     })
-  }, {
+  },
+  // Capacidade aproximada de execução (campo texto)
+  {
     id: 'capacity',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -524,7 +545,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:capacidadeExecucao',
       label: 'Capacidade aproximada de execução do processo'
     })
-  }, {
+  },
+  // Tipo da capacidade de execução (radio)
+  {
     id: 'capacity-type',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
       ...props,
@@ -539,7 +562,9 @@ function CurrentSituationGroup(element, injector) {
         label: 'Mensurado'
       }]
     })
-  }, {
+  },
+  // Quantidade de executores (campo texto, apenas inteiros)
+  {
     id: 'executors-quantity',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -549,7 +574,9 @@ function CurrentSituationGroup(element, injector) {
       label: 'Quantidade de executores do processo',
       onlyInt: true
     })
-  }, {
+  },
+  // Perfil dos executores (área de texto)
+  {
     id: 'executors-profile',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -558,7 +585,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:perfilExecutores',
       label: 'Perfil'
     })
-  }, {
+  },
+  // Quantidade de atividades manuais (campo texto)
+  {
     id: 'activities-manual',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -567,7 +596,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:atividadeManualQtd',
       label: 'Atividade manual (Qtd)'
     })
-  }, {
+  },
+  // Quantidade de atividades de usuário (campo texto)
+  {
     id: 'activities-user',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -576,7 +607,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:atividadeUsuarioQtd',
       label: 'Atividade de usuário (Qtd)'
     })
-  }, {
+  },
+  // Quantidade de atividades automatizadas (campo texto)
+  {
     id: 'activities-automated',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -585,7 +618,9 @@ function CurrentSituationGroup(element, injector) {
       propertyName: 'processo:atividadeAutomatizadaQtd',
       label: 'Atividade automatizada (Qtd)'
     })
-  }, {
+  },
+  // Indicador de desempenho (radio)
+  {
     id: 'performance-indicator',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
       ...props,
@@ -602,6 +637,8 @@ function CurrentSituationGroup(element, injector) {
       }]
     })
   }];
+
+  // Retorna o grupo configurado para ser exibido no painel de propriedades
   return {
     id: 'current-situation',
     label: translate('Dados da situação atual'),
@@ -636,6 +673,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+/**
+ * Cria um campo de texto genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {boolean} [params.onlyInt] - Se verdadeiro, permite apenas números inteiros.
+ */
 function GenericTextFieldEntry({
   element,
   id,
@@ -660,6 +707,15 @@ function GenericTextFieldEntry({
     debounce
   });
 }
+
+/**
+ * Cria um campo de área de texto genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ */
 function GenericTextAreaEntry({
   element,
   id,
@@ -679,6 +735,16 @@ function GenericTextAreaEntry({
     debounce
   });
 }
+
+/**
+ * Cria um campo de seleção por rádio genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {Array<{value: string, label: string}>} params.options - Opções disponíveis.
+ */
 function GenericRadioEntry({
   element,
   id,
@@ -702,6 +768,16 @@ function GenericRadioEntry({
     }))
   });
 }
+
+/**
+ * Cria um campo de seleção (dropdown) genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {Array<{value: string, label: string}>} params.options - Opções disponíveis.
+ */
 function GenericSelectEntry({
   element,
   id,
@@ -746,12 +822,26 @@ __webpack_require__.r(__webpack_exports__);
 // client/properties-panel/props/process-documentation-props.js
 
 
+
+/**
+ * Cria o grupo de propriedades "Documentação do Processo" para o painel de propriedades.
+ * Este grupo só é exibido para elementos do tipo 'bpmn:Definitions'.
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Object} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {Object|null} Grupo de propriedades configurado para o painel, ou null se não aplicável.
+ */
 function ProcessDocumentationGroup(element, injector) {
   const translate = injector.get('translate');
+
+  // Só exibe o grupo se o elemento for do tipo Definitions (processo raiz)
   if (!element || element.$type !== 'bpmn:Definitions') {
     return null;
   }
-  const entries = [{
+
+  // Lista de entradas (fields) exibidas no grupo "Documentação do Processo"
+  const entries = [
+  // Código do Processo
+  {
     id: 'process-code',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -760,7 +850,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:codigo',
       label: 'Código do Processo'
     })
-  }, {
+  },
+  // Nome do Processo
+  {
     id: 'process-name',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -769,7 +861,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:nome',
       label: 'Nome do Processo'
     })
-  }, {
+  },
+  // Entrada do processo (Insumo)
+  {
     id: 'definitions-prop-entrada',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -778,7 +872,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:entradaInsumo',
       label: 'Entrada do processo (Insumo)'
     })
-  }, {
+  },
+  // Fornecedores (área de texto)
+  {
     id: 'definitions-prop-fornecedores',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -787,7 +883,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:fornecedores',
       label: 'Fornecedores'
     })
-  }, {
+  },
+  // Objetivo do Processo
+  {
     id: 'process-objective',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -796,7 +894,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:objetivo',
       label: 'Objetivo do Processo'
     })
-  }, {
+  },
+  // Saída do processo (Resultado / Produto)
+  {
     id: 'definitions-prop-saida',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -805,7 +905,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:saidaResultado',
       label: 'Saída do processo (Resultado / Produto)'
     })
-  }, {
+  },
+  // Clientes (área de texto)
+  {
     id: 'definitions-prop-clientes',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -814,7 +916,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:clientes',
       label: 'Clientes'
     })
-  }, {
+  },
+  // Interface com outros processos (área de texto)
+  {
     id: 'definitions-prop-interface',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -823,7 +927,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:interfaceProcessos',
       label: 'Interface com outros processos'
     })
-  }, {
+  },
+  // Principais regras de negócio do processo (área de texto)
+  {
     id: 'definitions-prop-regras',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -832,7 +938,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:regrasNegocio',
       label: 'Principais regras de negócio do processo'
     })
-  }, {
+  },
+  // Dono do processo (Área)
+  {
     id: 'definitions-prop-donoArea',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -841,7 +949,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:donoProcessoArea',
       label: 'Dono do processo (Área)'
     })
-  }, {
+  },
+  // Dono do processo (Gestor(a))
+  {
     id: 'definitions-prop-donoGestor',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
       ...props,
@@ -850,7 +960,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:donoProcessoGestor',
       label: 'Dono do processo (Gestor(a))'
     })
-  }, {
+  },
+  // Atores envolvidos (área de texto)
+  {
     id: 'definitions-prop-atores',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -859,7 +971,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:atoresEnvolvidos',
       label: 'Atores envolvidos'
     })
-  }, {
+  },
+  // Sistemas utilizados (área de texto)
+  {
     id: 'definitions-prop-sistemas',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -868,7 +982,9 @@ function ProcessDocumentationGroup(element, injector) {
       propertyName: 'processo:sistemasUtilizados',
       label: 'Sistemas utilizados'
     })
-  }, {
+  },
+  // Legislação / Normativos aplicáveis (área de texto)
+  {
     id: 'definitions-prop-legislacao',
     component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
       ...props,
@@ -878,6 +994,8 @@ function ProcessDocumentationGroup(element, injector) {
       label: 'Legislação / Normativos aplicáveis'
     })
   }];
+
+  // Retorna o grupo configurado para ser exibido no painel de propriedades
   return {
     id: 'process-documentation',
     label: translate('Documentação do Processo'),

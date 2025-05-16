@@ -7,10 +7,19 @@ import {
 } from './generic-entries';
 
 // Entradas do grupo
+
+/**
+ * Cria o grupo de propriedades "Dados da situação atual" para o painel de propriedades.
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Object} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {Object} Grupo de propriedades configurado para o painel.
+ */
 export function CurrentSituationGroup(element, injector) {
   const translate = injector.get('translate');
 
+  // Lista de entradas (fields) exibidas no grupo "Dados da situação atual"
   const entries = [
+    // Periodicidade do processo (dropdown)
     {
       id: 'process-periodicity',
       component: props => GenericSelectEntry({
@@ -34,6 +43,7 @@ export function CurrentSituationGroup(element, injector) {
         ]
       })
     },
+    // Tempo de execução do processo (campo texto)
     {
       id: 'time-execution',
       component: props => GenericTextFieldEntry({
@@ -44,6 +54,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Tempo de execução do processo'
       })
     },
+    // Tipo do tempo de execução (radio)
     {
       id: 'time-execution-type',
       component: props => GenericRadioEntry({
@@ -57,6 +68,7 @@ export function CurrentSituationGroup(element, injector) {
         ]
       })
     },
+    // Quantidade de demandas recebidas (campo texto)
     {
       id: 'demands',
       component: props => GenericTextFieldEntry({
@@ -67,6 +79,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Quantidade de demandas recebidas'
       })
     },
+    // Tipo da quantidade de demandas (radio)
     {
       id: 'demands-type',
       component: props => GenericRadioEntry({
@@ -80,6 +93,7 @@ export function CurrentSituationGroup(element, injector) {
         ]
       })
     },
+    // Capacidade aproximada de execução (campo texto)
     {
       id: 'capacity',
       component: props => GenericTextFieldEntry({
@@ -90,6 +104,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Capacidade aproximada de execução do processo'
       })
     },
+    // Tipo da capacidade de execução (radio)
     {
       id: 'capacity-type',
       component: props => GenericRadioEntry({
@@ -103,6 +118,7 @@ export function CurrentSituationGroup(element, injector) {
         ]
       })
     },
+    // Quantidade de executores (campo texto, apenas inteiros)
     {
       id: 'executors-quantity',
       component: props => GenericTextFieldEntry({
@@ -114,6 +130,7 @@ export function CurrentSituationGroup(element, injector) {
         onlyInt: true
       })
     },
+    // Perfil dos executores (área de texto)
     {
       id: 'executors-profile',
       component: props => GenericTextAreaEntry({
@@ -124,6 +141,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Perfil'
       })
     },
+    // Quantidade de atividades manuais (campo texto)
     {
       id: 'activities-manual',
       component: props => GenericTextFieldEntry({
@@ -134,6 +152,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Atividade manual (Qtd)'
       })
     },
+    // Quantidade de atividades de usuário (campo texto)
     {
       id: 'activities-user',
       component: props => GenericTextFieldEntry({
@@ -144,6 +163,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Atividade de usuário (Qtd)'
       })
     },
+    // Quantidade de atividades automatizadas (campo texto)
     {
       id: 'activities-automated',
       component: props => GenericTextFieldEntry({
@@ -154,6 +174,7 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Atividade automatizada (Qtd)'
       })
     },
+    // Indicador de desempenho (radio)
     {
       id: 'performance-indicator',
       component: props => GenericRadioEntry({
@@ -170,6 +191,7 @@ export function CurrentSituationGroup(element, injector) {
     }
   ];
 
+  // Retorna o grupo configurado para ser exibido no painel de propriedades
   return {
     id: 'current-situation',
     label: translate('Dados da situação atual'),
