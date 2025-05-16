@@ -138,3 +138,6 @@ dist
 #arquivos de build
 client/client-bundle.js
 client/client-bundle.js.map
+
+# VSCode local settings
+.vscode/
