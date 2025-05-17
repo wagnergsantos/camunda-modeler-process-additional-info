@@ -1,28 +1,25 @@
 // client/properties-panel/helper/fixed-properties-helper.js
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import {
-  createExtensionElements, // Você pode precisar adaptar ou copiar de extensions-helper.js
-  createCamundaProperties,   // Você pode precisar adaptar ou copiar de extensions-helper.js
-  getExtensionElements,    // Você pode precisar adaptar ou copiar de extensions-helper.js
-  getCamundaProperties as getCamundaPropertiesContainer // Renomeie se houver conflito
-} from './extensions-helper'; // Adapte o caminho se moveu/renomeou extensions-helper.js
+  createExtensionElements,
+  createCamundaProperties,
+  getExtensionElements,
+  getCamundaProperties
+} from './extensions-helper';
 
+/**
+ * Sobe na hierarquia até encontrar o definitions.
+ * @param {ModdleElement} element
+ * @returns {ModdleElement|null}
+ */
 function getDefinitionsElement(element) {
   if (!element) return null;
-
   const bo = element.businessObject || element;
-  
-  // If we already have definitions, return it
-  if (bo.$type === 'bpmn:Definitions') {
-    return bo;
-  }
-
-  // Navigate up until we find definitions
+  if (bo.$type === 'bpmn:Definitions') return bo;
   let current = bo;
   while (current && current.$type !== 'bpmn:Definitions') {
     current = current.$parent;
   }
-
   return current;
 }
 
@@ -30,28 +27,25 @@ function getDefinitionsElement(element) {
  * Obtém o valor de uma propriedade camunda:property específica.
  * @param {object} element O elemento definitions do diagrama.
  * @param {string} propertyName O nome da propriedade (ex: 'processo:codigo').
- * @returns {string|undefined} O valor da propriedade ou undefined.
+ * @returns {string} O valor da propriedade ou string vazia.
  */
 export function getFixedProperty(element, propertyName) {
   if (!element) return '';
-
   const definitions = getDefinitionsElement(element);
   if (!definitions) return '';
-
   const extensionElements = definitions.get('extensionElements');
   if (!extensionElements) return '';
-
   const camundaProperties = extensionElements.get('values')
     .find(v => v.$type === 'camunda:Properties');
-  
   if (!camundaProperties || !camundaProperties.values) return '';
-
   const property = camundaProperties.values.find(p => p.name === propertyName);
   return property ? property.value : '';
 }
 
 /**
  * Define o valor de uma propriedade camunda:property específica.
+ * Cria extensionElements/camunda:Properties se necessário.
+ * Remove a propriedade se o valor for vazio/undefined/null.
  * @param {object} element O elemento definitions do diagrama.
  * @param {string} propertyName O nome da propriedade.
  * @param {string} propertyValue O valor da propriedade.
@@ -60,25 +54,11 @@ export function getFixedProperty(element, propertyName) {
  */
 export function setFixedProperty(element, propertyName, propertyValue, modeling, bpmnFactory) {
   if (!element) return;
-
-  console.log('setFixedProperty called with:', {
-    element,
-    propertyName,
-    propertyValue
-  });
-
   const definitions = getDefinitionsElement(element);
-  
-  console.log('Found definitions:', definitions); // DEBUG
-
-  if (!definitions) {
-    console.warn('No definitions found');
-    return;
-  }
+  if (!definitions) return;
 
   let extensionElements = definitions.get('extensionElements');
-
-  // 1. Garante bpmn:ExtensionElements
+  // Garante bpmn:ExtensionElements
   if (!extensionElements) {
     extensionElements = bpmnFactory.create('bpmn:ExtensionElements', { values: [] });
     modeling.updateModdleProperties(definitions, definitions, {
@@ -86,7 +66,7 @@ export function setFixedProperty(element, propertyName, propertyValue, modeling,
     });
   }
 
-  // 2. Garante camunda:Properties
+  // Garante camunda:Properties
   let camundaProperties = extensionElements.get('values').find(v => v.$type === 'camunda:Properties');
   if (!camundaProperties) {
     camundaProperties = bpmnFactory.create('camunda:Properties', { values: [] });
@@ -95,7 +75,7 @@ export function setFixedProperty(element, propertyName, propertyValue, modeling,
     });
   }
 
-  // 3. Atualiza ou cria a propriedade
+  // Atualiza, cria ou remove a propriedade
   let targetProperty = camundaProperties.values?.find(p => p.name === propertyName);
 
   if (shouldRemoveProperty(propertyValue)) {
@@ -117,29 +97,11 @@ export function setFixedProperty(element, propertyName, propertyValue, modeling,
   }
 }
 
+/**
+ * Retorna true se o valor for vazio, undefined ou null.
+ * @param {any} value
+ * @returns {boolean}
+ */
 function shouldRemoveProperty(value) {
   return value === undefined || value === null || value === '';
 }
-
-// Adapte ou copie as funções createExtensionElements, createCamundaProperties,
-// getExtensionElements, getCamundaProperties de 'extensions-helper.js' para este arquivo
-// ou ajuste os imports se você reorganizar os helpers.
-// É crucial que getCamundaPropertiesContainer retorne o elemento <camunda:Properties>.
-// A versão original em extensions-helper.js:
-// export function getCamundaProperties(element) {
-//   const bo = getBusinessObject(element); // Certifique-se que 'element' aqui é o business object
-//   const properties = findExtensions(bo, 'camunda:Properties') || [];
-//   if (properties.length) {
-//     return properties[0];
-//   }
-//   return null;
-// }
-// findExtensions também de extensions-helper.js
-// export function findExtensions(element, types) {
-//   const extensionElements = getExtensionElements(element); // element é o business object
-//   if (!extensionElements) {
-//     return [];
-//   }
-//   return extensionElements.get('values').filter(value => {
-//     return isAny(value, [].concat(types)); // isAny de bpmn-js/lib/features/modeling/util/ModelingUtil
-//   });
