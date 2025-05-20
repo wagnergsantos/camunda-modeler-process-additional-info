@@ -21,7 +21,7 @@ export function GenericTextFieldEntry({ element, id, propertyName, label, onlyIn
   return TextFieldEntry({
     element,
     id,
-    label: translate(label),
+    label: typeof label === 'string' ? translate(label) : label, // Corrigido: só traduz string
     getValue: () => getFixedProperty(element, propertyName),
     setValue: value => {
       let v = value;

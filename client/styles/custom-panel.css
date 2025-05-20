@@ -3,14 +3,14 @@
 .bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
   display: flex;
   align-items: center; /* Centraliza verticalmente */
-  gap: 6px; /* Aproxima radio do textfield */
+  gap: 0px; /* Reduzido ao mínimo possível */
   width: 100%;
 }
 
 .bio-properties-panel-combined-entry .bio-properties-panel-textfield {
-  flex: 0 0 280px; /* Aumenta largura fixa do input */
-  min-width: 180px;
-  max-width: 380px;
+  flex: 0 0 180px; /* reduzido */
+  min-width: 160px; /* reduzido */
+  max-width: 220px; /* reduzido */
   margin-bottom: 0;
   align-self: center; /* Centraliza na linha */
 }
@@ -23,9 +23,9 @@
 }
 
 .bio-properties-panel-combined-entry .bio-properties-panel-radio-group {
-  margin-top: 0; /* Remove margem superior se houver */
+  margin-top: 0 !important; /* Remove margem superior se houver */
   margin-left: 0; /* Remove margem esquerda */
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
   padding-left: 0; /* Remove padding esquerdo se houver */
   display: flex; /* Para alinhar os botões de rádio entre si */
   flex-direction: column; /* Radios em coluna */
@@ -38,6 +38,22 @@
   border-radius: 6px;
   background: #fafbfc;
   padding: 6px 10px 2px 10px; /* padding menor e mais horizontal */
-  margin-bottom: 8px;
+  margin-bottom: 4px; /* Reduz espaço entre painéis */
   box-shadow: 0 1px 2px rgba(60,60,60,0.03);
+  overflow-y: auto;
+  max-height: 70vh; /* ou ajuste conforme necessário */
+}
+
+/* Responsividade: radio embaixo do input em telas pequenas */
+@media (max-width: 600px) {
+  .bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+  .bio-properties-panel-combined-entry .bio-properties-panel-textfield {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
 }
