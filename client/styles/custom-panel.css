@@ -73,3 +73,10 @@
     min-width: 0;
   }
 }
+
+/* Aumenta altura padrão dos textareas dos campos customizados para ~4 linhas */
+.bio-properties-panel-entry textarea,
+.bio-properties-panel-textarea textarea {
+  min-height: 88px !important; /* Aproximadamente 4 linhas, ajuste se necessário */
+  resize: vertical;
+}
