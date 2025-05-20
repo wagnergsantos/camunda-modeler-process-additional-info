@@ -39,29 +39,30 @@ export default function CombinedInputRadioEntry(props) {
 
   return (
     h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry'), 'data-entry-id': id },
-      h('div', { class: 'bio-properties-panel-panel' },
-        h('label', { for: textFieldId, class: 'bio-properties-panel-label' }, translate(label)),
-        h('div', { class: 'bio-properties-panel-combined-input-radio-wrapper' },
-          h(TextFieldEntry, {
-            element,
-            id: textFieldId,
-            label: '',
-            getValue: textFieldGetValue,
-            setValue: textFieldSetValue,
-            debounce,
-            description: '',
-          }),
-          h(RadioEntry, {
-            element,
-            id: radioId,
-            label: '',
-            getValue: radioGetValue,
-            setValue: radioSetValue,
-            getOptions: () => radioOptions.map(opt => ({ ...opt, label: translate(opt.label) })),
-            description: '',
-          })
-        ),
-        description && h(Description, { forId: id, element: element, value: description })
+      h('fieldset', { class: 'bio-properties-panel-fieldset custom-thin-rounded-fieldset' },
+        h('legend', { class: 'bio-properties-panel-legend custom-thin-rounded-legend' }, translate(label)),
+        h('div', { class: 'bio-properties-panel-panel' },
+            h(TextFieldEntry, {
+              element,
+              id: textFieldId,
+              label: '',
+              getValue: textFieldGetValue,
+              setValue: textFieldSetValue,
+              debounce,
+              description: '',
+            }),
+            h(RadioEntry, {
+              element,
+              id: radioId,
+              label: '',
+              getValue: radioGetValue,
+              setValue: radioSetValue,
+              getOptions: () => radioOptions.map(opt => ({ ...opt, label: translate(opt.label) })),
+              description: '',
+            })
+          ,
+          description && h(Description, { forId: id, element: element, value: description })
+        )
       )
     )
   );

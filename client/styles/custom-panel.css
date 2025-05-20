@@ -2,9 +2,12 @@
 
 .bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
   display: flex;
-  align-items: center; /* Centraliza verticalmente */
-  gap: 0px; /* Reduzido ao mínimo possível */
-  width: 100%;
+  flex-direction: column; /* Garante que input e radio fiquem em coluna */
+  align-items: flex-start; /* Alinha à esquerda */
+  gap: 0px;
+  width: auto; /* Remove o width: 100% para não ocupar espaço extra */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bio-properties-panel-combined-entry .bio-properties-panel-textfield {
@@ -15,32 +18,28 @@
   align-self: center; /* Centraliza na linha */
 }
 
-/* O RadioEntry pode adicionar um label próprio; como já temos um label principal,
-   e passamos label: '' para ele no componente combinado, ele não deve aparecer.
-   Caso ele ainda reserve espaço, o CSS abaixo pode ajudar: */
-.bio-properties-panel-combined-entry .bio-properties-panel-radio-group .bio-properties-panel-label {
-  display: none !important; /* Esconde o label individual do RadioGroup, se houver */
-}
-
 .bio-properties-panel-combined-entry .bio-properties-panel-radio-group {
   margin-top: 0 !important; /* Remove margem superior se houver */
   margin-left: 0; /* Remove margem esquerda */
   margin-bottom: 0 !important;
-  padding-left: 0; /* Remove padding esquerdo se houver */
-  display: flex; /* Para alinhar os botões de rádio entre si */
-  flex-direction: column; /* Radios em coluna */
-  gap: 4px; /* Espaço entre os botões de rádio, se necessário */
-  align-items: flex-start;
+  padding-left: 0;
+  display: flex; /* Alinha os botões de rádio em linha */
+  flex-direction: row; /* <-- alterado de column para row */
+  gap: 12px; /* Espaço entre os botões de rádio */
+  align-items: center;
 }
 
 .bio-properties-panel-panel {
   border: 1px solid #d4d4d4;
   border-radius: 6px;
   background: #fafbfc;
-  padding: 6px 10px 2px 10px; /* padding menor e mais horizontal */
-  margin-bottom: 4px; /* Reduz espaço entre painéis */
+  padding: 6px 10px 2px 10px;
+  margin-bottom: 4px;
   box-shadow: 0 1px 2px rgba(60,60,60,0.03);
   overflow-y: auto;
+  max-width: 400px; /* Limita a largura máxima do painel interno */
+  width: auto;      /* Não ocupa 100% do fieldset */
+  min-width: 0;
   max-height: 70vh; /* ou ajuste conforme necessário */
 }
 
@@ -59,6 +58,21 @@
   color: #1a237e;
   padding: 0 6px;
   margin-bottom: 4px;
+}
+
+/* .custom-thin-rounded-fieldset deixa a borda fina, cinza e arredondada */
+.custom-thin-rounded-fieldset {
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+/* .custom-thin-rounded-legend estiliza o título do fieldset */
+.custom-thin-rounded-legend {
+  color: #666;
+  font-size: 1em;
+  padding: 0 8px;
 }
 
 /* Responsividade: radio embaixo do input em telas pequenas */
