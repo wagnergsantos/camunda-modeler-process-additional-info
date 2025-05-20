@@ -93,6 +93,6 @@ function findDefinitionsElement(injector) {
 
   // Garantir que pegamos o definitions
   const definitions = modeler.getDefinitions();
-  console.log('definitions type:', definitions && definitions.$type); // DEBUG
+  console.debug('definitions type:', definitions && definitions.$type); // DEBUG
   return definitions;
 }
