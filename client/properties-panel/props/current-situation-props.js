@@ -29,7 +29,7 @@ export function CurrentSituationGroup(element, injector) {
         ...props,
         element,
         id: 'process-periodicity',
-        propertyName: 'processo:periodicidade',
+        propertyName: 'processo:situacao:periodicidade',
         label: 'Periodicidade',
         options: [
           { value: 'diaria', label: 'Diária' },
@@ -56,9 +56,9 @@ export function CurrentSituationGroup(element, injector) {
           id: "time-execution-combined-entry",
           label: "Tempo de execução do processo",
           textFieldId: "time-execution-textfield",
-          textFieldPropertyName: "processo:tempoExecucao",
+          textFieldPropertyName: "processo:situacao:tempoExecucao",
           radioId: "time-execution-type-radio",
-          radioPropertyName: "processo:tempoExecucaoTipo",
+          radioPropertyName: "processo:situacao:tempoExecucaoTipo",
           radioOptions: [
             { value: 'estimado', label: 'Estimado' },
             { value: 'mensurado', label: 'Mensurado' }
@@ -77,9 +77,9 @@ export function CurrentSituationGroup(element, injector) {
           id: "demands-combined-entry",
           label: "Quantidade de demandas recebidas",
           textFieldId: "demands-textfield",
-          textFieldPropertyName: "processo:quantidadeDemandas",
+          textFieldPropertyName: "processo:situacao:quantidadeDemandas",
           radioId: "demands-type-radio",
-          radioPropertyName: "processo:quantidadeDemandasTipo",
+          radioPropertyName: "processo:situacao:quantidadeDemandasTipo",
           radioOptions: [
             { value: 'estimado', label: 'Estimado' },
             { value: 'mensurado', label: 'Mensurado' }
@@ -98,9 +98,9 @@ export function CurrentSituationGroup(element, injector) {
           id: "capacity-combined-entry",
           label: "Capacidade aproximada de execução do processo",
           textFieldId: "capacity-textfield",
-          textFieldPropertyName: "processo:capacidadeExecucao",
+          textFieldPropertyName: "processo:situacao:capacidadeExecucao",
           radioId: "capacity-type-radio",
-          radioPropertyName: "processo:capacidadeExecucaoTipo",
+          radioPropertyName: "processo:situacao:capacidadeExecucaoTipo",
           radioOptions: [
             { value: 'estimado', label: 'Estimado' },
             { value: 'mensurado', label: 'Mensurado' }
@@ -116,7 +116,7 @@ export function CurrentSituationGroup(element, injector) {
         ...props,
         element,
         id: 'executors-quantity',
-        propertyName: 'processo:quantidadeExecutores',
+        propertyName: 'processo:situacao:quantidadeExecutores',
         label: 'Quantidade de executores do processo',
         onlyInt: true
       })
@@ -128,7 +128,7 @@ export function CurrentSituationGroup(element, injector) {
         ...props,
         element,
         id: 'executors-profile',
-        propertyName: 'processo:perfilExecutores',
+        propertyName: 'processo:situacao:perfilExecutores',
         label: 'Perfil'
       })
     },
@@ -143,7 +143,7 @@ export function CurrentSituationGroup(element, injector) {
               ...props,
               element,
               id: 'activities-manual',
-              propertyName: 'processo:atividadeManualQtd',
+              propertyName: 'processo:situacao:atividadeManualQtd',
               label: h('span', { style: 'display: flex; align-items: center; gap: 4px;' },
                 'Atividade manual (Qtd)',
                 h('svg', { width: 16, height: 16, viewBox: '0 -0.5 17 17', style: 'vertical-align:middle;', xmlns: 'http://www.w3.org/2000/svg' },
@@ -160,7 +160,7 @@ export function CurrentSituationGroup(element, injector) {
               ...props,
               element,
               id: 'activities-user',
-              propertyName: 'processo:atividadeUsuarioQtd',
+              propertyName: 'processo:situacao:atividadeUsuarioQtd',
               label: h('span', { style: 'display: flex; align-items: center; gap: 4px;' },
                 'Atividade de usuário (Qtd)',
                 h('svg', { width: 16, height: 16, viewBox: '0 0 24 24', style: 'vertical-align:middle;', xmlns: 'http://www.w3.org/2000/svg' },
@@ -173,7 +173,7 @@ export function CurrentSituationGroup(element, injector) {
               ...props,
               element,
               id: 'activities-automated',
-              propertyName: 'processo:atividadeAutomatizadaQtd',
+              propertyName: 'processo:situacao:atividadeAutomatizadaQtd',
               label: h('span', { style: 'display: flex; align-items: center; gap: 4px;' },
                 'Atividade automatizada (Qtd)',
                 h('svg', { width: 16, height: 16, viewBox: '0 0 17 17', style: 'vertical-align:middle;', xmlns: 'http://www.w3.org/2000/svg' },
@@ -197,7 +197,7 @@ export function CurrentSituationGroup(element, injector) {
         ...props,
         element,
         id: 'performance-indicator',
-        propertyName: 'processo:possuiIndicador',
+        propertyName: 'processo:situacao:possuiIndicador',
         label: 'O processo possui indicador de desempenho?',
         options: [
           { value: 'sim', label: 'Sim' },

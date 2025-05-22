@@ -31,7 +31,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'process-code',
-        propertyName: 'processo:codigo',
+        propertyName: 'processo:documentacao:codigo',
         label: 'Código do Processo'
       })
     },
@@ -42,7 +42,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'process-name',
-        propertyName: 'processo:nome',
+        propertyName: 'processo:documentacao:nome',
         label: 'Nome do Processo'
       })
     },
@@ -53,7 +53,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-entrada',
-        propertyName: 'processo:entradaInsumo',
+        propertyName: 'processo:documentacao:entradaInsumo',
         label: 'Entrada do processo (Insumo)'
       })
     },
@@ -64,7 +64,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-fornecedores',
-        propertyName: 'processo:fornecedores',
+        propertyName: 'processo:documentacao:fornecedores',
         label: 'Fornecedores'
       })
     },
@@ -75,7 +75,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'process-objective',
-        propertyName: 'processo:objetivo',
+        propertyName: 'processo:documentacao:objetivo',
         label: 'Objetivo do Processo'
       })
     },
@@ -86,7 +86,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-saida',
-        propertyName: 'processo:saidaResultado',
+        propertyName: 'processo:documentacao:saidaResultado',
         label: 'Saída do processo (Resultado / Produto)'
       })
     },
@@ -97,7 +97,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-clientes',
-        propertyName: 'processo:clientes',
+        propertyName: 'processo:documentacao:clientes',
         label: 'Clientes'
       })
     },
@@ -108,7 +108,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-interface',
-        propertyName: 'processo:interfaceProcessos',
+        propertyName: 'processo:documentacao:interfaceProcessos',
         label: 'Interface com outros processos'
       })
     },
@@ -119,7 +119,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-regras',
-        propertyName: 'processo:regrasNegocio',
+        propertyName: 'processo:documentacao:regrasNegocio',
         label: 'Principais regras de negócio do processo'
       })
     },
@@ -130,7 +130,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-donoArea',
-        propertyName: 'processo:donoProcessoArea',
+        propertyName: 'processo:documentacao:donoProcessoArea',
         label: 'Dono do processo (Área)'
       })
     },
@@ -141,7 +141,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-donoGestor',
-        propertyName: 'processo:donoProcessoGestor',
+        propertyName: 'processo:documentacao:donoProcessoGestor',
         label: 'Dono do processo (Gestor(a))'
       })
     },
@@ -152,7 +152,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-atores',
-        propertyName: 'processo:atoresEnvolvidos',
+        propertyName: 'processo:documentacao:atoresEnvolvidos',
         label: 'Atores envolvidos'
       })
     },
@@ -163,7 +163,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-sistemas',
-        propertyName: 'processo:sistemasUtilizados',
+        propertyName: 'processo:documentacao:sistemasUtilizados',
         label: 'Sistemas utilizados'
       })
     },
@@ -174,7 +174,7 @@ export function ProcessDocumentationGroup(element, injector) {
         ...props,
         element,
         id: 'definitions-prop-legislacao',
-        propertyName: 'processo:legislacaoNormativos',
+        propertyName: 'processo:documentacao:legislacaoNormativos',
         label: 'Legislação / Normativos aplicáveis'
       })
     }
