@@ -110,9 +110,58 @@ export function GenericSelectEntry({ element, id, propertyName, label, options }
 }
 
 /**
+ * Cria um campo de seleção múltipla genérico para o painel de propriedades.
+ */
+export function GenericMultiSelectEntry({ element, id, propertyName, label, options, description }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+
+  const getValue = () => {
+    const rawValue = getFixedProperty(element, propertyName);
+    if (!rawValue) return [];
+    return rawValue.split(',').map(v => v.trim()).filter(Boolean);
+  };
+
+  const setValue = (selected) => {
+    setFixedProperty(element, propertyName, selected.join(','), modeling, bpmnFactory);
+  };
+
+  const handleChange = (event) => {
+    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
+    setValue(selected);
+  };
+
+  const value = getValue();
+
+  return h('div', { class: classNames('bio-properties-panel-entry'), 'data-entry-id': id },
+    h('label', { class: 'bio-properties-panel-label' },
+      translate(label)
+    ),
+    h('select', {
+      id,
+      name: id,
+      class: 'bio-properties-panel-input',
+      multiple: true,
+      onInput: handleChange,
+      value: value
+    },
+      options.map((option, idx) =>
+        h('option', {
+          key: idx,
+          value: option.value,
+          selected: value.includes(option.value)
+        }, translate(option.label))
+      )
+    ),
+    description && h(Description, { forId: id, element, value: description })
+  );
+}
+
+/**
  * Cria um grupo de opções com radio buttons dentro de um fieldset.
  */
-export function GenericAnalysisSectionEntry({ element, id, propertyName, label, options }) {
+export function GenericMultiRadioButtonEntry({ element, id, propertyName, label, options }) {
   const modeling = useService('modeling');
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');

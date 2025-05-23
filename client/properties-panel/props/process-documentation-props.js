@@ -5,7 +5,7 @@ import {
   GenericTextAreaEntry,
   GenericRadioEntry,
   GenericMultiSelectEntry,
-  GenericAnalysisSectionEntry
+  GenericMultiRadioButtonEntry
 } from './generic-entries';
 
 /**
@@ -197,7 +197,7 @@ export function ProcessDocumentationGroup(element, injector) {
     // Análise Preliminar
     {
       id: 'definitions-prop-analisePreliminar',
-      component: props => GenericAnalysisSectionEntry({
+      component: props => GenericMultiRadioButtonEntry({
         ...props,
         element,
         id: 'definitions-prop-analisePreliminar',
