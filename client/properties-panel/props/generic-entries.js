@@ -2,6 +2,9 @@ import { TextFieldEntry, TextAreaEntry, SelectEntry } from '@bpmn-io/properties-
 import { useService } from 'bpmn-js-properties-panel';
 import RadioEntry from '../custom/RadioEntry';
 import { getFixedProperty, setFixedProperty } from '../helper/fixed-properties-helper';
+import { h } from 'preact';
+import { Description, Tooltip } from '@bpmn-io/properties-panel';
+import classNames from 'classnames';
 
 /**
  * Cria um campo de texto genérico para o painel de propriedades.
@@ -104,4 +107,69 @@ export function GenericSelectEntry({ element, id, propertyName, label, options }
     getOptions: () => options.map(opt => ({ value: opt.value, label: translate(opt.label) })),
     debounce
   });
+}
+
+/**
+ * Cria um campo de seleção múltipla genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {Array<{value: string, label: string}>} params.options - Opções disponíveis.
+ */
+export function GenericMultiSelectEntry({ element, id, propertyName, label, options, description, tooltip, disabled }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const debounce = useService('debounceInput');
+  const bpmnFactory = useService('bpmnFactory');
+
+  // Get value as array
+  const getValue = () => {
+    const rawValue = getFixedProperty(element, propertyName);
+    if (Array.isArray(rawValue)) {
+      return rawValue;
+    }
+    if (typeof rawValue === 'string') {
+      return rawValue.split(',').map(v => v.trim()).filter(Boolean);
+    }
+    return [];
+  };
+
+  // Set value from array
+  const setValue = (selected) => {
+    setFixedProperty(element, propertyName, selected.join(','), modeling, bpmnFactory);
+  };
+
+  const handleChange = (event) => {
+    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
+    setValue(selected);
+  };
+
+  const value = getValue();
+
+  return h('div', { class: classNames('bio-properties-panel-entry'), 'data-entry-id': id },
+    h('label', { for: id, class: 'bio-properties-panel-label' },
+      h(Tooltip, { value: tooltip, forId: id, element: element }, translate(label))
+    ),
+    h('select', {
+      id,
+      name: id,
+      class: 'bio-properties-panel-input',
+      multiple: true,
+      onInput: handleChange,
+      value: value.length ? value : [''],
+      disabled
+    },
+      options.map((option, idx) =>
+        h('option', {
+          key: idx,
+          value: option.value,
+          disabled: option.disabled,
+          selected: value.includes(option.value)
+        }, translate(option.label))
+      )
+    ),
+    description && h(Description, { forId: id, element: element, value: description })
+  );
 }
