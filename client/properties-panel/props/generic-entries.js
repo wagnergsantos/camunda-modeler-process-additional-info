@@ -132,7 +132,7 @@ export function GenericMultiSelectEntry({ element, id, propertyName, label, opti
     setValue(selected);
   };
 
-  const value = getValue();
+  const selectedValues = getValue();
 
   return h('div', { class: classNames('bio-properties-panel-entry'), 'data-entry-id': id },
     h('label', { class: 'bio-properties-panel-label' },
@@ -143,14 +143,13 @@ export function GenericMultiSelectEntry({ element, id, propertyName, label, opti
       name: id,
       class: 'bio-properties-panel-input',
       multiple: true,
-      onInput: handleChange,
-      value: value
+      onChange: handleChange,
+      size: Math.min(options.length, 5)
     },
-      options.map((option, idx) =>
+      options.map((option) =>
         h('option', {
-          key: idx,
           value: option.value,
-          selected: value.includes(option.value)
+          selected: selectedValues.includes(option.value)
         }, translate(option.label))
       )
     ),
