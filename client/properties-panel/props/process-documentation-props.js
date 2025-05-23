@@ -46,6 +46,21 @@ export function ProcessDocumentationGroup(element, injector) {
         label: 'Nome do Processo'
       })
     },
+    // Tipo de mapeamento
+    {
+      id: 'performance-indicator',
+      component: props => GenericRadioEntry({
+        ...props,
+        element,
+        id: 'process-mapping-type',
+        propertyName: 'processo:documentacao:tipoMapeamento',
+        label: 'Tipo de mapeamento',
+        options: [
+          { value: 'AS-IS', label: 'Situação Atual' },
+          { value: 'TO-BE', label: 'Situação Futura' }
+        ]
+      })
+    },
     // Entrada do processo (Insumo)
     {
       id: 'definitions-prop-entrada',
