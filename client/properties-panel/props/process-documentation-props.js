@@ -4,7 +4,8 @@ import {
   GenericTextFieldEntry,
   GenericTextAreaEntry,
   GenericRadioEntry,
-  GenericSelectEntry
+  GenericMultiSelectEntry,
+  GenericAnalysisSectionEntry
 } from './generic-entries';
 
 /**
@@ -191,6 +192,25 @@ export function ProcessDocumentationGroup(element, injector) {
         id: 'definitions-prop-legislacao',
         propertyName: 'processo:documentacao:legislacaoNormativos',
         label: 'Legislação / Normativos aplicáveis'
+      })
+    },
+    // Análise Preliminar
+    {
+      id: 'definitions-prop-analisePreliminar',
+      component: props => GenericAnalysisSectionEntry({
+        ...props,
+        element,
+        id: 'definitions-prop-analisePreliminar',
+        propertyName: 'processo:documentacao:analisePreliminar',
+        label: 'Necessidades identificadas no mapeamento dos processos',
+        options: [
+          { value: 'alinhamento-estrategico', label: 'Análise de alinhamento estratégico' },
+          { value: 'melhorias-processo', label: 'Análise de melhorias em processos e sistemas' },
+          { value: 'capacidade-rh', label: 'Análise da capacidade de recursos humanos' },
+          { value: 'simulacao', label: 'Avaliar possibilidade para simulação de processos' },
+          { value: 'melhorias-rapidas', label: 'Avaliar possibilidade para melhorias rápidas' },
+          { value: 'automatizacao', label: 'Avaliar possibilidade de Automatização de processos' }
+        ]
       })
     }
   ];

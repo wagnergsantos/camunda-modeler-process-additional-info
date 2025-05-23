@@ -110,66 +110,52 @@ export function GenericSelectEntry({ element, id, propertyName, label, options }
 }
 
 /**
- * Cria um campo de seleção múltipla genérico para o painel de propriedades.
- * @param {Object} params
- * @param {ModdleElement} params.element - Elemento BPMN.
- * @param {string} params.id - Identificador único do campo.
- * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
- * @param {string} params.label - Rótulo exibido.
- * @param {Array<{value: string, label: string}>} params.options - Opções disponíveis.
+ * Cria um grupo de opções com radio buttons dentro de um fieldset.
  */
-export function GenericMultiSelectEntry({ element, id, propertyName, label, options, description, tooltip, disabled }) {
+export function GenericAnalysisSectionEntry({ element, id, propertyName, label, options }) {
   const modeling = useService('modeling');
   const translate = useService('translate');
-  const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // Get value as array
-  const getValue = () => {
-    const rawValue = getFixedProperty(element, propertyName);
-    if (Array.isArray(rawValue)) {
-      return rawValue;
-    }
-    if (typeof rawValue === 'string') {
-      return rawValue.split(',').map(v => v.trim()).filter(Boolean);
-    }
-    return [];
+  const getValue = (optionValue) => {
+    return getFixedProperty(element, `${propertyName}:${optionValue}`) || '';
   };
 
-  // Set value from array
-  const setValue = (selected) => {
-    setFixedProperty(element, propertyName, selected.join(','), modeling, bpmnFactory);
+  const setValue = (optionValue, value) => {
+    setFixedProperty(
+      element, 
+      `${propertyName}:${optionValue}`, 
+      value, 
+      modeling, 
+      bpmnFactory
+    );
   };
 
-  const handleChange = (event) => {
-    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
-    setValue(selected);
-  };
-
-  const value = getValue();
-
-  return h('div', { class: classNames('bio-properties-panel-entry'), 'data-entry-id': id },
-    h('label', { for: id, class: 'bio-properties-panel-label' },
-      h(Tooltip, { value: tooltip, forId: id, element: element }, translate(label))
-    ),
-    h('select', {
-      id,
-      name: id,
-      class: 'bio-properties-panel-input',
-      multiple: true,
-      onInput: handleChange,
-      value: value.length ? value : [''],
-      disabled
-    },
-      options.map((option, idx) =>
-        h('option', {
-          key: idx,
-          value: option.value,
-          disabled: option.disabled,
-          selected: value.includes(option.value)
-        }, translate(option.label))
+  return h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
+    h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
+      h('legend', { class: 'custom-thin-rounded-legend' }, translate(label)),
+      options.map((option) => 
+        h('div', { class: 'bio-properties-panel-radio-wrapper', style: 'margin-bottom: 10px;' },
+          h('label', { class: 'bio-properties-panel-label' }, translate(option.label)),
+          h('div', { class: 'bio-properties-panel-radio-group' },
+            [
+              { value: 'sim', label: 'Sim' },
+              { value: 'nao', label: 'Não' }
+            ].map(radio => 
+              h('span', { style: 'margin-right: 15px;' },
+                h('input', {
+                  type: 'radio',
+                  name: `${id}_${option.value}`,
+                  value: radio.value,
+                  checked: getValue(option.value) === radio.value,
+                  onChange: (e) => setValue(option.value, e.target.value)
+                }),
+                h('label', { style: 'margin-left: 5px;' }, radio.label)
+              )
+            )
+          )
+        )
       )
-    ),
-    description && h(Description, { forId: id, element: element, value: description })
+    )
   );
 }
