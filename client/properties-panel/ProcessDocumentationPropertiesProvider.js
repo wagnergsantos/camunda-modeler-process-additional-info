@@ -2,6 +2,7 @@
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { ProcessDocumentationGroup } from './props/process-documentation-props';
 import { CurrentSituationGroup } from './props/current-situation-props';
+import { createInputSpecificationGroup, createOutputSpecificationGroup } from './props/process-indicators-props';
 
 export default class ProcessDocumentationPropertiesProvider {
   constructor(propertiesPanel, injector) {
@@ -13,6 +14,7 @@ export default class ProcessDocumentationPropertiesProvider {
     // Sempre exibe a aba, independente do tipo de elemento
     const groups = [];
     const processDocumentationGroup = ProcessDocumentationGroup(element, this._injector);
+    
     if (processDocumentationGroup) {
       groups.push(processDocumentationGroup);
     }
@@ -31,10 +33,8 @@ export default class ProcessDocumentationPropertiesProvider {
       groups = groups.slice();
 
       const definitionsElement = findDefinitionsElement(this._injector);
-      console.log('definitions found:', definitionsElement); // DEBUG
 
       if (!definitionsElement) {
-        console.warn('No definitions element found!');
         return groups;
       }
 
@@ -46,7 +46,6 @@ export default class ProcessDocumentationPropertiesProvider {
       };
 
       const processDocumentationGroup = ProcessDocumentationGroup(definitionsElement, this._injector);
-      console.log('documentation group:', processDocumentationGroup); // DEBUG
 
       if (processDocumentationGroup && processDocumentationGroup.entries) {
         infoGroup.entries.push(...processDocumentationGroup.entries);
@@ -56,9 +55,8 @@ export default class ProcessDocumentationPropertiesProvider {
       const currentSituationGroup = CurrentSituationGroup(definitionsElement, this._injector);
 
       groups.push(infoGroup);
-      if (currentSituationGroup) {
-        groups.push(currentSituationGroup);
-      }
+      groups.push(currentSituationGroup);
+      groups.push(createInputSpecificationGroup(element, this._injector));
 
       return groups;
     };
