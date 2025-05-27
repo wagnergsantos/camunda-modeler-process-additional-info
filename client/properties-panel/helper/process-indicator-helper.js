@@ -1,3 +1,9 @@
+import {
+  getExtensionElements,
+  getCamundaProperties,
+  createExtensionElements,
+  createCamundaProperties
+} from './extensions-helper';
 
 /**
  * Checks if the given property object represents a process indicator property.
@@ -88,5 +94,23 @@ export function updateIndicatorProperty(element, property, newProps, modeling) {
     ...newProps
   });
 
+  // Usa extensions-helper para garantir consistência ao atualizar
+  // Atualiza apenas o property específico
   return modeling.updateModdleProperties(element, property, props);
+}
+
+// Utilitário para garantir extensionElements/camunda:Properties usando extensions-helper
+export function ensureCamundaProperties(element, bpmnFactory, modeling) {
+  let extensionElements = getExtensionElements(element);
+  if (!extensionElements) {
+    extensionElements = createExtensionElements(element, bpmnFactory);
+    modeling.updateModdleProperties(element, element, { extensionElements });
+  }
+  let camundaProperties = getCamundaProperties(element);
+  if (!camundaProperties) {
+    camundaProperties = createCamundaProperties(extensionElements, bpmnFactory, { values: [] });
+    extensionElements.values.push(camundaProperties);
+    modeling.updateModdleProperties(element, extensionElements, { values: extensionElements.get('values') });
+  }
+  return camundaProperties;
 }
