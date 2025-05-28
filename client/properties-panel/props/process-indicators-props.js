@@ -38,7 +38,7 @@ function getIndicatorIds(element) {
     return Array.from(indicatorIds);
 }
 
-export function createInputSpecificationGroup(element, injector) {
+export function IndicatorsGroup(element, injector) {
     const translate = injector.get('translate');
     const modeling = injector.get('modeling');
     const bpmnFactory = injector.get('bpmnFactory');
