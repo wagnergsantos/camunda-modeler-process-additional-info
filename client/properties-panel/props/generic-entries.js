@@ -13,9 +13,11 @@ import classNames from 'classnames';
  * @param {string} params.id - Identificador único do campo.
  * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
  * @param {string} params.label - Rótulo exibido.
+ * @param {Function} [params.validate] - Função de validação opcional.
+ * @param {string} [params.tooltip] - Texto de ajuda opcional.
  * @param {boolean} [params.onlyInt] - Se verdadeiro, permite apenas números inteiros.
  */
-export function GenericTextFieldEntry({ element, id, propertyName, label, onlyInt, disableDebounce, enableStandardDebounce, tooltip, description }) { // Adicione tooltip e description
+export function GenericTextFieldEntry({ element, id, propertyName, label, validate, tooltip, onlyInt, disableDebounce, enableStandardDebounce, description }) { // Adicione tooltip e description
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounceInputService = useService('debounceInput');
@@ -47,6 +49,10 @@ export function GenericTextFieldEntry({ element, id, propertyName, label, onlyIn
     getValue: () => getFixedProperty(element, propertyName),
     setValue: internalSetValue,
     debounce: debounceFunctionToUse,
+    validate: validate ? (value) => {
+      const error = validate(value);
+      return error ? translate(error) : null;
+    } : undefined,
     tooltip: tooltip ? translate(tooltip) : undefined, // Passe o tooltip traduzido
     description: description ? translate(description) : undefined // Passe a descrição traduzida
   });

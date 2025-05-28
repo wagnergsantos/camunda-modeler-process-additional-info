@@ -9,6 +9,33 @@ import {
 } from './generic-entries';
 
 /**
+ * Valida o formato do código do processo.
+ * C1: formato C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx
+ * C2: formato C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx
+ */
+function validateProcessCode(code) {
+  if (!code) return null; // Permite campo vazio
+
+  // Padrões de validação
+  const c1Pattern = /^C1\.N\d{2}\.(PAI|PTB)\d{5}$/;
+  const c2Pattern = /^C2\.N\d{2}\.M\d{2}\.(PAI|PTB)\d{5}$/;
+
+  if (code.startsWith('C1')) {
+    if (!c1Pattern.test(code)) {
+      return 'Formato inválido para C1. Use o padrão: C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx';
+    }
+  } else if (code.startsWith('C2')) {
+    if (!c2Pattern.test(code)) {
+      return 'Formato inválido para C2. Use o padrão: C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx';
+    }
+  } else {
+    return 'O código deve começar com C1 ou C2';
+  }
+
+  return null; // Código válido
+}
+
+/**
  * Cria o grupo de propriedades "Documentação do Processo" para o painel de propriedades.
  * Este grupo só é exibido para elementos do tipo 'bpmn:Definitions'.
  * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
@@ -32,7 +59,13 @@ export function ProcessDocumentationGroup(element, injector) {
         id: 'process-code',
         propertyName: 'processo:documentacao:codigo',
         label: 'Código do Processo',
-        tooltip: translate('Código único do processo, utilizado para identificação e rastreamento.'),
+        validate: validateProcessCode,
+        tooltip: translate(
+          'Formato esperado:\n' +
+          'Para C1: C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx\n' +
+          'Para C2: C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx\n' +
+          'Onde x são números'
+        )
       })
     },
     // Nome do Processo
