@@ -2,7 +2,8 @@ import { Group } from '@bpmn-io/properties-panel';
 import {
   GenericTextFieldEntry,
   GenericTextAreaEntry,
-  GenericRadioEntry
+  GenericRadioEntry,
+  GenericDateFieldEntry
 } from './generic-entries';
 
 export function MappingMetadataGroup(element, injector) {
@@ -26,12 +27,15 @@ export function MappingMetadataGroup(element, injector) {
     },
     {
       id: 'mapping-date',
-      component: props => GenericTextFieldEntry({
+      component: props => GenericDateFieldEntry({
         ...props,
         element,
         id: 'mapping-date',
         propertyName: 'metaMapeamento:dataDocumento',
-        label: 'Data do Mapeamento'
+        label: 'Data do Mapeamento',
+        dateFormat: 'DD/MM/YYYY',
+        tooltip: 'Use o formato DD/MM/YYYY',
+        disableDebounce: true
       })
     },
     {

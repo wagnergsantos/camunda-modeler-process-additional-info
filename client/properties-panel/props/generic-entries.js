@@ -234,37 +234,44 @@ export function GenericMultiRadioButtonEntry({ element, id, propertyName, label,
 }
 
 /**
- * Generic date field entry using HTML5 date input.
+ * Cria um campo de data usando HTML5 date input.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {boolean} [params.disabled] - Se verdadeiro, desabilita o campo.
+ * @param {string} [params.tooltip] - Texto de ajuda opcional.
+ * @param {string} [params.description] - Descrição opcional.
  */
-export function GenericDateFieldEntry(props) {
-  const {
-    element,
-    id,
-    label,
-    propertyName,
-    disabled
-  } = props;
-
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
+export function GenericDateFieldEntry({ element, id, propertyName, label, disabled, tooltip, description, dateFormat, ...rest }) {
   const translate = useService('translate');
-
-  const getValue = () => {
-    return getFixedProperty(element, propertyName) || '';
+  // Apenas validação de formato, sem conversão!
+  const validate = value => {
+    if (!value) return null; // Campo opcional
+    if (dateFormat === 'DD/MM/YYYY') {
+      const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+      if (!regex.test(value)) {
+        return translate('Use o formato DD/MM/YYYY');
+      }
+      // Valida se é uma data real
+      const [day, month, year] = value.split('/').map(Number);
+      const date = new Date(year, month - 1, day);
+      if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        return translate('Data inválida');
+      }
+    }
+    return null;
   };
-
-  const setValue = value => {
-    return setFixedProperty(element, propertyName, value, modeling, bpmnFactory);
-  };
-
-  return TextFieldEntry({
+  return GenericTextFieldEntry({
     element,
     id,
-    label: translate(label),
-    getValue,
-    setValue,
-    debounce,
+    propertyName,
+    label,
+    validate,
     disabled,
-    type: 'date' // Set input type to date
+    tooltip,
+    description,
+    ...rest
   });
 }
