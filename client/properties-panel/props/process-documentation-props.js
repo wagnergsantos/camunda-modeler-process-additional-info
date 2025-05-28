@@ -31,7 +31,8 @@ export function ProcessDocumentationGroup(element, injector) {
         element,
         id: 'process-code',
         propertyName: 'processo:documentacao:codigo',
-        label: 'Código do Processo'
+        label: 'Código do Processo',
+        tooltip: translate('Código único do processo, utilizado para identificação e rastreamento.'),
       })
     },
     // Nome do Processo
@@ -108,7 +109,8 @@ export function ProcessDocumentationGroup(element, injector) {
         element,
         id: 'definitions-prop-interface',
         propertyName: 'processo:documentacao:interfaceProcessos',
-        label: 'Interface com outros processos'
+        label: 'Interface com outros processos',
+        tooltip: translate('Liste os processos que fornecem entradas para este ou recebem saídas deste.')
       })
     },
     // Principais regras de negócio do processo (área de texto)

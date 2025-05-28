@@ -15,23 +15,40 @@ import classNames from 'classnames';
  * @param {string} params.label - Rótulo exibido.
  * @param {boolean} [params.onlyInt] - Se verdadeiro, permite apenas números inteiros.
  */
-export function GenericTextFieldEntry({ element, id, propertyName, label, onlyInt }) {
+export function GenericTextFieldEntry({ element, id, propertyName, label, onlyInt, disableDebounce, enableStandardDebounce, tooltip, description }) { // Adicione tooltip e description
   const modeling = useService('modeling');
   const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const debounceInputService = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
+
+  // ... (lógica do internalSetValue e debounceFunctionToUse) ...
+  const internalSetValue = (value) => {
+    let v = value;
+    if (onlyInt) v = v.replace(/\D/g, '');
+    setFixedProperty(element, propertyName, v, modeling, bpmnFactory);
+  };
+
+  const noDebounceImplementation = (setter) => (value) => setter(value);
+
+  let debounceFunctionToUse;
+  if (disableDebounce) {
+    debounceFunctionToUse = noDebounceImplementation;
+  } else if (enableStandardDebounce) {
+    debounceFunctionToUse = debounceInputService;
+  } else {
+    debounceFunctionToUse = debounceInputService; // Ou sua lógica de debounce customizado
+  }
+
 
   return TextFieldEntry({
     element,
     id,
-    label: typeof label === 'string' ? translate(label) : label, // Corrigido: só traduz string
+    label: typeof label === 'string' ? translate(label) : label,
     getValue: () => getFixedProperty(element, propertyName),
-    setValue: value => {
-      let v = value;
-      if (onlyInt) v = value.replace(/\D/g, '');
-      setFixedProperty(element, propertyName, v, modeling, bpmnFactory);
-    },
-    debounce
+    setValue: internalSetValue,
+    debounce: debounceFunctionToUse,
+    tooltip: tooltip ? translate(tooltip) : undefined, // Passe o tooltip traduzido
+    description: description ? translate(description) : undefined // Passe a descrição traduzida
   });
 }
 
@@ -43,10 +60,10 @@ export function GenericTextFieldEntry({ element, id, propertyName, label, onlyIn
  * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
  * @param {string} params.label - Rótulo exibido.
  */
-export function GenericTextAreaEntry({ element, id, propertyName, label }) {
+export function GenericTextAreaEntry({ element, id, propertyName, label, tooltip, description }) { // Adicione tooltip e description aqui
   const modeling = useService('modeling');
   const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const debounceInput = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
   return TextAreaEntry({
@@ -55,7 +72,9 @@ export function GenericTextAreaEntry({ element, id, propertyName, label }) {
     label: translate(label),
     getValue: () => getFixedProperty(element, propertyName),
     setValue: value => setFixedProperty(element, propertyName, value, modeling, bpmnFactory),
-    debounce
+    debounce: debounceInput,
+    tooltip: tooltip ? translate(tooltip) : undefined, // Passe o tooltip traduzido
+    description: description ? translate(description) : undefined // Passe a descrição traduzida
   });
 }
 
