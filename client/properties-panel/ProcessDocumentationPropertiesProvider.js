@@ -2,7 +2,8 @@
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { ProcessDocumentationGroup } from './props/process-documentation-props';
 import { CurrentSituationGroup } from './props/current-situation-props';
-import { createInputSpecificationGroup, createOutputSpecificationGroup } from './props/process-indicators-props';
+import { IndicatorsGroup } from './props/process-indicators-props';
+import { MappingMetadataGroup } from './props/mapping-metadata-props';
 
 export default class ProcessDocumentationPropertiesProvider {
   constructor(propertiesPanel, injector) {
@@ -45,6 +46,12 @@ export default class ProcessDocumentationPropertiesProvider {
         entries: []
       };
 
+      // Adiciona o grupo de metadados
+    const metadataGroup = MappingMetadataGroup(definitionsElement, this._injector);
+    if (metadataGroup) {
+      groups.push(metadataGroup);
+    }
+
       const processDocumentationGroup = ProcessDocumentationGroup(definitionsElement, this._injector);
 
       if (processDocumentationGroup && processDocumentationGroup.entries) {
@@ -56,7 +63,7 @@ export default class ProcessDocumentationPropertiesProvider {
 
       groups.push(infoGroup);
       groups.push(currentSituationGroup);
-      groups.push(createInputSpecificationGroup(element, this._injector));
+      groups.push(IndicatorsGroup(element, this._injector));
 
       return groups;
     };

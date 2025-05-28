@@ -207,3 +207,39 @@ export function GenericMultiRadioButtonEntry({ element, id, propertyName, label,
     )
   );
 }
+
+/**
+ * Generic date field entry using HTML5 date input.
+ */
+export function GenericDateFieldEntry(props) {
+  const {
+    element,
+    id,
+    label,
+    propertyName,
+    disabled
+  } = props;
+
+  const modeling = useService('modeling');
+  const debounce = useService('debounceInput');
+  const translate = useService('translate');
+
+  const getValue = () => {
+    return getFixedProperty(element, propertyName) || '';
+  };
+
+  const setValue = value => {
+    return setFixedProperty(element, propertyName, value, modeling, bpmnFactory);
+  };
+
+  return TextFieldEntry({
+    element,
+    id,
+    label: translate(label),
+    getValue,
+    setValue,
+    debounce,
+    disabled,
+    type: 'date' // Set input type to date
+  });
+}

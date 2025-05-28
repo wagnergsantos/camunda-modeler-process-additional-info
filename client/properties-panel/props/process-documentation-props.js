@@ -18,12 +18,10 @@ import {
 export function ProcessDocumentationGroup(element, injector) {
   const translate = injector.get('translate');
 
-  // Só exibe o grupo se o elemento for do tipo Definitions (processo raiz)
   if (!element || element.$type !== 'bpmn:Definitions') {
     return null;
   }
 
-  // Lista de entradas (fields) exibidas no grupo "Documentação do Processo"
   const entries = [
     // Código do Processo
     {
@@ -45,21 +43,6 @@ export function ProcessDocumentationGroup(element, injector) {
         id: 'process-name',
         propertyName: 'processo:documentacao:nome',
         label: 'Nome do Processo'
-      })
-    },
-    // Tipo de mapeamento
-    {
-      id: 'performance-indicator',
-      component: props => GenericRadioEntry({
-        ...props,
-        element,
-        id: 'process-mapping-type',
-        propertyName: 'processo:documentacao:tipoMapeamento',
-        label: 'Tipo de mapeamento',
-        options: [
-          { value: 'AS-IS', label: 'Situação Atual' },
-          { value: 'TO-BE', label: 'Situação Futura' }
-        ]
       })
     },
     // Entrada do processo (Insumo)
@@ -215,7 +198,6 @@ export function ProcessDocumentationGroup(element, injector) {
     }
   ];
 
-  // Retorna o grupo configurado para ser exibido no painel de propriedades
   return {
     id: 'process-documentation',
     label: translate('Documentação do Processo'),
