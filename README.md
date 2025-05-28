@@ -4,14 +4,46 @@ Plugin para o Camunda Modeler que permite documentar informações adicionais so
 
 ## Funcionalidades
 
-- Adiciona uma aba "Informações gerais" ao painel de propriedades do Camunda Modeler.
-- Permite registrar:
-  - Código e nome do processo
-  - Tipo de mapeamento (AS-IS/TO-BE)
-  - Entradas, saídas, fornecedores, clientes
-  - Objetivo, regras de negócio, donos do processo
-  - Indicadores, periodicidade, capacidade, perfil dos executores
-  - Outras informações relevantes para documentação de processos
+- Adiciona grupos ao painel de propriedades do Camunda Modeler:
+  - **Metadados do Mapeamento**: Versão, data, tipo (AS-IS/TO-BE) e equipe do mapeamento
+  - **Documentação do Processo**: Informações gerais do processo
+  - **Dados da situação atual**: Métricas e características operacionais
+  - **Indicadores do Processo**: Gestão de KPIs do processo
+
+### O plugin permite registrar:
+
+#### Metadados do Mapeamento
+- Versão e data do mapeamento
+- Tipo de mapeamento (AS-IS/TO-BE)
+- Equipe responsável pelo mapeamento (gestor, gerente, consultores)
+
+#### Documentação do Processo
+- Código e nome do processo
+- Entradas, saídas, fornecedores e clientes
+- Objetivo e principais regras de negócio
+- Interface com outros processos
+- Dono do processo (Área/Gestor)
+- Atores envolvidos
+- Sistemas utilizados
+- Legislação/normativos aplicáveis
+- Análise preliminar de necessidades
+
+#### Dados da Situação Atual
+- Periodicidade do processo
+- Tempo de execução
+- Quantidade de demandas recebidas
+- Capacidade aproximada de execução
+- Quantidade e perfil dos executores
+- Contagem de atividades (manuais, usuário, automatizadas)
+- Indicador de desempenho
+
+#### Indicadores do Processo
+- Gerenciamento dinâmico de indicadores
+- Para cada indicador:
+  - Nome e objetivo
+  - Fórmula de cálculo
+  - Meta estabelecida
+  - Última medição e resultado
 
 ## Exemplo de uso
 
@@ -41,8 +73,10 @@ Plugin para o Camunda Modeler que permite documentar informações adicionais so
 
 ## Estrutura do Projeto
 
-- `client/` - Código-fonte do plugin (componentes, helpers, estilos)
-- `client/styles/custom-panel.css` - Estilos customizados do painel
+- `client/` - Código-fonte do plugin:
+  - `properties-panel/` - Implementação dos grupos de propriedades
+  - `styles/` - Estilos customizados do painel
+  - `client.js` - Ponto de entrada do cliente
 - `index.js` - Arquivo de entrada do plugin para o Camunda Modeler
 - `webpack.config.js` - Configuração de build
 - `package.json` - Dependências e scripts
