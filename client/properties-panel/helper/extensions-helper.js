@@ -3,11 +3,17 @@ import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 
 /**
  * Retorna o extensionElements do businessObject do elemento.
- * @param {ModdleElement} element
+ * Lida tanto com elementos de diagrama quanto com businessObjects diretamente.
+ * @param {ModdleElement|djs.model.Base} element
  * @returns {ModdleElement|null}
  */
 export function getExtensionElements(element) {
-  const businessObject = getBusinessObject(element);
+  const businessObject = getBusinessObject(element) || element;
+
+  if (!businessObject) {
+    return null;
+  }
+  
   return businessObject.get('extensionElements');
 }
 
