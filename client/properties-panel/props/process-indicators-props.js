@@ -74,7 +74,12 @@ function PropertyItem(props) {
     const eventBus = injector.get('eventBus');
     
     const nameProp = `processo:indicadores:${indicatorId}:nome`;
-    const label = getFixedProperty(element, nameProp) || `Indicador ${indicatorId}`;
+    // Get the actual name of the indicator. This could be the user-defined name,
+    // "[Novo Indicador]" for new items, or an empty string if cleared by the user.
+    const actualIndicatorName = getFixedProperty(element, nameProp);
+    // The label should be in the format: "Name of indicator (Indicator #$id)"
+    // If the actualIndicatorName is null/undefined, use an empty string for the name part to avoid "null" in the label.
+    const label = `${actualIndicatorName || ''} (Indicador #${indicatorId})`;
 
     function remove(event) {
         event.stopPropagation();
@@ -91,13 +96,29 @@ function PropertyItem(props) {
         }
     }
 
-    const createEntry = (field, labelText) => {
+    // Função de validação para o nome do indicador
+    const validateName = (value) => {
+        if (!value || !value.trim()) {
+            // Esta mensagem será passada para o serviço de tradução pelo GenericTextFieldEntry
+            return 'O nome do indicador é obrigatório.';
+        }
+        return null; // Sem erros
+    };
+
+    const createEntry = (field, labelText, validateFn) => {
         const id = `indicator-${indicatorId}-${field}`;
         const propertyName = `processo:indicadores:${indicatorId}:${field}`;
         
         return {
             id,
-            component: (props) => GenericTextFieldEntry({ ...props, element, id, propertyName, label: labelText }),
+            component: (props) => GenericTextFieldEntry({ 
+                ...props, 
+                element, 
+                id, 
+                propertyName, 
+                label: labelText,
+                validate: validateFn // Adiciona a função de validação aqui
+            }),
         };
     };
 
@@ -106,7 +127,7 @@ function PropertyItem(props) {
         label,
         remove,
         entries: [
-            createEntry('nome', 'Nome'),
+            createEntry('nome', 'Nome', validateName), // Passa a função de validação para o campo 'nome'
             createEntry('objetivo', 'Objetivo'),
             createEntry('formula', 'Fórmula'),
             createEntry('meta', 'Meta'),
