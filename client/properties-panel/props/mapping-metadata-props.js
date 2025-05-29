@@ -6,6 +6,20 @@ import {
   GenericDateFieldEntry
 } from './generic-entries';
 
+/**
+ * Valida o formato do Número do OS.
+ * Esperado: OS<numero>/<ano> (ex: OS123/2023)
+ */
+function validateOsNumber(value) {
+  if (!value) return null; // Permite campo vazio, se for opcional
+
+  const osPattern = /^OS\d+\/\d{4}$/;
+  if (!osPattern.test(value)) {
+    return 'Formato inválido. Use OS<numero>/<ano> (ex: OS123/2023).';
+  }
+  return null; // Formato válido
+}
+
 export function MappingMetadataGroup(element, injector) {
   const translate = injector.get('translate');
 
@@ -16,6 +30,17 @@ export function MappingMetadataGroup(element, injector) {
 
   const entries = [
     {
+      id: 'mapping-osNumber',
+      component: props => GenericTextFieldEntry({
+        ...props,
+        element,
+        id: 'mapping-osNumber',
+        propertyName: 'metaMapeamento:osNumber',
+        label: 'Número do OS',
+        tooltip: 'Use o formato OS<numero>/<ano> (ex: OS123/2023)',
+        validate: validateOsNumber
+      })
+    },{
       id: 'mapping-version',
       component: props => GenericTextFieldEntry({
         ...props,
