@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>custom/MultiSelectEntry.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a><ul class='members'><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li></ul></li><li></li><li><a href="module.exports_module.exports.html">exports</a></li><li></li></ul><h3>Global</h3><ul><li><a href="global.html#ActivityFieldsetProps">ActivityFieldsetProps</a></li><li><a href="global.html#BpmnFactory">BpmnFactory</a></li><li><a href="global.html#Bpmnjs">Bpmnjs</a></li><li><a href="global.html#CamundaProperties">CamundaProperties</a></li><li><a href="global.html#CamundaProperty">CamundaProperty</a></li><li><a href="global.html#CombinedEntryProps">CombinedEntryProps</a></li><li><a href="global.html#CombinedInputRadioEntryProps">CombinedInputRadioEntryProps</a></li><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#DateFieldConfig">DateFieldConfig</a></li><li><a href="global.html#Element">Element</a></li><li><a href="global.html#ElementRegistry">ElementRegistry</a></li><li><a href="global.html#EntryConfig">EntryConfig</a></li><li><a href="global.html#EntryOption">EntryOption</a></li><li><a href="global.html#EventBus">EventBus</a></li><li><a href="global.html#ExtensionElements">ExtensionElements</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#GroupsProcessor">GroupsProcessor</a></li><li><a href="global.html#IndicatorGroupConfig">IndicatorGroupConfig</a></li><li><a href="global.html#IndicatorProperty">IndicatorProperty</a></li><li><a href="global.html#IndicatorPropertyOptions">IndicatorPropertyOptions</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#Injector">Injector</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ModdleElement">ModdleElement</a></li><li><a href="global.html#Modeling">Modeling</a></li><li><a href="global.html#ModelingService">ModelingService</a></li><li><a href="global.html#MultiSelectEntryProps">MultiSelectEntryProps</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertiesPanel">PropertiesPanel</a></li><li><a href="global.html#PropertiesPanelTab">PropertiesPanelTab</a></li><li><a href="global.html#PropertyGroup">PropertyGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#PropertyItemConfig">PropertyItemConfig</a></li><li><a href="global.html#RadioEntryProps">RadioEntryProps</a></li><li><a href="global.html#RadioOption">RadioOption</a></li><li><a href="global.html#SelectOption">SelectOption</a></li><li><a href="global.html#TextFieldConfig">TextFieldConfig</a></li><li><a href="global.html#Translate">Translate</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">custom/MultiSelectEntry.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { h } from 'preact';
+import { Description, Tooltip } from '@bpmn-io/properties-panel';
+import classNames from 'classnames';
+
+/**
+ * @typedef {Object} ModdleElement
+ * @description Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} SelectOption
+ * @property {string} value - Valor interno da opção
+ * @property {string} label - Rótulo exibido para o usuário
+ * @property {boolean} [disabled] - Indica se a opção está desabilitada
+ */
+
+/**
+ * @typedef {Object} MultiSelectEntryProps
+ * @property {ModdleElement} element - Elemento BPMN associado
+ * @property {string} id - Identificador único do componente
+ * @property {string} [description] - Descrição adicional do campo
+ * @property {string} label - Rótulo do grupo de seleção múltipla
+ * @property {function(): Array&lt;string>} getValue - Função para obter os valores selecionados
+ * @property {function(Array&lt;string>): void} setValue - Função para definir os novos valores
+ * @property {function(ModdleElement): Array&lt;SelectOption>} getOptions - Função que retorna as opções disponíveis
+ * @property {boolean} [disabled] - Indica se o componente está desabilitado
+ * @property {function(): void} [onFocus] - Handler para evento de foco
+ * @property {function(): void} [onBlur] - Handler para evento de perda de foco
+ * @property {string} [tooltip] - Texto de ajuda
+ */
+
+/**
+ * Componente personalizado de seleção múltipla.
+ * Renderiza um campo select com múltiplas opções selecionáveis,
+ * seguindo o estilo visual do painel de propriedades do BPMN.
+ * 
+ * @param {MultiSelectEntryProps} props - Propriedades do componente
+ * @returns {Object} Elemento virtual do Preact
+ * 
+ * @example
+ * // Uso básico
+ * &lt;MultiSelectEntry
+ *   element={element}
+ *   id="my-multiselect"
+ *   label="Escolha múltiplas opções"
+ *   getValue={() => getProperty(element, 'myProperty')}
+ *   setValue={values => setProperty(element, 'myProperty', values)}
+ *   getOptions={() => [
+ *     { value: 'option1', label: 'Opção 1' },
+ *     { value: 'option2', label: 'Opção 2' }
+ *   ]}
+ * />
+ */
+export default function MultiSelectEntry(props) {
+  const {
+    element,
+    id,
+    description,
+    label,
+    getValue,
+    setValue,
+    getOptions,
+    disabled,
+    onFocus,
+    onBlur,
+    tooltip
+  } = props;
+
+  const options = getOptions(element);
+
+  /**
+   * Normaliza o valor recebido para sempre retornar um array de strings.
+   * @param {string|Array&lt;string>|null|undefined} rawValue - Valor bruto recebido
+   * @returns {Array&lt;string>} Array de strings normalizado
+   */
+  const normalizeValue = (rawValue) => {
+    if (Array.isArray(rawValue)) {
+      return rawValue;
+    }
+    if (typeof rawValue === 'string') {
+      return rawValue.split(',').map(v => v.trim()).filter(Boolean);
+    }
+    if (rawValue == null) {
+      return [];
+    }
+    return [String(rawValue)];
+  };
+
+  const value = normalizeValue(getValue(element));
+
+  /**
+   * Manipula a mudança de valores selecionados.
+   * @param {Event} event - Evento de mudança do select
+   */
+  const handleChange = (event) => {
+    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
+    setValue(selected);
+  };
+
+  return (
+    h('div', { class: classNames('bio-properties-panel-entry'), 'data-entry-id': id },
+      h('label', { for: id, class: 'bio-properties-panel-label' },
+        h(Tooltip, { value: tooltip, forId: id, element: element }, label)
+      ),
+      h('select', {
+        id,
+        name: id,
+        class: 'bio-properties-panel-input',
+        multiple: true,
+        onInput: handleChange,
+        onFocus,
+        onBlur,
+        value: value.length ? value : [''],
+        disabled
+      },
+        options.map((option, idx) =>
+          h('option', {
+            key: idx,
+            value: option.value,
+            disabled: option.disabled,
+            selected: value.includes(option.value)
+          }, option.label)
+        )
+      ),
+      h(Description, { forId: id, element, value: description })
+    )
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:48:54 GMT-0300 (Horário Padrão de Brasília) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>props/process-indicators-props.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a><ul class='members'><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li></ul></li><li></li><li><a href="module.exports_module.exports.html">exports</a></li><li></li></ul><h3>Global</h3><ul><li><a href="global.html#ActivityFieldsetProps">ActivityFieldsetProps</a></li><li><a href="global.html#BpmnFactory">BpmnFactory</a></li><li><a href="global.html#Bpmnjs">Bpmnjs</a></li><li><a href="global.html#CamundaProperties">CamundaProperties</a></li><li><a href="global.html#CamundaProperty">CamundaProperty</a></li><li><a href="global.html#CombinedEntryProps">CombinedEntryProps</a></li><li><a href="global.html#CombinedInputRadioEntryProps">CombinedInputRadioEntryProps</a></li><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#DateFieldConfig">DateFieldConfig</a></li><li><a href="global.html#Element">Element</a></li><li><a href="global.html#ElementRegistry">ElementRegistry</a></li><li><a href="global.html#EntryConfig">EntryConfig</a></li><li><a href="global.html#EntryOption">EntryOption</a></li><li><a href="global.html#EventBus">EventBus</a></li><li><a href="global.html#ExtensionElements">ExtensionElements</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#GroupsProcessor">GroupsProcessor</a></li><li><a href="global.html#IndicatorGroupConfig">IndicatorGroupConfig</a></li><li><a href="global.html#IndicatorProperty">IndicatorProperty</a></li><li><a href="global.html#IndicatorPropertyOptions">IndicatorPropertyOptions</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#Injector">Injector</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ModdleElement">ModdleElement</a></li><li><a href="global.html#Modeling">Modeling</a></li><li><a href="global.html#ModelingService">ModelingService</a></li><li><a href="global.html#MultiSelectEntryProps">MultiSelectEntryProps</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertiesPanel">PropertiesPanel</a></li><li><a href="global.html#PropertiesPanelTab">PropertiesPanelTab</a></li><li><a href="global.html#PropertyGroup">PropertyGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#PropertyItemConfig">PropertyItemConfig</a></li><li><a href="global.html#RadioEntryProps">RadioEntryProps</a></li><li><a href="global.html#RadioOption">RadioOption</a></li><li><a href="global.html#SelectOption">SelectOption</a></li><li><a href="global.html#TextFieldConfig">TextFieldConfig</a></li><li><a href="global.html#Translate">Translate</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">props/process-indicators-props.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useService } from 'bpmn-js-properties-panel';
+import { ListGroup } from '@bpmn-io/properties-panel';
+import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { getCamundaProperties } from '../helper/extensions-helper';
+import { GenericTextFieldEntry } from './generic-entries';
+import { setFixedProperty, getFixedProperty } from '../helper/fixed-properties-helper';
+import Ids from 'ids';
+
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} Element Representa um elemento do diagrama BPMN.
+ */
+
+/**
+ * @typedef {Object} Injector O injetor de dependências do Camunda Modeler.
+ */
+
+/**
+ * @typedef {Object} PropertyItemConfig
+ * @property {string} id - ID único do item de propriedade
+ * @property {string} label - Rótulo exibido para o item
+ * @property {Function} remove - Função para remover o item
+ * @property {Array&lt;EntryConfig>} entries - Lista de entradas do item
+ * @property {string} autoFocusEntry - ID da entrada que deve receber foco automático
+ */
+
+/**
+ * @typedef {Object} EntryConfig
+ * @property {string} id - ID único da entrada
+ * @property {Function} component - Componente React/Preact para renderizar a entrada
+ */
+
+/**
+ * @typedef {Object} IndicatorGroupConfig
+ * @property {string} id - ID do grupo de indicadores
+ * @property {string} label - Rótulo do grupo
+ * @property {Function} component - Componente para renderizar o grupo
+ * @property {Function} add - Função para adicionar novo indicador
+ * @property {Array&lt;PropertyItemConfig>} items - Lista de itens de indicadores
+ */
+
+const ids = new Ids([16, 36, 1]);
+
+/**
+ * Helper robusto para encontrar o elemento &lt;definitions> na hierarquia do modelo BPMN.
+ * Percorre a árvore de elementos até encontrar o elemento raiz bpmn:Definitions.
+ * 
+ * @param {Element} element - Elemento BPMN a partir do qual iniciar a busca
+ * @returns {ModdleElement|null} Elemento bpmn:Definitions ou null se não encontrado
+ */
+function getDefinitions(element) {
+    const bo = getBusinessObject(element);
+    if (!bo) return null;
+    let current = bo;
+    while (current.$parent &amp;&amp; current.$type !== 'bpmn:Definitions') {
+        current = current.$parent;
+    }
+    return current;
+}
+
+/**
+ * Helper para extrair os IDs dos indicadores existentes no elemento BPMN.
+ * Analisa as propriedades Camunda do elemento para encontrar IDs de indicadores
+ * usando um padrão regex específico.
+ * 
+ * @param {Element} element - Elemento BPMN para extrair os IDs dos indicadores
+ * @returns {Array&lt;string>} Lista de IDs únicos dos indicadores encontrados
+ */
+function getIndicatorIds(element) {
+    const definitions = getDefinitions(element);
+    if (!definitions) return [];
+
+    const camundaProperties = getCamundaProperties(definitions);
+    if (!camundaProperties || !camundaProperties.get('values')) return [];
+
+    const regex = /^processo:indicadores:(.*?):/;
+    const indicatorIds = new Set();
+    for (const prop of camundaProperties.get('values')) {
+        const match = prop.name.match(regex);
+        if (match &amp;&amp; match[1]) {
+            indicatorIds.add(match[1]);
+        }
+    }
+    return Array.from(indicatorIds);
+}
+
+/**
+ * Cria o grupo de indicadores do processo para o painel de propriedades.
+ * Este grupo permite gerenciar indicadores do processo, incluindo:
+ * - Adicionar novos indicadores
+ * - Remover indicadores existentes
+ * - Editar propriedades dos indicadores (nome, objetivo, fórmula, etc.)
+ * 
+ * @param {Element} element - Elemento BPMN (tipicamente bpmn:Definitions)
+ * @param {Injector} injector - Injetor de dependências do Camunda Modeler
+ * @returns {IndicatorGroupConfig} Configuração do grupo de indicadores
+ */
+export function IndicatorsGroup(element, injector) {
+    const translate = injector.get('translate');
+    const modeling = injector.get('modeling');
+    const bpmnFactory = injector.get('bpmnFactory');
+    const eventBus = injector.get('eventBus');
+
+    /**
+     * Manipulador para adicionar um novo indicador.
+     * Gera um novo ID único e cria um indicador com nome padrão.
+     * 
+     * @param {Event} event - Evento do DOM
+     */
+    function add(event) {
+        event.stopPropagation();
+        const newId = ids.next();
+        setFixedProperty(element, `processo:indicadores:${newId}:nome`, '[Novo Indicador]', modeling, bpmnFactory);
+        eventBus.fire('elements.changed', {
+            elements: [element]
+        });
+    }
+
+    const indicatorIds = getIndicatorIds(element);
+
+    return {
+        id: 'process-indicators-group',
+        label: translate('Indicadores do Processo'),
+        component: ListGroup,
+        add,
+        items: indicatorIds.map(id => PropertyItem({
+            element,
+            indicatorId: id,
+            injector
+        }))
+    };
+}
+
+/**
+ * Cria um item de propriedade para um indicador específico.
+ * Cada item contém campos para editar as propriedades do indicador:
+ * - Nome (obrigatório)
+ * - Objetivo
+ * - Fórmula
+ * - Meta
+ * - Última Medição
+ * - Resultado
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {Element} props.element - Elemento BPMN
+ * @param {string} props.indicatorId - ID do indicador
+ * @param {Injector} props.injector - Injetor de dependências
+ * @returns {PropertyItemConfig} Configuração do item de propriedade
+ */
+function PropertyItem(props) {
+    const { element, indicatorId, injector } = props;
+    const modeling = injector.get('modeling');
+    const eventBus = injector.get('eventBus');
+    
+    const nameProp = `processo:indicadores:${indicatorId}:nome`;
+    const actualIndicatorName = getFixedProperty(element, nameProp);
+    const label = `${actualIndicatorName || ''} (Indicador #${indicatorId})`;
+
+    /**
+     * Remove o indicador e todas as suas propriedades associadas.
+     * 
+     * @param {Event} event - Evento do DOM
+     */
+    function remove(event) {
+        event.stopPropagation();
+        const definitions = getDefinitions(element);
+        const camundaProperties = getCamundaProperties(definitions);
+
+        if (camundaProperties &amp;&amp; camundaProperties.get('values')) {
+            const prefix = `processo:indicadores:${indicatorId}:`;
+            const values = camundaProperties.get('values').filter(p => !p.name.startsWith(prefix));
+            modeling.updateModdleProperties(element, camundaProperties, { values });
+            eventBus.fire('elements.changed', {
+                elements: [element]
+            });
+        }
+    }
+
+    /**
+     * Valida o nome do indicador.
+     * 
+     * @param {string} value - Valor do campo nome
+     * @returns {string|null} Mensagem de erro ou null se válido
+     */
+    const validateName = (value) => {
+        if (!value || !value.trim()) {
+            return 'O nome do indicador é obrigatório.';
+        }
+        return null;
+    };
+
+    /**
+     * Cria uma entrada de propriedade com configurações específicas.
+     * 
+     * @param {string} field - Nome do campo
+     * @param {string} labelText - Texto do rótulo
+     * @param {Function} [validateFn] - Função de validação opcional
+     * @returns {EntryConfig} Configuração da entrada
+     */
+    const createEntry = (field, labelText, validateFn) => {
+        const id = `indicator-${indicatorId}-${field}`;
+        const propertyName = `processo:indicadores:${indicatorId}:${field}`;
+        
+        return {
+            id,
+            component: (props) => GenericTextFieldEntry({ 
+                ...props, 
+                element, 
+                id, 
+                propertyName, 
+                label: labelText,
+                validate: validateFn
+            }),
+        };
+    };
+
+    return {
+        id: `indicator-${indicatorId}`,
+        label,
+        remove,
+        entries: [
+            createEntry('nome', 'Nome', validateName),
+            createEntry('objetivo', 'Objetivo'),
+            createEntry('formula', 'Fórmula'),
+            createEntry('meta', 'Meta'),
+            createEntry('ultimaMedicao', 'Última Medição'),
+            createEntry('resultado', 'Resultado'),
+        ],
+        autoFocusEntry: `indicator-${indicatorId}-nome`
+    };
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:48:54 GMT-0300 (Horário Padrão de Brasília) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

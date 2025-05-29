@@ -1,4 +1,3 @@
-// client/properties-panel/props/process-documentation-props.js
 import { Group } from '@bpmn-io/properties-panel';
 import {
   GenericTextFieldEntry,
@@ -9,9 +8,30 @@ import {
 } from './generic-entries';
 
 /**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} Injector O injetor de dependências do Camunda Modeler.
+ */
+
+/**
+ * @typedef {Object} PropertyGroup
+ * @property {string} id - O ID único do grupo.
+ * @property {string} label - O rótulo do grupo exibido na interface.
+ * @property {Array<Object>} [entries] - Uma lista de entradas de propriedade para o grupo.
+ * @property {Function} [component] - O componente React/Preact para renderizar o grupo.
+ * @property {Array} [groups] - Subgrupos, se aplicável (usado em abas).
+ */
+
+/**
  * Valida o formato do código do processo.
  * C1: formato C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx
  * C2: formato C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx
+ * 
+ * @param {string} code - Código do processo a ser validado
+ * @returns {string|null} Mensagem de erro ou null se válido
  */
 function validateProcessCode(code) {
   if (!code) return null; // Permite campo vazio
@@ -38,9 +58,10 @@ function validateProcessCode(code) {
 /**
  * Cria o grupo de propriedades "Documentação do Processo" para o painel de propriedades.
  * Este grupo só é exibido para elementos do tipo 'bpmn:Definitions'.
+ * 
  * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
- * @param {Object} injector - Injetor de dependências do Camunda Modeler.
- * @returns {Object|null} Grupo de propriedades configurado para o painel, ou null se não aplicável.
+ * @param {Injector} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {PropertyGroup|null} Grupo de propriedades configurado para o painel, ou null se não aplicável.
  */
 export function ProcessDocumentationGroup(element, injector) {
   const translate = injector.get('translate');
@@ -49,6 +70,11 @@ export function ProcessDocumentationGroup(element, injector) {
     return null;
   }
 
+  /**
+   * Lista de entradas (fields) exibidas no grupo "Documentação do Processo".
+   * Cada entrada representa um campo ou conjunto de campos relacionados.
+   * @type {Array<Object>}
+   */
   const entries = [
     // Código do Processo
     {

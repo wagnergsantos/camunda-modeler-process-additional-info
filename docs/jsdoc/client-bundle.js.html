@@ -1,0 +1,4196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client-bundle.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client-bundle.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./client/properties-panel/ProcessDocumentationPropertiesProvider.js":
+/*!***************************************************************************!*\
+  !*** ./client/properties-panel/ProcessDocumentationPropertiesProvider.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ProcessDocumentationPropertiesProvider)
+/* harmony export */ });
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _props_process_documentation_props__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./props/process-documentation-props */ "./client/properties-panel/props/process-documentation-props.js");
+/* harmony import */ var _props_current_situation_props__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./props/current-situation-props */ "./client/properties-panel/props/current-situation-props.js");
+/* harmony import */ var _props_process_indicators_props__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./props/process-indicators-props */ "./client/properties-panel/props/process-indicators-props.js");
+/* harmony import */ var _props_mapping_metadata_props__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./props/mapping-metadata-props */ "./client/properties-panel/props/mapping-metadata-props.js");
+// client/properties-panel/ProcessDocumentationPropertiesProvider.js
+
+
+
+
+
+
+/**
+ * @typedef {import('bpmn-js/lib/model/Types').Element} Element
+ * @typedef {import('bpmn-js/lib/model/Types').ModdleElement} ModdleElement
+ * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
+ * @typedef {import('bpmn-js/lib/features/modeling/Modeling').default} Modeling
+ * @typedef {import('bpmn-js-properties-panel/lib/PropertiesPanel').default} PropertiesPanel
+ * @typedef {import('didi').Injector} Injector
+ * @typedef {import('bpmn-js/lib/features/translate/Translate').default} Translate
+ * @typedef {import('bpmn-js/lib/features/modeling/BpmnFactory').default} BpmnFactory
+ * @typedef {import('bpmn-js/lib/BaseModeler').default} Bpmnjs
+ * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
+ */
+
+/**
+ * @typedef {Object} PropertyGroup
+ * @property {string} id - O ID único do grupo.
+ * @property {string} label - O rótulo do grupo exibido na interface.
+ * @property {Array&lt;Object>} [entries] - Uma lista de entradas de propriedade para o grupo.
+ * @property {Function} [component] - O componente React/Preact para renderizar o grupo.
+ * @property {Array&lt;PropertyGroup>} [groups] - Subgrupos, se aplicável (usado em abas).
+ */
+
+/**
+ * @typedef {Object} PropertiesPanelTab
+ * @property {string} id - O ID único da aba.
+ * @property {string} label - O rótulo da aba exibido na interface.
+ * @property {Array&lt;PropertyGroup>} groups - Os grupos de propriedades contidos nesta aba.
+ */
+
+/**
+ * Um provedor de painel de propriedades que adiciona abas e grupos personalizados
+ * para documentação de processo, situação atual, indicadores e metadados de mapeamento.
+ *
+ * @class ProcessDocumentationPropertiesProvider
+ */
+class ProcessDocumentationPropertiesProvider {
+  /**
+   * @constructor
+   * @param {PropertiesPanel} propertiesPanel - A instância do painel de propriedades.
+   * @param {Injector} injector - O injetor de dependências.
+   */
+  constructor(propertiesPanel, injector) {
+    this._injector = injector;
+    propertiesPanel.registerProvider(this);
+  }
+
+  /**
+   * Retorna as abas a serem adicionadas ao painel de propriedades.
+   * Atualmente, adiciona uma aba "Informações gerais".
+   *
+   * @param {Element} element - O elemento BPMN selecionado.
+   * @returns {Array&lt;PropertiesPanelTab>} Uma lista de definições de abas.
+   */
+  getTabs(element) {
+    // Sempre exibe a aba, independente do tipo de elemento
+    const groups = [];
+    // Embora ProcessDocumentationGroup seja chamado aqui, ele só é realmente usado
+    // se o elemento for bpmn:Definitions. No entanto, a estrutura getTabs
+    // espera grupos. Para uma aba estática, isso pode ser simplificado ou
+    // os grupos podem ser condicionalmente adicionados aqui também.
+    const processDocumentationGroup = (0,_props_process_documentation_props__WEBPACK_IMPORTED_MODULE_0__.ProcessDocumentationGroup)(element, this._injector);
+    if (processDocumentationGroup) {
+      groups.push(processDocumentationGroup);
+    }
+    return [{
+      id: 'generalInfo',
+      label: 'Informações gerais',
+      // Idealmente, usar translate aqui
+      groups
+    }];
+  }
+
+  /**
+   * Retorna uma função que modifica a lista de grupos de propriedades.
+   * Adiciona grupos para Metadados do Mapeamento, Documentação do Processo,
+   * Situação Atual e Indicadores.
+   *
+   * @param {Element} element - O elemento BPMN selecionado.
+   * @returns {(groups: Array&lt;PropertyGroup>) => Array&lt;PropertyGroup>} Uma função que recebe e retorna uma lista de grupos.
+   */
+  getGroups(element) {
+    return groups => {
+      groups = groups.slice();
+      const definitionsElement = findDefinitionsElement(this._injector);
+      if (!definitionsElement) {
+        // Se não houver definitionsElement, não podemos adicionar os grupos que dependem dele.
+        // O IndicatorsGroup ainda pode ser adicionado se não depender estritamente do definitionsElement
+        // para sua lógica principal, mas sim do 'element' fornecido.
+        // No entanto, a lógica atual em IndicatorsGroup usa getDefinitions(element),
+        // que pode ou não ser o mesmo que o definitionsElement global.
+        // Por segurança e consistência, é melhor retornar os grupos originais se definitionsElement não for encontrado.
+        console.warn('Elemento bpmn:Definitions não encontrado. Alguns grupos de propriedades podem não ser exibidos.');
+
+        // Adiciona o grupo de Indicadores se ele for aplicável ao 'element' atual
+        // e não depender exclusivamente do 'definitionsElement' global.
+        // A função IndicatorsGroup já lida com a obtenção das definições a partir do 'element'.
+        const indicatorsGroup = (0,_props_process_indicators_props__WEBPACK_IMPORTED_MODULE_2__.IndicatorsGroup)(element, this._injector);
+        if (indicatorsGroup) {
+          groups.push(indicatorsGroup);
+        }
+        return groups;
+      }
+
+      // Grupo de Metadados do Mapeamento (aplicado ao bpmn:Definitions)
+      const metadataGroup = (0,_props_mapping_metadata_props__WEBPACK_IMPORTED_MODULE_3__.MappingMetadataGroup)(definitionsElement, this._injector);
+      if (metadataGroup) {
+        groups.push(metadataGroup);
+      }
+
+      // Grupo de Documentação do Processo (aplicado ao bpmn:Definitions)
+      const processDocumentationGroup = (0,_props_process_documentation_props__WEBPACK_IMPORTED_MODULE_0__.ProcessDocumentationGroup)(definitionsElement, this._injector);
+      if (processDocumentationGroup) {
+        // Nota: ProcessDocumentationGroup retorna um grupo completo, não apenas entradas.
+        // Se a intenção era adicionar suas entradas a um grupo 'generalInfo' existente,
+        // a lógica precisaria ser ajustada.
+        // Atualmente, ele será adicionado como um grupo separado.
+        groups.push(processDocumentationGroup);
+      }
+
+      // Grupo de Situação Atual (aplicado ao bpmn:Definitions)
+      const currentSituationGroup = (0,_props_current_situation_props__WEBPACK_IMPORTED_MODULE_1__.CurrentSituationGroup)(definitionsElement, this._injector);
+      if (currentSituationGroup) {
+        groups.push(currentSituationGroup);
+      }
+
+      // Grupo de Indicadores (aplicado ao 'element' selecionado, mas armazena dados em bpmn:Definitions)
+      // É importante que IndicatorsGroup seja chamado com o 'element' correto
+      // para o qual os indicadores são relevantes, mesmo que os dados sejam armazenados globalmente.
+      const indicatorsGroupInstance = (0,_props_process_indicators_props__WEBPACK_IMPORTED_MODULE_2__.IndicatorsGroup)(element, this._injector);
+      if (indicatorsGroupInstance) {
+        groups.push(indicatorsGroupInstance);
+      }
+      return groups;
+    };
+  }
+}
+
+/**
+ * @static
+ * @type {Array&lt;string>}
+ * @description Lista de dependências a serem injetadas na classe.
+ */
+ProcessDocumentationPropertiesProvider.$inject = ['propertiesPanel', 'injector'];
+
+/**
+ * Função utilitária para encontrar o primeiro elemento bpmn:Process no diagrama.
+ * Nota: Esta função parece não estar sendo utilizada ativamente no fluxo principal de `getGroups` ou `getTabs`.
+ *
+ * @param {Element} _element - O elemento BPMN atual (não usado diretamente na lógica de busca do processo).
+ * @param {Injector} injector - O injetor de dependências.
+ * @returns {ModdleElement|null} O elemento bpmn:Process encontrado ou null.
+ */
+// eslint-disable-next-line no-unused-vars
+function findProcessElement(_element, injector) {
+  const elementRegistry = injector.get('elementRegistry', false);
+  if (!elementRegistry) return null;
+  const allElements = elementRegistry.getAll();
+  const processElement = allElements.find(el => (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.is)(el, 'bpmn:Process'));
+  return processElement ? (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.getBusinessObject)(processElement) : null;
+}
+
+/**
+ * Função utilitária para obter a referência `processRef` de um elemento,
+ * tipicamente de um `bpmn:Participant`.
+ * Nota: Esta função parece não estar sendo utilizada ativamente.
+ *
+ * @param {Element} element - O elemento BPMN.
+ * @returns {ModdleElement|undefined} A referência ao processo ou undefined.
+ */
+// eslint-disable-next-line no-unused-vars
+function getProcessRef(element) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.getBusinessObject)(element);
+  return bo.processRef;
+}
+
+/**
+ * Encontra o elemento raiz `bpmn:Definitions` do diagrama.
+ *
+ * @param {Injector} injector - O injetor de dependências.
+ * @returns {ModdleElement|null} O elemento `bpmn:Definitions` ou null se não encontrado.
+ */
+function findDefinitionsElement(injector) {
+  const modeler = injector.get('bpmnjs', false);
+  if (!modeler) {
+    console.error('Serviço bpmnjs não encontrado no injetor.');
+    return null;
+  }
+  const definitions = modeler.getDefinitions();
+  // console.debug('definitions type:', definitions &amp;&amp; definitions.$type); // DEBUG
+  if (!definitions || !(0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.is)(definitions, 'bpmn:Definitions')) {
+    console.warn('Elemento bpmn:Definitions não é do tipo esperado ou não foi encontrado:', definitions);
+    return null;
+  }
+  return definitions;
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/custom/CombinedInputRadioEntry.js":
+/*!*******************************************************************!*\
+  !*** ./client/properties-panel/custom/CombinedInputRadioEntry.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CombinedInputRadioEntry)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _custom_RadioEntry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../custom/RadioEntry */ "./client/properties-panel/custom/RadioEntry.js");
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../helper/fixed-properties-helper */ "./client/properties-panel/helper/fixed-properties-helper.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
+
+
+
+function CombinedInputRadioEntry(props) {
+  const {
+    element,
+    id,
+    label,
+    textFieldId,
+    textFieldPropertyName,
+    radioId,
+    radioPropertyName,
+    radioOptions,
+    description,
+    injector
+  } = props;
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3__.useService)('translate');
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3__.useService)('modeling');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3__.useService)('bpmnFactory');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_3__.useService)('debounceInput');
+  const textFieldGetValue = () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__.getFixedProperty)(element, textFieldPropertyName);
+  const textFieldSetValue = value => {
+    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__.setFixedProperty)(element, textFieldPropertyName, value, modeling, bpmnFactory);
+  };
+  const radioGetValue = () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__.getFixedProperty)(element, radioPropertyName);
+  const radioSetValue = value => {
+    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__.setFixedProperty)(element, radioPropertyName, value, modeling, bpmnFactory);
+  };
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('div', {
+    class: classnames__WEBPACK_IMPORTED_MODULE_5___default()('bio-properties-panel-entry', 'bio-properties-panel-combined-entry'),
+    'data-entry-id': id
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('fieldset', {
+    class: 'bio-properties-panel-fieldset custom-thin-rounded-fieldset'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('legend', {
+    class: 'bio-properties-panel-legend custom-thin-rounded-legend'
+  }, translate(label)), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('div', {
+    class: 'bio-properties-panel-panel'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.TextFieldEntry, {
+    element,
+    id: textFieldId,
+    label: '',
+    getValue: textFieldGetValue,
+    setValue: textFieldSetValue,
+    debounce,
+    description: ''
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_custom_RadioEntry__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    element,
+    id: radioId,
+    label: '',
+    getValue: radioGetValue,
+    setValue: radioSetValue,
+    getOptions: () => radioOptions.map(opt => ({
+      ...opt,
+      label: translate(opt.label)
+    })),
+    description: ''
+  }), description &amp;&amp; (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.Description, {
+    forId: id,
+    element: element,
+    value: description
+  }))));
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/custom/RadioEntry.js":
+/*!******************************************************!*\
+  !*** ./client/properties-panel/custom/RadioEntry.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ RadioEntry)
+/* harmony export */ });
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+function RadioEntry(props) {
+  const {
+    element,
+    id,
+    description,
+    label,
+    getValue,
+    setValue,
+    getOptions,
+    disabled,
+    onFocus,
+    onBlur,
+    tooltip
+  } = props;
+  const options = getOptions(element);
+  const value = getValue(element) || '';
+  const handleChange = event => {
+    setValue(event.target.value);
+  };
+  return (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('div', {
+    class: classnames__WEBPACK_IMPORTED_MODULE_2___default()('bio-properties-panel-entry'),
+    'data-entry-id': id
+  }, label &amp;&amp; (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('label', {
+    class: 'bio-properties-panel-label'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.Tooltip, {
+    value: tooltip,
+    forId: id,
+    element: element
+  }, label)), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('div', {
+    class: 'bio-properties-panel-radio-group'
+  }, options.map((option, idx) => (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('label', {
+    key: idx,
+    class: 'bio-properties-panel-radio'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)('input', {
+    type: 'radio',
+    name: id,
+    value: option.value,
+    checked: value === option.value,
+    disabled: disabled || option.disabled,
+    onInput: handleChange,
+    onFocus,
+    onBlur
+  }), option.label))), (0,preact__WEBPACK_IMPORTED_MODULE_0__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.Description, {
+    forId: id,
+    element: element,
+    value: description
+  }));
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/helper/extensions-helper.js":
+/*!*************************************************************!*\
+  !*** ./client/properties-panel/helper/extensions-helper.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createCamundaProperties: () => (/* binding */ createCamundaProperties),
+/* harmony export */   createElement: () => (/* binding */ createElement),
+/* harmony export */   createExtensionElements: () => (/* binding */ createExtensionElements),
+/* harmony export */   findExtensions: () => (/* binding */ findExtensions),
+/* harmony export */   getCamundaProperties: () => (/* binding */ getCamundaProperties),
+/* harmony export */   getExtensionElements: () => (/* binding */ getExtensionElements)
+/* harmony export */ });
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+
+
+
+/**
+ * Retorna o extensionElements do businessObject do elemento.
+ * Lida tanto com elementos de diagrama quanto com businessObjects diretamente.
+ * @param {ModdleElement|djs.model.Base} element
+ * @returns {ModdleElement|null}
+ */
+function getExtensionElements(element) {
+  const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element) || element;
+  if (!businessObject) {
+    return null;
+  }
+  return businessObject.get('extensionElements');
+}
+
+/**
+ * Busca extensões do tipo informado dentro do extensionElements.
+ * @param {ModdleElement} element
+ * @param {string|string[]} types
+ * @returns {Array&lt;ModdleElement>}
+ */
+function findExtensions(element, types) {
+  const extensionElements = getExtensionElements(element);
+  if (!extensionElements) return [];
+  return extensionElements.get('values').filter(value => (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.isAny)(value, [].concat(types)));
+}
+
+/**
+ * Retorna o elemento camunda:Properties, se existir.
+ * @param {ModdleElement} element
+ * @returns {ModdleElement|null}
+ */
+function getCamundaProperties(element) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
+  const properties = findExtensions(bo, 'camunda:Properties') || [];
+  return properties.length ? properties[0] : null;
+}
+
+/**
+ * Cria um novo bpmn:ExtensionElements vazio.
+ * @param {ModdleElement} element
+ * @param {BpmnFactory} bpmnFactory
+ * @returns {ModdleElement}
+ */
+function createExtensionElements(element, bpmnFactory) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
+  return createElement('bpmn:ExtensionElements', {
+    values: []
+  }, bo, bpmnFactory);
+}
+
+/**
+ * Cria um novo camunda:Properties com as propriedades informadas.
+ * @param {ModdleElement} extensionElements
+ * @param {BpmnFactory} bpmnFactory
+ * @param {Object} properties
+ * @returns {ModdleElement}
+ */
+function createCamundaProperties(extensionElements, bpmnFactory, properties) {
+  return createElement('camunda:Properties', properties, extensionElements, bpmnFactory);
+}
+
+/**
+ * Cria um novo elemento moddle e define o parent.
+ * @param {string} elementType
+ * @param {Object} properties
+ * @param {ModdleElement} parent
+ * @param {BpmnFactory} factory
+ * @returns {ModdleElement}
+ */
+function createElement(elementType, properties, parent, factory) {
+  const element = factory.create(elementType, properties);
+  element.$parent = parent;
+  return element;
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/helper/fixed-properties-helper.js":
+/*!*******************************************************************!*\
+  !*** ./client/properties-panel/helper/fixed-properties-helper.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getFixedProperty: () => (/* binding */ getFixedProperty),
+/* harmony export */   setFixedProperty: () => (/* binding */ setFixedProperty)
+/* harmony export */ });
+/* harmony import */ var _extensions_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./extensions-helper */ "./client/properties-panel/helper/extensions-helper.js");
+// client/properties-panel/helper/fixed-properties-helper.js
+
+
+
+/**
+ * Sobe na hierarquia até encontrar o definitions.
+ * @param {ModdleElement} element
+ * @returns {ModdleElement|null}
+ */
+function getDefinitionsElement(element) {
+  if (!element) return null;
+  const bo = element.businessObject || element;
+  if (bo.$type === 'bpmn:Definitions') return bo;
+  let current = bo;
+  while (current &amp;&amp; current.$type !== 'bpmn:Definitions') {
+    current = current.$parent;
+  }
+  return current;
+}
+
+/**
+ * Obtém o valor de uma propriedade camunda:property específica.
+ * @param {object} element O elemento definitions do diagrama.
+ * @param {string} propertyName O nome da propriedade (ex: 'processo:codigo').
+ * @returns {string} O valor da propriedade ou string vazia.
+ */
+function getFixedProperty(element, propertyName) {
+  if (!element) return '';
+  const definitions = getDefinitionsElement(element);
+  if (!definitions) return '';
+  const extensionElements = definitions.get('extensionElements');
+  if (!extensionElements) return '';
+  const camundaProperties = extensionElements.get('values').find(v => v.$type === 'camunda:Properties');
+  if (!camundaProperties || !camundaProperties.values) return '';
+  const property = camundaProperties.values.find(p => p.name === propertyName);
+  return property ? property.value : '';
+}
+
+/**
+ * Define o valor de uma propriedade camunda:property específica.
+ * Cria extensionElements/camunda:Properties se necessário.
+ * Remove a propriedade se o valor for vazio/undefined/null.
+ * @param {object} element O elemento definitions do diagrama.
+ * @param {string} propertyName O nome da propriedade.
+ * @param {string} propertyValue O valor da propriedade.
+ * @param {object} modeling Serviço de modelagem do bpmn-js.
+ * @param {object} bpmnFactory Fábrica de elementos BPMN do bpmn-js.
+ */
+function setFixedProperty(element, propertyName, propertyValue, modeling, bpmnFactory) {
+  if (!element) return;
+  const definitions = getDefinitionsElement(element);
+  if (!definitions) return;
+  let extensionElements = definitions.get('extensionElements');
+  // Garante bpmn:ExtensionElements
+  if (!extensionElements) {
+    extensionElements = bpmnFactory.create('bpmn:ExtensionElements', {
+      values: []
+    });
+    modeling.updateModdleProperties(definitions, definitions, {
+      extensionElements: extensionElements
+    });
+  }
+
+  // Garante camunda:Properties
+  let camundaProperties = extensionElements.get('values').find(v => v.$type === 'camunda:Properties');
+  if (!camundaProperties) {
+    camundaProperties = bpmnFactory.create('camunda:Properties', {
+      values: []
+    });
+    modeling.updateModdleProperties(definitions, extensionElements, {
+      values: [...extensionElements.get('values'), camundaProperties]
+    });
+  }
+
+  // Atualiza, cria ou remove a propriedade
+  let targetProperty = camundaProperties.values?.find(p => p.name === propertyName);
+  if (shouldRemoveProperty(propertyValue)) {
+    if (targetProperty) {
+      const newValues = camundaProperties.values.filter(p => p.name !== propertyName);
+      modeling.updateModdleProperties(definitions, camundaProperties, {
+        values: newValues
+      });
+    }
+  } else {
+    if (targetProperty) {
+      modeling.updateModdleProperties(definitions, targetProperty, {
+        value: propertyValue
+      });
+    } else {
+      const newProperty = bpmnFactory.create('camunda:Property', {
+        name: propertyName,
+        value: propertyValue
+      });
+      const newValues = [...(camundaProperties.values || []), newProperty];
+      modeling.updateModdleProperties(definitions, camundaProperties, {
+        values: newValues
+      });
+    }
+  }
+}
+
+/**
+ * Retorna true se o valor for vazio, undefined ou null.
+ * @param {any} value
+ * @returns {boolean}
+ */
+function shouldRemoveProperty(value) {
+  return value === undefined || value === null || value === '';
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/index.js":
+/*!******************************************!*\
+  !*** ./client/properties-panel/index.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ProcessDocumentationPropertiesProvider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProcessDocumentationPropertiesProvider */ "./client/properties-panel/ProcessDocumentationPropertiesProvider.js");
+// client/properties-panel/index.js
+
+
+// Garante que estamos usando a classe construtora real.
+const ActualProviderClass = _ProcessDocumentationPropertiesProvider__WEBPACK_IMPORTED_MODULE_0__["default"]["default"] || _ProcessDocumentationPropertiesProvider__WEBPACK_IMPORTED_MODULE_0__["default"];
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['processDocumentationPropertiesProvider'],
+  processDocumentationPropertiesProvider: ['type', ActualProviderClass]
+});
+
+/***/ }),
+
+/***/ "./client/properties-panel/props/current-situation-props.js":
+/*!******************************************************************!*\
+  !*** ./client/properties-panel/props/current-situation-props.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CurrentSituationGroup: () => (/* binding */ CurrentSituationGroup)
+/* harmony export */ });
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _generic_entries__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generic-entries */ "./client/properties-panel/props/generic-entries.js");
+/* harmony import */ var _custom_CombinedInputRadioEntry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../custom/CombinedInputRadioEntry */ "./client/properties-panel/custom/CombinedInputRadioEntry.js");
+
+
+
+
+
+
+// Entradas do grupo
+
+/**
+ * Cria o grupo de propriedades "Dados da situação atual" para o painel de propriedades.
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Object} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {Object} Grupo de propriedades configurado para o painel.
+ */
+function CurrentSituationGroup(element, injector) {
+  const translate = injector.get('translate');
+
+  // Lista de entradas (fields) exibidas no grupo "Dados da situação atual"
+  const entries = [
+  // Periodicidade do processo (dropdown)
+  {
+    id: 'process-periodicity',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericSelectEntry)({
+      ...props,
+      element,
+      id: 'process-periodicity',
+      propertyName: 'processo:situacao:periodicidade',
+      label: 'Periodicidade',
+      options: [{
+        value: 'diaria',
+        label: 'Diária'
+      }, {
+        value: 'semanal',
+        label: 'Semanal'
+      }, {
+        value: 'quinzenal',
+        label: 'Quinzenal'
+      }, {
+        value: 'mensal',
+        label: 'Mensal'
+      }, {
+        value: 'bimestral',
+        label: 'Bimestral'
+      }, {
+        value: 'trimestral',
+        label: 'Trimestral'
+      }, {
+        value: 'quadrimestral',
+        label: 'Quadrimestral'
+      }, {
+        value: 'semestral',
+        label: 'Semestral'
+      }, {
+        value: 'anual',
+        label: 'Anual'
+      }, {
+        value: 'sob_demanda',
+        label: 'Por demanda'
+      }, {
+        value: 'outro',
+        label: 'Outro'
+      }]
+    })
+  },
+  // Tempo de execução do processo (input + radio)
+  {
+    id: 'time-execution-combined',
+    component: props => (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_custom_CombinedInputRadioEntry__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      ...props,
+      element: element,
+      id: "time-execution-combined-entry",
+      label: "Tempo de execução do processo",
+      textFieldId: "time-execution-textfield",
+      textFieldPropertyName: "processo:situacao:tempoExecucao",
+      radioId: "time-execution-type-radio",
+      radioPropertyName: "processo:situacao:tempoExecucaoTipo",
+      radioOptions: [{
+        value: 'estimado',
+        label: 'Estimado'
+      }, {
+        value: 'mensurado',
+        label: 'Mensurado'
+      }],
+      injector: injector
+    })
+  },
+  // Quantidade de demandas recebidas (input + radio)
+  {
+    id: 'demands-combined',
+    component: props => (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_custom_CombinedInputRadioEntry__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      ...props,
+      element: element,
+      id: "demands-combined-entry",
+      label: "Quantidade de demandas recebidas",
+      textFieldId: "demands-textfield",
+      textFieldPropertyName: "processo:situacao:quantidadeDemandas",
+      radioId: "demands-type-radio",
+      radioPropertyName: "processo:situacao:quantidadeDemandasTipo",
+      radioOptions: [{
+        value: 'estimado',
+        label: 'Estimado'
+      }, {
+        value: 'mensurado',
+        label: 'Mensurado'
+      }],
+      injector: injector
+    })
+  },
+  // Capacidade aproximada de execução (input + radio)
+  {
+    id: 'capacity-combined',
+    component: props => (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_custom_CombinedInputRadioEntry__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      ...props,
+      element: element,
+      id: "capacity-combined-entry",
+      label: "Capacidade aproximada de execução do processo",
+      textFieldId: "capacity-textfield",
+      textFieldPropertyName: "processo:situacao:capacidadeExecucao",
+      radioId: "capacity-type-radio",
+      radioPropertyName: "processo:situacao:capacidadeExecucaoTipo",
+      radioOptions: [{
+        value: 'estimado',
+        label: 'Estimado'
+      }, {
+        value: 'mensurado',
+        label: 'Mensurado'
+      }],
+      injector: injector
+    })
+  },
+  // Quantidade de executores (campo texto, apenas inteiros)
+  {
+    id: 'executors-quantity',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'executors-quantity',
+      propertyName: 'processo:situacao:quantidadeExecutores',
+      label: 'Quantidade de executores do processo',
+      onlyInt: true
+    })
+  },
+  // Perfil dos executores (área de texto)
+  {
+    id: 'executors-profile',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'executors-profile',
+      propertyName: 'processo:situacao:perfilExecutores',
+      label: 'Perfil'
+    })
+  },
+  // Quantidade de atividades manuais, usuário e automatizadas agrupadas em um fieldset
+  {
+    id: 'activities-group-fieldset',
+    component: props => (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('div', {
+      class: classnames__WEBPACK_IMPORTED_MODULE_2___default()('bio-properties-panel-entry', 'bio-properties-panel-combined-entry')
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('fieldset', {
+      class: 'custom-thin-rounded-fieldset',
+      style: 'margin-bottom: 12px;'
+    }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('legend', {
+      class: 'custom-thin-rounded-legend'
+    }, 'Identificação das atividades do processo'), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericTextFieldEntry, {
+      ...props,
+      element,
+      id: 'activities-manual',
+      propertyName: 'processo:situacao:atividadeManualQtd',
+      label: (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('span', {
+        style: 'display: flex; align-items: center; gap: 4px;'
+      }, 'Atividade manual (Qtd)', (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('svg', {
+        width: 16,
+        height: 16,
+        viewBox: '0 -0.5 17 17',
+        style: 'vertical-align:middle;',
+        xmlns: 'http://www.w3.org/2000/svg'
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('g', {
+        fill: 'none',
+        'fill-rule': 'evenodd'
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('path', {
+        fill: '#434343',
+        d: 'M14.5,6.792 C14.11,6.599 13.653,6.703 13.477,7.023 C13.477,7.023 12.381,9.422 11.743,9.32 C11.399,9.264 11.124,8.94 11.001,8.315 L11.001,1.771 C11.001,1.345 10.562,1 10.021,1 C9.481,1 9.001,1.346 9.001,1.771 L9.001,6.938 L8.001,6.938 L8.001,0.771 C8.001,0.345 7.562,0 7.021,0 C6.481,0 6.001,0.346 6.001,0.771 L6.001,6.938 L5.001,6.938 L5.001,2.771 C5.001,2.345 4.561,2 4.02,2 C3.48,2 3.001,2.346 3.001,2.771 L3.001,11.186 C3.001,13.77 4.73,15.907 8.679,15.907 C13.562,15.907 14.884,7.719 14.884,7.719 C15.058,7.399 14.887,6.983 14.5,6.792 L14.5,6.792 Z'
+      }))))
+    }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericTextFieldEntry, {
+      ...props,
+      element,
+      id: 'activities-user',
+      propertyName: 'processo:situacao:atividadeUsuarioQtd',
+      label: (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('span', {
+        style: 'display: flex; align-items: center; gap: 4px;'
+      }, 'Atividade de usuário (Qtd)', (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('svg', {
+        width: 16,
+        height: 16,
+        viewBox: '0 0 24 24',
+        style: 'vertical-align:middle;',
+        xmlns: 'http://www.w3.org/2000/svg'
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('path', {
+        d: 'M12 1C8.96243 1 6.5 3.46243 6.5 6.5C6.5 9.53757 8.96243 12 12 12C15.0376 12 17.5 9.53757 17.5 6.5C17.5 3.46243 15.0376 1 12 1Z',
+        fill: '#000000'
+      }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('path', {
+        d: 'M7 14C4.23858 14 2 16.2386 2 19V22C2 22.5523 2.44772 23 3 23H21C21.5523 23 22 22.5523 22 22V19C22 16.2386 19.7614 14 17 14H7Z',
+        fill: '#000000'
+      })))
+    }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)(_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericTextFieldEntry, {
+      ...props,
+      element,
+      id: 'activities-automated',
+      propertyName: 'processo:situacao:atividadeAutomatizadaQtd',
+      label: (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('span', {
+        style: 'display: flex; align-items: center; gap: 4px;'
+      }, 'Atividade automatizada (Qtd)', (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('svg', {
+        width: 16,
+        height: 16,
+        viewBox: '0 0 17 17',
+        style: 'vertical-align:middle;',
+        xmlns: 'http://www.w3.org/2000/svg'
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('g', {
+        fill: 'none',
+        'fill-rule': 'evenodd'
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('g', {
+        transform: 'translate(1.000000, 1.000000)',
+        fill: '#434343'
+      }, (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('path', {
+        d: 'M7.887,9.025 C7.799,8.449 7.569,7.92 7.229,7.475 L7.995,6.71 L7.307,6.023 L6.536,6.794 C6.093,6.467 5.566,6.245 4.994,6.161 L4.994,5.066 L4.021,5.066 L4.021,6.155 C3.444,6.232 2.913,6.452 2.461,6.777 L1.709,6.024 L1.021,6.712 L1.761,7.452 C1.411,7.901 1.175,8.437 1.087,9.024 L0.062,9.024 L0.062,9.025 L0.062,9.998 L1.08,9.998 C1.162,10.589 1.396,11.132 1.744,11.587 L1.02,12.31 L1.708,12.997 L2.437,12.268 C2.892,12.604 3.432,12.83 4.02,12.91 L4.02,13.958 L4.993,13.958 L4.993,12.904 C5.576,12.818 6.11,12.589 6.56,12.252 L7.306,12.999 L7.994,12.311 L7.248,11.564 C7.586,11.115 7.812,10.581 7.893,10 L8.952,10 L8.952,9.998 L8.952,9.026 L7.887,9.026 L7.887,9.025 z M4.496,11.295 C3.512,11.295 2.715,10.497 2.715,9.512 C2.715,8.528 3.512,7.73 4.496,7.73 C5.481,7.73 6.28,8.528 6.28,9.512 C6.28,10.497 5.481,11.295 4.496,11.295 L4.496,11.295 z'
+      }), (0,preact__WEBPACK_IMPORTED_MODULE_1__.h)('path', {
+        d: 'M13.031,3.37 L14.121,3.089 L13.869,2.11 L12.778,2.392 C12.66,2.152 12.513,1.922 12.317,1.72 C12.125,1.524 11.902,1.376 11.67,1.256 L11.971,0.177 L10.998,-0.094 L10.699,0.978 C10.158,0.935 9.608,1.056 9.133,1.36 L8.373,0.584 L7.652,1.291 L8.408,2.061 C8.082,2.531 7.939,3.085 7.967,3.636 L6.927,3.904 L7.179,4.881 L8.217,4.613 C8.334,4.856 8.483,5.088 8.682,5.291 C8.885,5.499 9.121,5.653 9.368,5.776 L9.079,6.815 L10.05,7.086 L10.343,6.038 C10.885,6.071 11.435,5.938 11.906,5.623 L12.677,6.409 L13.397,5.702 L12.621,4.911 C12.928,4.446 13.06,3.905 13.031,3.37 L13.031,3.37 z M10.514,4.987 C9.691,4.987 9.023,4.318 9.023,3.494 C9.023,2.672 9.691,2.005 10.514,2.005 C11.336,2.005 12.004,2.672 12.004,3.494 C12.004,4.318 11.336,4.987 10.514,4.987 L10.514,4.987 z'
+      })))))
+    })))
+  },
+  // Indicador de desempenho (radio)
+  {
+    id: 'performance-indicator',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericRadioEntry)({
+      ...props,
+      element,
+      id: 'performance-indicator',
+      propertyName: 'processo:situacao:possuiIndicador',
+      label: 'O processo possui indicador de desempenho?',
+      options: [{
+        value: 'sim',
+        label: 'Sim'
+      }, {
+        value: 'nao',
+        label: 'Não'
+      }]
+    })
+  }];
+
+  // Retorna o grupo configurado para ser exibido no painel de propriedades
+  return {
+    id: 'current-situation',
+    label: translate('Dados da situação atual'),
+    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.Group,
+    entries
+  };
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/props/generic-entries.js":
+/*!**********************************************************!*\
+  !*** ./client/properties-panel/props/generic-entries.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GenericDateFieldEntry: () => (/* binding */ GenericDateFieldEntry),
+/* harmony export */   GenericMultiRadioButtonEntry: () => (/* binding */ GenericMultiRadioButtonEntry),
+/* harmony export */   GenericMultiSelectEntry: () => (/* binding */ GenericMultiSelectEntry),
+/* harmony export */   GenericRadioEntry: () => (/* binding */ GenericRadioEntry),
+/* harmony export */   GenericSelectEntry: () => (/* binding */ GenericSelectEntry),
+/* harmony export */   GenericTextAreaEntry: () => (/* binding */ GenericTextAreaEntry),
+/* harmony export */   GenericTextFieldEntry: () => (/* binding */ GenericTextFieldEntry)
+/* harmony export */ });
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _custom_RadioEntry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../custom/RadioEntry */ "./client/properties-panel/custom/RadioEntry.js");
+/* harmony import */ var _helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../helper/fixed-properties-helper */ "./client/properties-panel/helper/fixed-properties-helper.js");
+/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
+
+
+
+
+
+/**
+ * Cria um campo de texto genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {Function} [params.validate] - Função de validação opcional.
+ * @param {string} [params.tooltip] - Texto de ajuda opcional.
+ * @param {boolean} [params.onlyInt] - Se verdadeiro, permite apenas números inteiros.
+ */
+function GenericTextFieldEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  validate,
+  tooltip,
+  onlyInt,
+  disableDebounce,
+  enableStandardDebounce,
+  description
+}) {
+  // Adicione tooltip e description
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const debounceInputService = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+
+  // ... (lógica do internalSetValue e debounceFunctionToUse) ...
+  const internalSetValue = value => {
+    let v = value;
+    if (onlyInt) v = v.replace(/\D/g, '');
+    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, v, modeling, bpmnFactory);
+  };
+  const noDebounceImplementation = setter => value => setter(value);
+  let debounceFunctionToUse;
+  if (disableDebounce) {
+    debounceFunctionToUse = noDebounceImplementation;
+  } else if (enableStandardDebounce) {
+    debounceFunctionToUse = debounceInputService;
+  } else {
+    debounceFunctionToUse = debounceInputService; // Ou sua lógica de debounce customizado
+  }
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextFieldEntry)({
+    element,
+    id,
+    label: typeof label === 'string' ? translate(label) : label,
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: internalSetValue,
+    debounce: debounceFunctionToUse,
+    validate: validate ? value => {
+      const error = validate(value);
+      return error ? translate(error) : null;
+    } : undefined,
+    tooltip: tooltip ? translate(tooltip) : undefined,
+    // Passe o tooltip traduzido
+    description: description ? translate(description) : undefined // Passe a descrição traduzida
+  });
+}
+
+/**
+ * Cria um campo de área de texto genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ */
+function GenericTextAreaEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  tooltip,
+  description
+}) {
+  // Adicione tooltip e description aqui
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const debounceInput = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.TextAreaEntry)({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
+    debounce: debounceInput,
+    tooltip: tooltip ? translate(tooltip) : undefined,
+    // Passe o tooltip traduzido
+    description: description ? translate(description) : undefined // Passe a descrição traduzida
+  });
+}
+
+/**
+ * Cria um campo de seleção por rádio genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {Array&lt;{value: string, label: string}>} params.options - Opções disponíveis.
+ */
+function GenericRadioEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  options
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_custom_RadioEntry__WEBPACK_IMPORTED_MODULE_2__["default"])({
+    element,
+    id,
+    label: label ? translate(label) : '',
+    // &lt;-- Evita erro se label for undefined
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
+    getOptions: () => options.map(opt => ({
+      value: opt.value,
+      label: translate(opt.label)
+    }))
+  });
+}
+
+/**
+ * Cria um campo de seleção (dropdown) genérico para o painel de propriedades.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {Array&lt;{value: string, label: string}>} params.options - Opções disponíveis.
+ */
+function GenericSelectEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  options
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('debounceInput');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.SelectEntry)({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName),
+    setValue: value => (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, value, modeling, bpmnFactory),
+    getOptions: () => options.map(opt => ({
+      value: opt.value,
+      label: translate(opt.label)
+    })),
+    debounce
+  });
+}
+
+/**
+ * Cria um campo de seleção múltipla genérico para o painel de propriedades.
+ */
+function GenericMultiSelectEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  options,
+  description
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  const getValue = () => {
+    const rawValue = (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, propertyName);
+    if (!rawValue) return [];
+    return rawValue.split(',').map(v => v.trim()).filter(Boolean);
+  };
+  const setValue = selected => {
+    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, propertyName, selected.join(','), modeling, bpmnFactory);
+  };
+  const handleChange = event => {
+    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
+    setValue(selected);
+  };
+  const selectedValues = getValue();
+  return (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('div', {
+    class: classnames__WEBPACK_IMPORTED_MODULE_5___default()('bio-properties-panel-entry'),
+    'data-entry-id': id
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('label', {
+    class: 'bio-properties-panel-label'
+  }, translate(label)), (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('select', {
+    id,
+    name: id,
+    class: 'bio-properties-panel-input',
+    multiple: true,
+    onChange: handleChange,
+    size: Math.min(options.length, 5)
+  }, options.map(option => (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('option', {
+    value: option.value,
+    selected: selectedValues.includes(option.value)
+  }, translate(option.label)))), description &amp;&amp; (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.Description, {
+    forId: id,
+    element,
+    value: description
+  }));
+}
+
+/**
+ * Cria um grupo de opções com radio buttons dentro de um fieldset.
+ */
+function GenericMultiRadioButtonEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  options
+}) {
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  const bpmnFactory = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('bpmnFactory');
+  const getValue = optionValue => {
+    return (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.getFixedProperty)(element, `${propertyName}:${optionValue}`) || '';
+  };
+  const setValue = (optionValue, value) => {
+    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_3__.setFixedProperty)(element, `${propertyName}:${optionValue}`, value, modeling, bpmnFactory);
+  };
+  return (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('div', {
+    class: classnames__WEBPACK_IMPORTED_MODULE_5___default()('bio-properties-panel-entry', 'bio-properties-panel-combined-entry')
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('fieldset', {
+    class: 'custom-thin-rounded-fieldset',
+    style: 'margin-bottom: 12px;'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('legend', {
+    class: 'custom-thin-rounded-legend'
+  }, translate(label)), options.map(option => (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('div', {
+    class: 'bio-properties-panel-radio-wrapper',
+    style: 'margin-bottom: 10px;'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('label', {
+    class: 'bio-properties-panel-label'
+  }, translate(option.label)), (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('div', {
+    class: 'bio-properties-panel-radio-group'
+  }, [{
+    value: 'sim',
+    label: 'Sim'
+  }, {
+    value: 'nao',
+    label: 'Não'
+  }].map(radio => (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('span', {
+    style: 'margin-right: 15px;'
+  }, (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('input', {
+    type: 'radio',
+    name: `${id}_${option.value}`,
+    value: radio.value,
+    checked: getValue(option.value) === radio.value,
+    onChange: e => setValue(option.value, e.target.value)
+  }), (0,preact__WEBPACK_IMPORTED_MODULE_4__.h)('label', {
+    style: 'margin-left: 5px;'
+  }, radio.label))))))));
+}
+
+/**
+ * Cria um campo de data usando HTML5 date input.
+ * @param {Object} params
+ * @param {ModdleElement} params.element - Elemento BPMN.
+ * @param {string} params.id - Identificador único do campo.
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
+ * @param {string} params.label - Rótulo exibido.
+ * @param {boolean} [params.disabled] - Se verdadeiro, desabilita o campo.
+ * @param {string} [params.tooltip] - Texto de ajuda opcional.
+ * @param {string} [params.description] - Descrição opcional.
+ */
+function GenericDateFieldEntry({
+  element,
+  id,
+  propertyName,
+  label,
+  disabled,
+  tooltip,
+  description,
+  dateFormat,
+  ...rest
+}) {
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__.useService)('translate');
+  // Apenas validação de formato, sem conversão!
+  const validate = value => {
+    if (!value) return null; // Campo opcional
+    if (dateFormat === 'DD/MM/YYYY') {
+      const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+      if (!regex.test(value)) {
+        return translate('Use o formato DD/MM/YYYY');
+      }
+      // Valida se é uma data real
+      const [day, month, year] = value.split('/').map(Number);
+      const date = new Date(year, month - 1, day);
+      if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        return translate('Data inválida');
+      }
+    }
+    return null;
+  };
+  return GenericTextFieldEntry({
+    element,
+    id,
+    propertyName,
+    label,
+    validate,
+    disabled,
+    tooltip,
+    description,
+    ...rest
+  });
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/props/mapping-metadata-props.js":
+/*!*****************************************************************!*\
+  !*** ./client/properties-panel/props/mapping-metadata-props.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MappingMetadataGroup: () => (/* binding */ MappingMetadataGroup)
+/* harmony export */ });
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _generic_entries__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generic-entries */ "./client/properties-panel/props/generic-entries.js");
+
+
+
+/**
+ * Valida o formato do Número do OS.
+ * Esperado: OS&lt;numero>/&lt;ano> (ex: OS123/2023)
+ */
+function validateOsNumber(value) {
+  if (!value) return null; // Permite campo vazio, se for opcional
+
+  const osPattern = /^OS\d+\/\d{4}$/;
+  if (!osPattern.test(value)) {
+    return 'Formato inválido. Use OS&lt;numero>/&lt;ano> (ex: OS123/2023).';
+  }
+  return null; // Formato válido
+}
+function MappingMetadataGroup(element, injector) {
+  const translate = injector.get('translate');
+
+  // Só exibe o grupo se o elemento for do tipo Definitions
+  if (!element || element.$type !== 'bpmn:Definitions') {
+    return null;
+  }
+  const entries = [{
+    id: 'mapping-osNumber',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'mapping-osNumber',
+      propertyName: 'metaMapeamento:osNumber',
+      label: 'Número do OS',
+      tooltip: 'Use o formato OS&lt;numero>/&lt;ano> (ex: OS123/2023)',
+      validate: validateOsNumber
+    })
+  }, {
+    id: 'mapping-version',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'mapping-version',
+      propertyName: 'metaMapeamento:versaoDocumento',
+      label: 'Versão do Mapeamento'
+    })
+  }, {
+    id: 'mapping-date',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericDateFieldEntry)({
+      ...props,
+      element,
+      id: 'mapping-date',
+      propertyName: 'metaMapeamento:dataDocumento',
+      label: 'Data do Mapeamento',
+      dateFormat: 'DD/MM/YYYY',
+      tooltip: 'Use o formato DD/MM/YYYY',
+      disableDebounce: true
+    })
+  }, {
+    id: 'process-mapping-type',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericRadioEntry)({
+      ...props,
+      element,
+      id: 'process-mapping-type',
+      propertyName: 'metaMapeamento:tipoMapeamento',
+      label: 'Tipo de mapeamento',
+      options: [{
+        value: 'AS-IS',
+        label: 'Situação Atual'
+      }, {
+        value: 'TO-BE',
+        label: 'Situação Futura'
+      }]
+    })
+  }, {
+    id: 'team-process-manager',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'team-process-manager',
+      propertyName: 'metaMapeamento:equipeGestor',
+      label: 'Equipe de Mapeamento - Gestor de Processo'
+    })
+  }, {
+    id: 'team-bpm-manager',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'team-bpm-manager',
+      propertyName: 'metaMapeamento:equipeGerente',
+      label: 'Equipe de Mapeamento - Gerente de Processos'
+    })
+  }, {
+    id: 'team-consultants',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'team-consultants',
+      propertyName: 'metaMapeamento:equipeConsultores',
+      label: 'Equipe de Mapeamento - Consultores'
+    })
+  }];
+  return {
+    id: 'mapping-metadata',
+    label: translate('Metadados do Mapeamento'),
+    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.Group,
+    entries
+  };
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/props/process-documentation-props.js":
+/*!**********************************************************************!*\
+  !*** ./client/properties-panel/props/process-documentation-props.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ProcessDocumentationGroup: () => (/* binding */ ProcessDocumentationGroup)
+/* harmony export */ });
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _generic_entries__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generic-entries */ "./client/properties-panel/props/generic-entries.js");
+// client/properties-panel/props/process-documentation-props.js
+
+
+
+/**
+ * Valida o formato do código do processo.
+ * C1: formato C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx
+ * C2: formato C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx
+ */
+function validateProcessCode(code) {
+  if (!code) return null; // Permite campo vazio
+
+  // Padrões de validação
+  const c1Pattern = /^C1\.N\d{2}\.(PAI|PTB)\d{5}$/;
+  const c2Pattern = /^C2\.N\d{2}\.M\d{2}\.(PAI|PTB)\d{5}$/;
+  if (code.startsWith('C1')) {
+    if (!c1Pattern.test(code)) {
+      return 'Formato inválido para C1. Use o padrão: C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx';
+    }
+  } else if (code.startsWith('C2')) {
+    if (!c2Pattern.test(code)) {
+      return 'Formato inválido para C2. Use o padrão: C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx';
+    }
+  } else {
+    return 'O código deve começar com C1 ou C2';
+  }
+  return null; // Código válido
+}
+
+/**
+ * Cria o grupo de propriedades "Documentação do Processo" para o painel de propriedades.
+ * Este grupo só é exibido para elementos do tipo 'bpmn:Definitions'.
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Object} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {Object|null} Grupo de propriedades configurado para o painel, ou null se não aplicável.
+ */
+function ProcessDocumentationGroup(element, injector) {
+  const translate = injector.get('translate');
+  if (!element || element.$type !== 'bpmn:Definitions') {
+    return null;
+  }
+  const entries = [
+  // Código do Processo
+  {
+    id: 'process-code',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'process-code',
+      propertyName: 'processo:documentacao:codigo',
+      label: 'Código do Processo',
+      validate: validateProcessCode,
+      tooltip: translate('Formato esperado:\n' + 'Para C1: C1.Nxx.PAIxxxxx ou C1.Nxx.PTBxxxxx\n' + 'Para C2: C2.Nxx.Mxx.PAIxxxxx ou C2.Nxx.Mxx.PTBxxxxx\n' + 'Onde x são números')
+    })
+  },
+  // Nome do Processo
+  {
+    id: 'process-name',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'process-name',
+      propertyName: 'processo:documentacao:nome',
+      label: 'Nome do Processo'
+    })
+  },
+  // Entrada do processo (Insumo)
+  {
+    id: 'definitions-prop-entrada',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-entrada',
+      propertyName: 'processo:documentacao:entradaInsumo',
+      label: 'Entrada do processo (Insumo)'
+    })
+  },
+  // Fornecedores (área de texto)
+  {
+    id: 'definitions-prop-fornecedores',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-fornecedores',
+      propertyName: 'processo:documentacao:fornecedores',
+      label: 'Fornecedores'
+    })
+  },
+  // Objetivo do Processo
+  {
+    id: 'process-objective',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'process-objective',
+      propertyName: 'processo:documentacao:objetivo',
+      label: 'Objetivo do Processo'
+    })
+  },
+  // Saída do processo (Resultado / Produto)
+  {
+    id: 'definitions-prop-saida',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-saida',
+      propertyName: 'processo:documentacao:saidaResultado',
+      label: 'Saída do processo (Resultado / Produto)'
+    })
+  },
+  // Clientes (área de texto)
+  {
+    id: 'definitions-prop-clientes',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-clientes',
+      propertyName: 'processo:documentacao:clientes',
+      label: 'Clientes'
+    })
+  },
+  // Interface com outros processos (área de texto)
+  {
+    id: 'definitions-prop-interface',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-interface',
+      propertyName: 'processo:documentacao:interfaceProcessos',
+      label: 'Interface com outros processos',
+      tooltip: translate('Liste os processos que fornecem entradas para este ou recebem saídas deste.')
+    })
+  },
+  // Principais regras de negócio do processo (área de texto)
+  {
+    id: 'definitions-prop-regras',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-regras',
+      propertyName: 'processo:documentacao:regrasNegocio',
+      label: 'Principais regras de negócio do processo'
+    })
+  },
+  // Dono do processo (Área)
+  {
+    id: 'definitions-prop-donoArea',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-donoArea',
+      propertyName: 'processo:documentacao:donoProcessoArea',
+      label: 'Dono do processo (Área)'
+    })
+  },
+  // Dono do processo (Gestor(a))
+  {
+    id: 'definitions-prop-donoGestor',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextFieldEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-donoGestor',
+      propertyName: 'processo:documentacao:donoProcessoGestor',
+      label: 'Dono do processo (Gestor(a))'
+    })
+  },
+  // Atores envolvidos (área de texto)
+  {
+    id: 'definitions-prop-atores',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-atores',
+      propertyName: 'processo:documentacao:atoresEnvolvidos',
+      label: 'Atores envolvidos'
+    })
+  },
+  // Sistemas utilizados (área de texto)
+  {
+    id: 'definitions-prop-sistemas',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-sistemas',
+      propertyName: 'processo:documentacao:sistemasUtilizados',
+      label: 'Sistemas utilizados'
+    })
+  },
+  // Legislação / Normativos aplicáveis (área de texto)
+  {
+    id: 'definitions-prop-legislacao',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericTextAreaEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-legislacao',
+      propertyName: 'processo:documentacao:legislacaoNormativos',
+      label: 'Legislação / Normativos aplicáveis'
+    })
+  },
+  // Análise Preliminar
+  {
+    id: 'definitions-prop-analisePreliminar',
+    component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_1__.GenericMultiRadioButtonEntry)({
+      ...props,
+      element,
+      id: 'definitions-prop-analisePreliminar',
+      propertyName: 'processo:documentacao:analisePreliminar',
+      label: 'Necessidades identificadas no mapeamento dos processos',
+      options: [{
+        value: 'alinhamento-estrategico',
+        label: 'Análise de alinhamento estratégico'
+      }, {
+        value: 'melhorias-processo',
+        label: 'Análise de melhorias em processos e sistemas'
+      }, {
+        value: 'capacidade-rh',
+        label: 'Análise da capacidade de recursos humanos'
+      }, {
+        value: 'simulacao',
+        label: 'Avaliar possibilidade para simulação de processos'
+      }, {
+        value: 'melhorias-rapidas',
+        label: 'Avaliar possibilidade para melhorias rápidas'
+      }, {
+        value: 'automatizacao',
+        label: 'Avaliar possibilidade de Automatização de processos'
+      }]
+    })
+  }];
+  return {
+    id: 'process-documentation',
+    label: translate('Documentação do Processo'),
+    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_0__.Group,
+    entries
+  };
+}
+
+/***/ }),
+
+/***/ "./client/properties-panel/props/process-indicators-props.js":
+/*!*******************************************************************!*\
+  !*** ./client/properties-panel/props/process-indicators-props.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   IndicatorsGroup: () => (/* binding */ IndicatorsGroup)
+/* harmony export */ });
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _helper_extensions_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helper/extensions-helper */ "./client/properties-panel/helper/extensions-helper.js");
+/* harmony import */ var _generic_entries__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generic-entries */ "./client/properties-panel/props/generic-entries.js");
+/* harmony import */ var _helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../helper/fixed-properties-helper */ "./client/properties-panel/helper/fixed-properties-helper.js");
+/* harmony import */ var ids__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ids */ "./node_modules/ids/dist/index.esm.js");
+
+
+
+
+
+
+
+const ids = new ids__WEBPACK_IMPORTED_MODULE_5__["default"]([16, 36, 1]);
+
+// Helper robusto para encontrar o elemento &lt;definitions>
+function getDefinitions(element) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_6__.getBusinessObject)(element);
+  if (!bo) return null;
+  let current = bo;
+  while (current.$parent &amp;&amp; current.$type !== 'bpmn:Definitions') {
+    current = current.$parent;
+  }
+  return current;
+}
+
+// Helper para extrair os IDs dos indicadores existentes
+function getIndicatorIds(element) {
+  const definitions = getDefinitions(element);
+  if (!definitions) return [];
+  const camundaProperties = (0,_helper_extensions_helper__WEBPACK_IMPORTED_MODULE_2__.getCamundaProperties)(definitions);
+  if (!camundaProperties || !camundaProperties.get('values')) return [];
+  const regex = /^processo:indicadores:(.*?):/;
+  const indicatorIds = new Set();
+  for (const prop of camundaProperties.get('values')) {
+    const match = prop.name.match(regex);
+    if (match &amp;&amp; match[1]) {
+      indicatorIds.add(match[1]);
+    }
+  }
+  return Array.from(indicatorIds);
+}
+function IndicatorsGroup(element, injector) {
+  const translate = injector.get('translate');
+  const modeling = injector.get('modeling');
+  const bpmnFactory = injector.get('bpmnFactory');
+  const eventBus = injector.get('eventBus');
+  function add(event) {
+    event.stopPropagation();
+    const newId = ids.next();
+    (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__.setFixedProperty)(element, `processo:indicadores:${newId}:nome`, '[Novo Indicador]', modeling, bpmnFactory);
+    eventBus.fire('elements.changed', {
+      elements: [element]
+    });
+  }
+  const indicatorIds = getIndicatorIds(element);
+  return {
+    id: 'process-indicators-group',
+    label: translate('Indicadores do Processo'),
+    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.ListGroup,
+    add,
+    items: indicatorIds.map(id => PropertyItem({
+      element,
+      indicatorId: id,
+      injector
+    }))
+  };
+}
+function PropertyItem(props) {
+  const {
+    element,
+    indicatorId,
+    injector
+  } = props;
+  const modeling = injector.get('modeling');
+  const eventBus = injector.get('eventBus');
+  const nameProp = `processo:indicadores:${indicatorId}:nome`;
+  // Get the actual name of the indicator. This could be the user-defined name,
+  // "[Novo Indicador]" for new items, or an empty string if cleared by the user.
+  const actualIndicatorName = (0,_helper_fixed_properties_helper__WEBPACK_IMPORTED_MODULE_4__.getFixedProperty)(element, nameProp);
+  // The label should be in the format: "Name of indicator (Indicator #$id)"
+  // If the actualIndicatorName is null/undefined, use an empty string for the name part to avoid "null" in the label.
+  const label = `${actualIndicatorName || ''} (Indicador #${indicatorId})`;
+  function remove(event) {
+    event.stopPropagation();
+    const definitions = getDefinitions(element);
+    const camundaProperties = (0,_helper_extensions_helper__WEBPACK_IMPORTED_MODULE_2__.getCamundaProperties)(definitions);
+    if (camundaProperties &amp;&amp; camundaProperties.get('values')) {
+      const prefix = `processo:indicadores:${indicatorId}:`;
+      const values = camundaProperties.get('values').filter(p => !p.name.startsWith(prefix));
+      modeling.updateModdleProperties(element, camundaProperties, {
+        values
+      });
+      eventBus.fire('elements.changed', {
+        elements: [element]
+      });
+    }
+  }
+
+  // Função de validação para o nome do indicador
+  const validateName = value => {
+    if (!value || !value.trim()) {
+      // Esta mensagem será passada para o serviço de tradução pelo GenericTextFieldEntry
+      return 'O nome do indicador é obrigatório.';
+    }
+    return null; // Sem erros
+  };
+  const createEntry = (field, labelText, validateFn) => {
+    const id = `indicator-${indicatorId}-${field}`;
+    const propertyName = `processo:indicadores:${indicatorId}:${field}`;
+    return {
+      id,
+      component: props => (0,_generic_entries__WEBPACK_IMPORTED_MODULE_3__.GenericTextFieldEntry)({
+        ...props,
+        element,
+        id,
+        propertyName,
+        label: labelText,
+        validate: validateFn // Adiciona a função de validação aqui
+      })
+    };
+  };
+  return {
+    id: `indicator-${indicatorId}`,
+    label,
+    remove,
+    entries: [createEntry('nome', 'Nome', validateName),
+    // Passa a função de validação para o campo 'nome'
+    createEntry('objetivo', 'Objetivo'), createEntry('formula', 'Fórmula'), createEntry('meta', 'Meta'), createEntry('ultimaMedicao', 'Última Medição'), createEntry('resultado', 'Resultado')],
+    autoFocusEntry: `indicator-${indicatorId}-nome`
+  };
+}
+
+/***/ }),
+
+/***/ "./node_modules/bpmn-js/lib/util/ModelUtil.js":
+/*!****************************************************!*\
+  !*** ./node_modules/bpmn-js/lib/util/ModelUtil.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getBusinessObject: () => (/* binding */ getBusinessObject),
+/* harmony export */   getDi: () => (/* binding */ getDi),
+/* harmony export */   is: () => (/* binding */ is),
+/* harmony export */   isAny: () => (/* binding */ isAny)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef { import('../model/Types').Element } Element
+ * @typedef { import('../model/Types').ModdleElement } ModdleElement
+ */
+
+/**
+ * Is an element of the given BPMN type?
+ *
+ * @param  {Element|ModdleElement} element
+ * @param  {string} type
+ *
+ * @return {boolean}
+ */
+function is(element, type) {
+  var bo = getBusinessObject(element);
+
+  return bo &amp;&amp; (typeof bo.$instanceOf === 'function') &amp;&amp; bo.$instanceOf(type);
+}
+
+
+/**
+ * Return true if element has any of the given types.
+ *
+ * @param {Element|ModdleElement} element
+ * @param {string[]} types
+ *
+ * @return {boolean}
+ */
+function isAny(element, types) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.some)(types, function(t) {
+    return is(element, t);
+  });
+}
+
+/**
+ * Return the business object for a given element.
+ *
+ * @param {Element|ModdleElement} element
+ *
+ * @return {ModdleElement}
+ */
+function getBusinessObject(element) {
+  return (element &amp;&amp; element.businessObject) || element;
+}
+
+/**
+ * Return the di object for a given element.
+ *
+ * @param {Element} element
+ *
+ * @return {ModdleElement}
+ */
+function getDi(element) {
+  return element &amp;&amp; element.di;
+}
+
+/***/ }),
+
+/***/ "./node_modules/camunda-modeler-plugin-helpers/helper.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/camunda-modeler-plugin-helpers/helper.js ***!
+  \***************************************************************/
+/***/ ((module) => {
+
+module.exports.returnOrThrow = function(getter, minimalModelerVersion) {
+  let result;
+  try {
+    result = getter();
+  } catch (error) {}
+
+  if (!result) {
+    throw new Error(`Not compatible with Camunda Modeler &lt; ${minimalModelerVersion}`);
+  }
+
+  return result;
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/camunda-modeler-plugin-helpers/index.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/camunda-modeler-plugin-helpers/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getModelerDirectory: () => (/* binding */ getModelerDirectory),
+/* harmony export */   getPluginsDirectory: () => (/* binding */ getPluginsDirectory),
+/* harmony export */   registerBpmnJSModdleExtension: () => (/* binding */ registerBpmnJSModdleExtension),
+/* harmony export */   registerBpmnJSPlugin: () => (/* binding */ registerBpmnJSPlugin),
+/* harmony export */   registerClientExtension: () => (/* binding */ registerClientExtension),
+/* harmony export */   registerClientPlugin: () => (/* binding */ registerClientPlugin),
+/* harmony export */   registerCloudBpmnJSModdleExtension: () => (/* binding */ registerCloudBpmnJSModdleExtension),
+/* harmony export */   registerCloudBpmnJSPlugin: () => (/* binding */ registerCloudBpmnJSPlugin),
+/* harmony export */   registerCloudDmnJSModdleExtension: () => (/* binding */ registerCloudDmnJSModdleExtension),
+/* harmony export */   registerCloudDmnJSPlugin: () => (/* binding */ registerCloudDmnJSPlugin),
+/* harmony export */   registerDmnJSModdleExtension: () => (/* binding */ registerDmnJSModdleExtension),
+/* harmony export */   registerDmnJSPlugin: () => (/* binding */ registerDmnJSPlugin),
+/* harmony export */   registerPlatformBpmnJSModdleExtension: () => (/* binding */ registerPlatformBpmnJSModdleExtension),
+/* harmony export */   registerPlatformBpmnJSPlugin: () => (/* binding */ registerPlatformBpmnJSPlugin),
+/* harmony export */   registerPlatformDmnJSModdleExtension: () => (/* binding */ registerPlatformDmnJSModdleExtension),
+/* harmony export */   registerPlatformDmnJSPlugin: () => (/* binding */ registerPlatformDmnJSPlugin)
+/* harmony export */ });
+/**
+ * Validate and register a client plugin.
+ *
+ * @param {Object} plugin
+ * @param {String} type
+ */
+function registerClientPlugin(plugin, type) {
+  var plugins = window.plugins || [];
+  window.plugins = plugins;
+
+  if (!plugin) {
+    throw new Error('plugin not specified');
+  }
+
+  if (!type) {
+    throw new Error('type not specified');
+  }
+
+  plugins.push({
+    plugin: plugin,
+    type: type
+  });
+}
+
+/**
+ * Validate and register a client plugin.
+ *
+ * @param {import('react').ComponentType} extension
+ *
+ * @example
+ *
+ * import MyExtensionComponent from './MyExtensionComponent';
+ *
+ * registerClientExtension(MyExtensionComponent);
+ */
+function registerClientExtension(component) {
+  registerClientPlugin(component, 'client');
+}
+
+/**
+ * Validate and register a bpmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerBpmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const BpmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerBpmnJSPlugin(BpmnJSModule);
+ */
+function registerBpmnJSPlugin(module) {
+  registerClientPlugin(module, 'bpmn.modeler.additionalModules');
+}
+
+/**
+ * Validate and register a platform specific bpmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerPlatformBpmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const BpmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerPlatformBpmnJSPlugin(BpmnJSModule);
+ */
+function registerPlatformBpmnJSPlugin(module) {
+  registerClientPlugin(module, 'bpmn.platform.modeler.additionalModules');
+}
+
+/**
+ * Validate and register a cloud specific bpmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerCloudBpmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const BpmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerCloudBpmnJSPlugin(BpmnJSModule);
+ */
+function registerCloudBpmnJSPlugin(module) {
+  registerClientPlugin(module, 'bpmn.cloud.modeler.additionalModules');
+}
+
+/**
+ * Validate and register a bpmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerBpmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerBpmnJSModdleExtension(moddleDescriptor);
+ */
+function registerBpmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'bpmn.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a platform specific bpmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerPlatformBpmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerPlatformBpmnJSModdleExtension(moddleDescriptor);
+ */
+function registerPlatformBpmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'bpmn.platform.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a cloud specific bpmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerCloudBpmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerCloudBpmnJSModdleExtension(moddleDescriptor);
+ */
+function registerCloudBpmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'bpmn.cloud.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a dmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerDmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerDmnJSModdleExtension(moddleDescriptor);
+ */
+function registerDmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'dmn.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a cloud specific dmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerCloudDmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerCloudDmnJSModdleExtension(moddleDescriptor);
+ */
+function registerCloudDmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'dmn.cloud.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a platform specific dmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerPlatformDmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerPlatformDmnJSModdleExtension(moddleDescriptor);
+ */
+function registerPlatformDmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'dmn.platform.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a dmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerDmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const DmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerDmnJSPlugin(DmnJSModule, [ 'drd', 'literalExpression' ]);
+ * registerDmnJSPlugin(DmnJSModule, 'drd')
+ */
+function registerDmnJSPlugin(module, components) {
+
+  if (!Array.isArray(components)) {
+    components = [ components ]
+  }
+
+  components.forEach(c => registerClientPlugin(module, `dmn.modeler.${c}.additionalModules`));
+}
+
+/**
+ * Validate and register a cloud specific dmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerCloudDmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const DmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerCloudDmnJSPlugin(DmnJSModule, [ 'drd', 'literalExpression' ]);
+ * registerCloudDmnJSPlugin(DmnJSModule, 'drd')
+ */
+function registerCloudDmnJSPlugin(module, components) {
+
+  if (!Array.isArray(components)) {
+    components = [ components ]
+  }
+
+  components.forEach(c => registerClientPlugin(module, `dmn.cloud.modeler.${c}.additionalModules`));
+}
+
+/**
+ * Validate and register a platform specific dmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerPlatformDmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const DmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerPlatformDmnJSPlugin(DmnJSModule, [ 'drd', 'literalExpression' ]);
+ * registerPlatformDmnJSPlugin(DmnJSModule, 'drd')
+ */
+function registerPlatformDmnJSPlugin(module, components) {
+
+  if (!Array.isArray(components)) {
+    components = [ components ]
+  }
+
+  components.forEach(c => registerClientPlugin(module, `dmn.platform.modeler.${c}.additionalModules`));
+}
+
+/**
+ * Return the modeler directory, as a string.
+ *
+ * @deprecated Will be removed in future Camunda Modeler versions without replacement.
+ *
+ * @return {String}
+ */
+function getModelerDirectory() {
+  return window.getModelerDirectory();
+}
+
+/**
+ * Return the modeler plugin directory, as a string.
+ *
+ * @deprecated Will be removed in future Camunda Modeler versions without replacement.
+ *
+ * @return {String}
+ */
+function getPluginsDirectory() {
+  return window.getPluginsDirectory();
+}
+
+/***/ }),
+
+/***/ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js":
+/*!***********************************************************************************************!*\
+  !*** ./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js ***!
+  \***********************************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { returnOrThrow } = __webpack_require__(/*! ../../../helper */ "./node_modules/camunda-modeler-plugin-helpers/helper.js");
+
+module.exports = returnOrThrow(() => window.vendor.propertiesPanel.common, '5.0.0');
+
+
+/***/ }),
+
+/***/ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js":
+/*!****************************************************************************************!*\
+  !*** ./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js ***!
+  \****************************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { returnOrThrow } = __webpack_require__(/*! ../helper */ "./node_modules/camunda-modeler-plugin-helpers/helper.js");
+
+module.exports = returnOrThrow(() => window.vendor.propertiesPanel.bpmn, '5.0.0');
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./client/styles/custom-panel.css":
+/*!******************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./client/styles/custom-panel.css ***!
+  \******************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* client/styles/custom-panel.css */
+
+.bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
+  display: flex;
+  flex-direction: column; /* Garante que input e radio fiquem em coluna */
+  align-items: flex-start; /* Alinha à esquerda */
+  gap: 0px;
+  width: auto; /* Remove o width: 100% para não ocupar espaço extra */
+  min-width: 0;
+  max-width: 100%;
+}
+
+.bio-properties-panel-combined-entry .bio-properties-panel-textfield {
+  flex: 0 0 180px; /* reduzido */
+  min-width: 160px; /* reduzido */
+  max-width: 220px; /* reduzido */
+  margin-bottom: 0;
+  align-self: center; /* Centraliza na linha */
+}
+
+.bio-properties-panel-combined-entry .bio-properties-panel-radio-group {
+  margin-top: 0 !important; /* Remove margem superior se houver */
+  margin-left: 0; /* Remove margem esquerda */
+  margin-bottom: 0 !important;
+  padding-left: 0;
+  display: flex; /* Alinha os botões de rádio em linha */
+  flex-direction: row; /* &lt;-- alterado de column para row */
+  gap: 12px; /* Espaço entre os botões de rádio */
+  align-items: center;
+}
+
+.bio-properties-panel-panel {
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  background: #fafbfc;
+  padding: 6px 10px 2px 10px;
+  margin-bottom: 4px;
+  box-shadow: 0 1px 2px rgba(60,60,60,0.03);
+  overflow-y: auto;
+  max-width: 400px; /* Limita a largura máxima do painel interno */
+  width: auto;      /* Não ocupa 100% do fieldset */
+  min-width: 0;
+  max-height: 70vh; /* ou ajuste conforme necessário */
+}
+
+/* Unifique o layout dos fieldsets */
+.custom-thin-rounded-fieldset {
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+  padding: 12px;
+  margin-bottom: 16px;  
+  max-width: 440px; /* ajuste para o mesmo valor para ambos os fieldsets */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-thin-rounded-legend {
+  color: #666;
+  font-size: 1em;
+  padding: 0 8px;
+}
+
+/* Responsividade: radio embaixo do input em telas pequenas */
+@media (max-width: 600px) {
+  .bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+  .bio-properties-panel-combined-entry .bio-properties-panel-textfield {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Aumenta altura padrão dos textareas dos campos customizados para ~4 linhas */
+.bio-properties-panel-entry textarea,
+.bio-properties-panel-textarea textarea {
+  min-height: 88px !important; /* Aproximadamente 4 linhas, ajuste se necessário */
+  resize: vertical;
+}`, "",{"version":3,"sources":["webpack://./client/styles/custom-panel.css"],"names":[],"mappings":"AAAA,mCAAmC;;AAEnC;EACE,aAAa;EACb,sBAAsB,EAAE,+CAA+C;EACvE,uBAAuB,EAAE,sBAAsB;EAC/C,QAAQ;EACR,WAAW,EAAE,sDAAsD;EACnE,YAAY;EACZ,eAAe;AACjB;;AAEA;EACE,eAAe,EAAE,aAAa;EAC9B,gBAAgB,EAAE,aAAa;EAC/B,gBAAgB,EAAE,aAAa;EAC/B,gBAAgB;EAChB,kBAAkB,EAAE,wBAAwB;AAC9C;;AAEA;EACE,wBAAwB,EAAE,qCAAqC;EAC/D,cAAc,EAAE,2BAA2B;EAC3C,2BAA2B;EAC3B,eAAe;EACf,aAAa,EAAE,uCAAuC;EACtD,mBAAmB,EAAE,oCAAoC;EACzD,SAAS,EAAE,oCAAoC;EAC/C,mBAAmB;AACrB;;AAEA;EACE,yBAAyB;EACzB,kBAAkB;EAClB,mBAAmB;EACnB,0BAA0B;EAC1B,kBAAkB;EAClB,yCAAyC;EACzC,gBAAgB;EAChB,gBAAgB,EAAE,8CAA8C;EAChE,WAAW,OAAO,+BAA+B;EACjD,YAAY;EACZ,gBAAgB,EAAE,kCAAkC;AACtD;;AAEA,oCAAoC;AACpC;EACE,iCAAiC;EACjC,6BAA6B;EAC7B,aAAa;EACb,mBAAmB;EACnB,gBAAgB,EAAE,sDAAsD;EACxE,WAAW;EACX,sBAAsB;AACxB;;AAEA;EACE,WAAW;EACX,cAAc;EACd,cAAc;AAChB;;AAEA,6DAA6D;AAC7D;EACE;IACE,sBAAsB;IACtB,oBAAoB;IACpB,QAAQ;EACV;EACA;IACE,WAAW;IACX,eAAe;IACf,YAAY;EACd;AACF;;AAEA,+EAA+E;AAC/E;;EAEE,2BAA2B,EAAE,mDAAmD;EAChF,gBAAgB;AAClB","sourcesContent":["/* client/styles/custom-panel.css */\r\n\r\n.bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {\r\n  display: flex;\r\n  flex-direction: column; /* Garante que input e radio fiquem em coluna */\r\n  align-items: flex-start; /* Alinha à esquerda */\r\n  gap: 0px;\r\n  width: auto; /* Remove o width: 100% para não ocupar espaço extra */\r\n  min-width: 0;\r\n  max-width: 100%;\r\n}\r\n\r\n.bio-properties-panel-combined-entry .bio-properties-panel-textfield {\r\n  flex: 0 0 180px; /* reduzido */\r\n  min-width: 160px; /* reduzido */\r\n  max-width: 220px; /* reduzido */\r\n  margin-bottom: 0;\r\n  align-self: center; /* Centraliza na linha */\r\n}\r\n\r\n.bio-properties-panel-combined-entry .bio-properties-panel-radio-group {\r\n  margin-top: 0 !important; /* Remove margem superior se houver */\r\n  margin-left: 0; /* Remove margem esquerda */\r\n  margin-bottom: 0 !important;\r\n  padding-left: 0;\r\n  display: flex; /* Alinha os botões de rádio em linha */\r\n  flex-direction: row; /* &lt;-- alterado de column para row */\r\n  gap: 12px; /* Espaço entre os botões de rádio */\r\n  align-items: center;\r\n}\r\n\r\n.bio-properties-panel-panel {\r\n  border: 1px solid #d4d4d4;\r\n  border-radius: 6px;\r\n  background: #fafbfc;\r\n  padding: 6px 10px 2px 10px;\r\n  margin-bottom: 4px;\r\n  box-shadow: 0 1px 2px rgba(60,60,60,0.03);\r\n  overflow-y: auto;\r\n  max-width: 400px; /* Limita a largura máxima do painel interno */\r\n  width: auto;      /* Não ocupa 100% do fieldset */\r\n  min-width: 0;\r\n  max-height: 70vh; /* ou ajuste conforme necessário */\r\n}\r\n\r\n/* Unifique o layout dos fieldsets */\r\n.custom-thin-rounded-fieldset {\r\n  border: 1px solid #ccc !important;\r\n  border-radius: 8px !important;\r\n  padding: 12px;\r\n  margin-bottom: 16px;  \r\n  max-width: 440px; /* ajuste para o mesmo valor para ambos os fieldsets */\r\n  width: 100%;\r\n  box-sizing: border-box;\r\n}\r\n\r\n.custom-thin-rounded-legend {\r\n  color: #666;\r\n  font-size: 1em;\r\n  padding: 0 8px;\r\n}\r\n\r\n/* Responsividade: radio embaixo do input em telas pequenas */\r\n@media (max-width: 600px) {\r\n  .bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {\r\n    flex-direction: column;\r\n    align-items: stretch;\r\n    gap: 2px;\r\n  }\r\n  .bio-properties-panel-combined-entry .bio-properties-panel-textfield {\r\n    width: 100%;\r\n    max-width: 100%;\r\n    min-width: 0;\r\n  }\r\n}\r\n\r\n/* Aumenta altura padrão dos textareas dos campos customizados para ~4 linhas */\r\n.bio-properties-panel-entry textarea,\r\n.bio-properties-panel-textarea textarea {\r\n  min-height: 88px !important; /* Aproximadamente 4 linhas, ajuste se necessário */\r\n  resize: vertical;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/runtime/api.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+*/
+module.exports = function (cssWithMappingToString) {
+  var list = [];
+
+  // return the list of modules as css string
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = "";
+      var needLayer = typeof item[5] !== "undefined";
+      if (item[4]) {
+        content += "@supports (".concat(item[4], ") {");
+      }
+      if (item[2]) {
+        content += "@media ".concat(item[2], " {");
+      }
+      if (needLayer) {
+        content += "@layer".concat(item[5].length > 0 ? " ".concat(item[5]) : "", " {");
+      }
+      content += cssWithMappingToString(item);
+      if (needLayer) {
+        content += "}";
+      }
+      if (item[2]) {
+        content += "}";
+      }
+      if (item[4]) {
+        content += "}";
+      }
+      return content;
+    }).join("");
+  };
+
+  // import a list of modules into the list
+  list.i = function i(modules, media, dedupe, supports, layer) {
+    if (typeof modules === "string") {
+      modules = [[null, modules, undefined]];
+    }
+    var alreadyImportedModules = {};
+    if (dedupe) {
+      for (var k = 0; k &lt; this.length; k++) {
+        var id = this[k][0];
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+    for (var _k = 0; _k &lt; modules.length; _k++) {
+      var item = [].concat(modules[_k]);
+      if (dedupe &amp;&amp; alreadyImportedModules[item[0]]) {
+        continue;
+      }
+      if (typeof layer !== "undefined") {
+        if (typeof item[5] === "undefined") {
+          item[5] = layer;
+        } else {
+          item[1] = "@layer".concat(item[5].length > 0 ? " ".concat(item[5]) : "", " {").concat(item[1], "}");
+          item[5] = layer;
+        }
+      }
+      if (media) {
+        if (!item[2]) {
+          item[2] = media;
+        } else {
+          item[1] = "@media ".concat(item[2], " {").concat(item[1], "}");
+          item[2] = media;
+        }
+      }
+      if (supports) {
+        if (!item[4]) {
+          item[4] = "".concat(supports);
+        } else {
+          item[1] = "@supports (".concat(item[4], ") {").concat(item[1], "}");
+          item[4] = supports;
+        }
+      }
+      list.push(item);
+    }
+  };
+  return list;
+};
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/runtime/sourceMaps.js":
+/*!************************************************************!*\
+  !*** ./node_modules/css-loader/dist/runtime/sourceMaps.js ***!
+  \************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = function (item) {
+  var content = item[1];
+  var cssMapping = item[3];
+  if (!cssMapping) {
+    return content;
+  }
+  if (typeof btoa === "function") {
+    var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(cssMapping))));
+    var data = "sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(base64);
+    var sourceMapping = "/*# ".concat(data, " */");
+    return [content].concat([sourceMapping]).join("\n");
+  }
+  return [content].join("\n");
+};
+
+/***/ }),
+
+/***/ "./node_modules/ids/dist/index.esm.js":
+/*!********************************************!*\
+  !*** ./node_modules/ids/dist/index.esm.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var hat_1 = createCommonjsModule(function (module) {
+var hat = module.exports = function (bits, base) {
+    if (!base) base = 16;
+    if (bits === undefined) bits = 128;
+    if (bits &lt;= 0) return '0';
+    
+    var digits = Math.log(Math.pow(2, bits)) / Math.log(base);
+    for (var i = 2; digits === Infinity; i *= 2) {
+        digits = Math.log(Math.pow(2, bits / i)) / Math.log(base) * i;
+    }
+    
+    var rem = digits - Math.floor(digits);
+    
+    var res = '';
+    
+    for (var i = 0; i &lt; Math.floor(digits); i++) {
+        var x = Math.floor(Math.random() * base).toString(base);
+        res = x + res;
+    }
+    
+    if (rem) {
+        var b = Math.pow(base, rem);
+        var x = Math.floor(Math.random() * b).toString(base);
+        res = x + res;
+    }
+    
+    var parsed = parseInt(res, base);
+    if (parsed !== Infinity &amp;&amp; parsed >= Math.pow(2, bits)) {
+        return hat(bits, base)
+    }
+    else return res;
+};
+
+hat.rack = function (bits, base, expandBy) {
+    var fn = function (data) {
+        var iters = 0;
+        do {
+            if (iters ++ > 10) {
+                if (expandBy) bits += expandBy;
+                else throw new Error('too many ID collisions, use more bits')
+            }
+            
+            var id = hat(bits, base);
+        } while (Object.hasOwnProperty.call(hats, id));
+        
+        hats[id] = data;
+        return id;
+    };
+    var hats = fn.hats = {};
+    
+    fn.get = function (id) {
+        return fn.hats[id];
+    };
+    
+    fn.set = function (id, value) {
+        fn.hats[id] = value;
+        return fn;
+    };
+    
+    fn.bits = bits || 128;
+    fn.base = base || 16;
+    return fn;
+};
+});
+
+/**
+ * Create a new id generator / cache instance.
+ *
+ * You may optionally provide a seed that is used internally.
+ *
+ * @param {Seed} seed
+ */
+function Ids(seed) {
+  if (!(this instanceof Ids)) {
+    return new Ids(seed);
+  }
+  seed = seed || [128, 36, 1];
+  this._seed = seed.length ? hat_1.rack(seed[0], seed[1], seed[2]) : seed;
+}
+
+/**
+ * Generate a next id.
+ *
+ * @param {Object} [element] element to bind the id to
+ *
+ * @return {String} id
+ */
+Ids.prototype.next = function (element) {
+  return this._seed(element || true);
+};
+
+/**
+ * Generate a next id with a given prefix.
+ *
+ * @param {Object} [element] element to bind the id to
+ *
+ * @return {String} id
+ */
+Ids.prototype.nextPrefixed = function (prefix, element) {
+  var id;
+  do {
+    id = prefix + this.next(true);
+  } while (this.assigned(id));
+
+  // claim {prefix}{random}
+  this.claim(id, element);
+
+  // return
+  return id;
+};
+
+/**
+ * Manually claim an existing id.
+ *
+ * @param {String} id
+ * @param {String} [element] element the id is claimed by
+ */
+Ids.prototype.claim = function (id, element) {
+  this._seed.set(id, element || true);
+};
+
+/**
+ * Returns true if the given id has already been assigned.
+ *
+ * @param  {String} id
+ * @return {Boolean}
+ */
+Ids.prototype.assigned = function (id) {
+  return this._seed.get(id) || false;
+};
+
+/**
+ * Unclaim an id.
+ *
+ * @param  {String} id the id to unclaim
+ */
+Ids.prototype.unclaim = function (id) {
+  delete this._seed.hats[id];
+};
+
+/**
+ * Clear all claimed ids.
+ */
+Ids.prototype.clear = function () {
+  var hats = this._seed.hats,
+    id;
+  for (id in hats) {
+    this.unclaim(id);
+  }
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Ids);
+//# sourceMappingURL=index.esm.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/preact/dist/preact.module.js":
+/*!***************************************************!*\
+  !*** ./node_modules/preact/dist/preact.module.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Component: () => (/* binding */ b),
+/* harmony export */   Fragment: () => (/* binding */ g),
+/* harmony export */   cloneElement: () => (/* binding */ E),
+/* harmony export */   createContext: () => (/* binding */ F),
+/* harmony export */   createElement: () => (/* binding */ y),
+/* harmony export */   createRef: () => (/* binding */ _),
+/* harmony export */   h: () => (/* binding */ y),
+/* harmony export */   hydrate: () => (/* binding */ B),
+/* harmony export */   isValidElement: () => (/* binding */ t),
+/* harmony export */   options: () => (/* binding */ l),
+/* harmony export */   render: () => (/* binding */ q),
+/* harmony export */   toChildArray: () => (/* binding */ $)
+/* harmony export */ });
+var n,l,u,t,i,o,r,f,e,c={},s=[],a=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,h=Array.isArray;function v(n,l){for(var u in l)n[u]=l[u];return n}function p(n){var l=n.parentNode;l&amp;&amp;l.removeChild(n)}function y(l,u,t){var i,o,r,f={};for(r in u)"key"==r?i=u[r]:"ref"==r?o=u[r]:f[r]=u[r];if(arguments.length>2&amp;&amp;(f.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&amp;&amp;null!=l.defaultProps)for(r in l.defaultProps)void 0===f[r]&amp;&amp;(f[r]=l.defaultProps[r]);return d(l,f,i,o,null)}function d(n,t,i,o,r){var f={type:n,props:t,key:i,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,constructor:void 0,__v:null==r?++u:r,__i:-1,__u:0};return null==r&amp;&amp;null!=l.vnode&amp;&amp;l.vnode(f),f}function _(){return{current:null}}function g(n){return n.children}function b(n,l){this.props=n,this.context=l}function m(n,l){if(null==l)return n.__?m(n.__,n.__i+1):null;for(var u;l&lt;n.__k.length;l++)if(null!=(u=n.__k[l])&amp;&amp;null!=u.__e)return u.__e;return"function"==typeof n.type?m(n):null}function k(n){var l,u;if(null!=(n=n.__)&amp;&amp;null!=n.__c){for(n.__e=n.__c.base=null,l=0;l&lt;n.__k.length;l++)if(null!=(u=n.__k[l])&amp;&amp;null!=u.__e){n.__e=n.__c.base=u.__e;break}return k(n)}}function w(n){(!n.__d&amp;&amp;(n.__d=!0)&amp;&amp;i.push(n)&amp;&amp;!x.__r++||o!==l.debounceRendering)&amp;&amp;((o=l.debounceRendering)||r)(x)}function x(){var n,u,t,o,r,e,c,s,a;for(i.sort(f);n=i.shift();)n.__d&amp;&amp;(u=i.length,o=void 0,e=(r=(t=n).__v).__e,s=[],a=[],(c=t.__P)&amp;&amp;((o=v({},r)).__v=r.__v+1,l.vnode&amp;&amp;l.vnode(o),L(c,o,r,t.__n,void 0!==c.ownerSVGElement,32&amp;r.__u?[e]:null,s,null==e?m(r):e,!!(32&amp;r.__u),a),o.__.__k[o.__i]=o,M(s,o,a),o.__e!=e&amp;&amp;k(o)),i.length>u&amp;&amp;i.sort(f));x.__r=0}function C(n,l,u,t,i,o,r,f,e,a,h){var v,p,y,d,_,g=t&amp;&amp;t.__k||s,b=l.length;for(u.__d=e,P(u,l,g),e=u.__d,v=0;v&lt;b;v++)null!=(y=u.__k[v])&amp;&amp;"boolean"!=typeof y&amp;&amp;"function"!=typeof y&amp;&amp;(p=-1===y.__i?c:g[y.__i]||c,y.__i=v,L(n,y,p,i,o,r,f,e,a,h),d=y.__e,y.ref&amp;&amp;p.ref!=y.ref&amp;&amp;(p.ref&amp;&amp;z(p.ref,null,y),h.push(y.ref,y.__c||d,y)),null==_&amp;&amp;null!=d&amp;&amp;(_=d),65536&amp;y.__u||p.__k===y.__k?e=S(y,e,n):"function"==typeof y.type&amp;&amp;void 0!==y.__d?e=y.__d:d&amp;&amp;(e=d.nextSibling),y.__d=void 0,y.__u&amp;=-196609);u.__d=e,u.__e=_}function P(n,l,u){var t,i,o,r,f,e=l.length,c=u.length,s=c,a=0;for(n.__k=[],t=0;t&lt;e;t++)null!=(i=n.__k[t]=null==(i=l[t])||"boolean"==typeof i||"function"==typeof i?null:"string"==typeof i||"number"==typeof i||"bigint"==typeof i||i.constructor==String?d(null,i,null,null,i):h(i)?d(g,{children:i},null,null,null):void 0===i.constructor&amp;&amp;i.__b>0?d(i.type,i.props,i.key,i.ref?i.ref:null,i.__v):i)?(i.__=n,i.__b=n.__b+1,f=H(i,u,r=t+a,s),i.__i=f,o=null,-1!==f&amp;&amp;(s--,(o=u[f])&amp;&amp;(o.__u|=131072)),null==o||null===o.__v?(-1==f&amp;&amp;a--,"function"!=typeof i.type&amp;&amp;(i.__u|=65536)):f!==r&amp;&amp;(f===r+1?a++:f>r?s>e-r?a+=f-r:a--:a=f&lt;r&amp;&amp;f==r-1?f-r:0,f!==t+a&amp;&amp;(i.__u|=65536))):(o=u[t])&amp;&amp;null==o.key&amp;&amp;o.__e&amp;&amp;(o.__e==n.__d&amp;&amp;(n.__d=m(o)),N(o,o,!1),u[t]=null,s--);if(s)for(t=0;t&lt;c;t++)null!=(o=u[t])&amp;&amp;0==(131072&amp;o.__u)&amp;&amp;(o.__e==n.__d&amp;&amp;(n.__d=m(o)),N(o,o))}function S(n,l,u){var t,i;if("function"==typeof n.type){for(t=n.__k,i=0;t&amp;&amp;i&lt;t.length;i++)t[i]&amp;&amp;(t[i].__=n,l=S(t[i],l,u));return l}return n.__e!=l&amp;&amp;(u.insertBefore(n.__e,l||null),l=n.__e),l&amp;&amp;l.nextSibling}function $(n,l){return l=l||[],null==n||"boolean"==typeof n||(h(n)?n.some(function(n){$(n,l)}):l.push(n)),l}function H(n,l,u,t){var i=n.key,o=n.type,r=u-1,f=u+1,e=l[u];if(null===e||e&amp;&amp;i==e.key&amp;&amp;o===e.type)return u;if(t>(null!=e&amp;&amp;0==(131072&amp;e.__u)?1:0))for(;r>=0||f&lt;l.length;){if(r>=0){if((e=l[r])&amp;&amp;0==(131072&amp;e.__u)&amp;&amp;i==e.key&amp;&amp;o===e.type)return r;r--}if(f&lt;l.length){if((e=l[f])&amp;&amp;0==(131072&amp;e.__u)&amp;&amp;i==e.key&amp;&amp;o===e.type)return f;f++}}return-1}function I(n,l,u){"-"===l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||a.test(l)?u:u+"px"}function T(n,l,u,t,i){var o;n:if("style"===l)if("string"==typeof u)n.style.cssText=u;else{if("string"==typeof t&amp;&amp;(n.style.cssText=t=""),t)for(l in t)u&amp;&amp;l in u||I(n.style,l,"");if(u)for(l in u)t&amp;&amp;u[l]===t[l]||I(n.style,l,u[l])}else if("o"===l[0]&amp;&amp;"n"===l[1])o=l!==(l=l.replace(/(PointerCapture)$|Capture$/,"$1")),l=l.toLowerCase()in n?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=u,u?t?u.u=t.u:(u.u=Date.now(),n.addEventListener(l,o?D:A,o)):n.removeEventListener(l,o?D:A,o);else{if(i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!==l&amp;&amp;"height"!==l&amp;&amp;"href"!==l&amp;&amp;"list"!==l&amp;&amp;"form"!==l&amp;&amp;"tabIndex"!==l&amp;&amp;"download"!==l&amp;&amp;"rowSpan"!==l&amp;&amp;"colSpan"!==l&amp;&amp;"role"!==l&amp;&amp;l in n)try{n[l]=null==u?"":u;break n}catch(n){}"function"==typeof u||(null==u||!1===u&amp;&amp;"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,u))}}function A(n){var u=this.l[n.type+!1];if(n.t){if(n.t&lt;=u.u)return}else n.t=Date.now();return u(l.event?l.event(n):n)}function D(n){return this.l[n.type+!0](l.event?l.event(n):n)}function L(n,u,t,i,o,r,f,e,c,s){var a,p,y,d,_,m,k,w,x,P,S,$,H,I,T,A=u.type;if(void 0!==u.constructor)return null;128&amp;t.__u&amp;&amp;(c=!!(32&amp;t.__u),r=[e=u.__e=t.__e]),(a=l.__b)&amp;&amp;a(u);n:if("function"==typeof A)try{if(w=u.props,x=(a=A.contextType)&amp;&amp;i[a.__c],P=a?x?x.props.value:a.__:i,t.__c?k=(p=u.__c=t.__c).__=p.__E:("prototype"in A&amp;&amp;A.prototype.render?u.__c=p=new A(w,P):(u.__c=p=new b(w,P),p.constructor=A,p.render=O),x&amp;&amp;x.sub(p),p.props=w,p.state||(p.state={}),p.context=P,p.__n=i,y=p.__d=!0,p.__h=[],p._sb=[]),null==p.__s&amp;&amp;(p.__s=p.state),null!=A.getDerivedStateFromProps&amp;&amp;(p.__s==p.state&amp;&amp;(p.__s=v({},p.__s)),v(p.__s,A.getDerivedStateFromProps(w,p.__s))),d=p.props,_=p.state,p.__v=u,y)null==A.getDerivedStateFromProps&amp;&amp;null!=p.componentWillMount&amp;&amp;p.componentWillMount(),null!=p.componentDidMount&amp;&amp;p.__h.push(p.componentDidMount);else{if(null==A.getDerivedStateFromProps&amp;&amp;w!==d&amp;&amp;null!=p.componentWillReceiveProps&amp;&amp;p.componentWillReceiveProps(w,P),!p.__e&amp;&amp;(null!=p.shouldComponentUpdate&amp;&amp;!1===p.shouldComponentUpdate(w,p.__s,P)||u.__v===t.__v)){for(u.__v!==t.__v&amp;&amp;(p.props=w,p.state=p.__s,p.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.forEach(function(n){n&amp;&amp;(n.__=u)}),S=0;S&lt;p._sb.length;S++)p.__h.push(p._sb[S]);p._sb=[],p.__h.length&amp;&amp;f.push(p);break n}null!=p.componentWillUpdate&amp;&amp;p.componentWillUpdate(w,p.__s,P),null!=p.componentDidUpdate&amp;&amp;p.__h.push(function(){p.componentDidUpdate(d,_,m)})}if(p.context=P,p.props=w,p.__P=n,p.__e=!1,$=l.__r,H=0,"prototype"in A&amp;&amp;A.prototype.render){for(p.state=p.__s,p.__d=!1,$&amp;&amp;$(u),a=p.render(p.props,p.state,p.context),I=0;I&lt;p._sb.length;I++)p.__h.push(p._sb[I]);p._sb=[]}else do{p.__d=!1,$&amp;&amp;$(u),a=p.render(p.props,p.state,p.context),p.state=p.__s}while(p.__d&amp;&amp;++H&lt;25);p.state=p.__s,null!=p.getChildContext&amp;&amp;(i=v(v({},i),p.getChildContext())),y||null==p.getSnapshotBeforeUpdate||(m=p.getSnapshotBeforeUpdate(d,_)),C(n,h(T=null!=a&amp;&amp;a.type===g&amp;&amp;null==a.key?a.props.children:a)?T:[T],u,t,i,o,r,f,e,c,s),p.base=u.__e,u.__u&amp;=-161,p.__h.length&amp;&amp;f.push(p),k&amp;&amp;(p.__E=p.__=null)}catch(n){u.__v=null,c||null!=r?(u.__e=e,u.__u|=c?160:32,r[r.indexOf(e)]=null):(u.__e=t.__e,u.__k=t.__k),l.__e(n,u,t)}else null==r&amp;&amp;u.__v===t.__v?(u.__k=t.__k,u.__e=t.__e):u.__e=j(t.__e,u,t,i,o,r,f,c,s);(a=l.diffed)&amp;&amp;a(u)}function M(n,u,t){u.__d=void 0;for(var i=0;i&lt;t.length;i++)z(t[i],t[++i],t[++i]);l.__c&amp;&amp;l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u)})}catch(n){l.__e(n,u.__v)}})}function j(l,u,t,i,o,r,f,e,s){var a,v,y,d,_,g,b,k=t.props,w=u.props,x=u.type;if("svg"===x&amp;&amp;(o=!0),null!=r)for(a=0;a&lt;r.length;a++)if((_=r[a])&amp;&amp;"setAttribute"in _==!!x&amp;&amp;(x?_.localName===x:3===_.nodeType)){l=_,r[a]=null;break}if(null==l){if(null===x)return document.createTextNode(w);l=o?document.createElementNS("http://www.w3.org/2000/svg",x):document.createElement(x,w.is&amp;&amp;w),r=null,e=!1}if(null===x)k===w||e&amp;&amp;l.data===w||(l.data=w);else{if(r=r&amp;&amp;n.call(l.childNodes),k=t.props||c,!e&amp;&amp;null!=r)for(k={},a=0;a&lt;l.attributes.length;a++)k[(_=l.attributes[a]).name]=_.value;for(a in k)_=k[a],"children"==a||("dangerouslySetInnerHTML"==a?y=_:"key"===a||a in w||T(l,a,null,_,o));for(a in w)_=w[a],"children"==a?d=_:"dangerouslySetInnerHTML"==a?v=_:"value"==a?g=_:"checked"==a?b=_:"key"===a||e&amp;&amp;"function"!=typeof _||k[a]===_||T(l,a,_,k[a],o);if(v)e||y&amp;&amp;(v.__html===y.__html||v.__html===l.innerHTML)||(l.innerHTML=v.__html),u.__k=[];else if(y&amp;&amp;(l.innerHTML=""),C(l,h(d)?d:[d],u,t,i,o&amp;&amp;"foreignObject"!==x,r,f,r?r[0]:t.__k&amp;&amp;m(t,0),e,s),null!=r)for(a=r.length;a--;)null!=r[a]&amp;&amp;p(r[a]);e||(a="value",void 0!==g&amp;&amp;(g!==l[a]||"progress"===x&amp;&amp;!g||"option"===x&amp;&amp;g!==k[a])&amp;&amp;T(l,a,g,k[a],!1),a="checked",void 0!==b&amp;&amp;b!==l[a]&amp;&amp;T(l,a,b,k[a],!1))}return l}function z(n,u,t){try{"function"==typeof n?n(u):n.current=u}catch(n){l.__e(n,t)}}function N(n,u,t){var i,o;if(l.unmount&amp;&amp;l.unmount(n),(i=n.ref)&amp;&amp;(i.current&amp;&amp;i.current!==n.__e||z(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,u)}i.base=i.__P=null,n.__c=void 0}if(i=n.__k)for(o=0;o&lt;i.length;o++)i[o]&amp;&amp;N(i[o],u,t||"function"!=typeof n.type);t||null==n.__e||p(n.__e),n.__=n.__e=n.__d=void 0}function O(n,l,u){return this.constructor(n,u)}function q(u,t,i){var o,r,f,e;l.__&amp;&amp;l.__(u,t),r=(o="function"==typeof i)?null:i&amp;&amp;i.__k||t.__k,f=[],e=[],L(t,u=(!o&amp;&amp;i||t).__k=y(g,null,[u]),r||c,c,void 0!==t.ownerSVGElement,!o&amp;&amp;i?[i]:r?null:t.firstChild?n.call(t.childNodes):null,f,!o&amp;&amp;i?i:r?r.__e:t.firstChild,o,e),M(f,u,e)}function B(n,l){q(n,l,B)}function E(l,u,t){var i,o,r,f,e=v({},l.props);for(r in l.type&amp;&amp;l.type.defaultProps&amp;&amp;(f=l.type.defaultProps),u)"key"==r?i=u[r]:"ref"==r?o=u[r]:e[r]=void 0===u[r]&amp;&amp;void 0!==f?f[r]:u[r];return arguments.length>2&amp;&amp;(e.children=arguments.length>3?n.call(arguments,2):t),d(l.type,e,i||l.key,o||l.ref,null)}function F(n,l){var u={__c:l="__cC"+e++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var u,t;return this.getChildContext||(u=[],(t={})[l]=this,this.getChildContext=function(){return t},this.shouldComponentUpdate=function(n){this.props.value!==n.value&amp;&amp;u.some(function(n){n.__e=!0,w(n)})},this.sub=function(n){u.push(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){u.splice(u.indexOf(n),1),l&amp;&amp;l.call(n)}}),n.children}};return u.Provider.__=u.Consumer.contextType=u}n=s.slice,l={__e:function(n,l,u,t){for(var i,o,r;l=l.__;)if((i=l.__c)&amp;&amp;!i.__)try{if((o=i.constructor)&amp;&amp;null!=o.getDerivedStateFromError&amp;&amp;(i.setState(o.getDerivedStateFromError(n)),r=i.__d),null!=i.componentDidCatch&amp;&amp;(i.componentDidCatch(n,t||{}),r=i.__d),r)return i.__E=i}catch(l){n=l}throw n}},u=0,t=function(n){return null!=n&amp;&amp;null==n.constructor},b.prototype.setState=function(n,l){var u;u=null!=this.__s&amp;&amp;this.__s!==this.state?this.__s:this.__s=v({},this.state),"function"==typeof n&amp;&amp;(n=n(v({},u),this.props)),n&amp;&amp;v(u,n),null!=n&amp;&amp;this.__v&amp;&amp;(l&amp;&amp;this._sb.push(l),w(this))},b.prototype.forceUpdate=function(n){this.__v&amp;&amp;(this.__e=!0,n&amp;&amp;this.__h.push(n),w(this))},b.prototype.render=g,i=[],r="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,f=function(n,l){return n.__v.__b-l.__v.__b},x.__r=0,e=0;
+//# sourceMappingURL=preact.module.js.map
+
+
+/***/ }),
+
+/***/ "./client/styles/custom-panel.css":
+/*!****************************************!*\
+  !*** ./client/styles/custom-panel.css ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_custom_panel_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./custom-panel.css */ "./node_modules/css-loader/dist/cjs.js!./client/styles/custom-panel.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_custom_panel_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_custom_panel_css__WEBPACK_IMPORTED_MODULE_6__["default"] &amp;&amp; _node_modules_css_loader_dist_cjs_js_custom_panel_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_custom_panel_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
+  \****************************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var stylesInDOM = [];
+function getIndexByIdentifier(identifier) {
+  var result = -1;
+  for (var i = 0; i &lt; stylesInDOM.length; i++) {
+    if (stylesInDOM[i].identifier === identifier) {
+      result = i;
+      break;
+    }
+  }
+  return result;
+}
+function modulesToDom(list, options) {
+  var idCountMap = {};
+  var identifiers = [];
+  for (var i = 0; i &lt; list.length; i++) {
+    var item = list[i];
+    var id = options.base ? item[0] + options.base : item[0];
+    var count = idCountMap[id] || 0;
+    var identifier = "".concat(id, " ").concat(count);
+    idCountMap[id] = count + 1;
+    var indexByIdentifier = getIndexByIdentifier(identifier);
+    var obj = {
+      css: item[1],
+      media: item[2],
+      sourceMap: item[3],
+      supports: item[4],
+      layer: item[5]
+    };
+    if (indexByIdentifier !== -1) {
+      stylesInDOM[indexByIdentifier].references++;
+      stylesInDOM[indexByIdentifier].updater(obj);
+    } else {
+      var updater = addElementStyle(obj, options);
+      options.byIndex = i;
+      stylesInDOM.splice(i, 0, {
+        identifier: identifier,
+        updater: updater,
+        references: 1
+      });
+    }
+    identifiers.push(identifier);
+  }
+  return identifiers;
+}
+function addElementStyle(obj, options) {
+  var api = options.domAPI(options);
+  api.update(obj);
+  var updater = function updater(newObj) {
+    if (newObj) {
+      if (newObj.css === obj.css &amp;&amp; newObj.media === obj.media &amp;&amp; newObj.sourceMap === obj.sourceMap &amp;&amp; newObj.supports === obj.supports &amp;&amp; newObj.layer === obj.layer) {
+        return;
+      }
+      api.update(obj = newObj);
+    } else {
+      api.remove();
+    }
+  };
+  return updater;
+}
+module.exports = function (list, options) {
+  options = options || {};
+  list = list || [];
+  var lastIdentifiers = modulesToDom(list, options);
+  return function update(newList) {
+    newList = newList || [];
+    for (var i = 0; i &lt; lastIdentifiers.length; i++) {
+      var identifier = lastIdentifiers[i];
+      var index = getIndexByIdentifier(identifier);
+      stylesInDOM[index].references--;
+    }
+    var newLastIdentifiers = modulesToDom(newList, options);
+    for (var _i = 0; _i &lt; lastIdentifiers.length; _i++) {
+      var _identifier = lastIdentifiers[_i];
+      var _index = getIndexByIdentifier(_identifier);
+      if (stylesInDOM[_index].references === 0) {
+        stylesInDOM[_index].updater();
+        stylesInDOM.splice(_index, 1);
+      }
+    }
+    lastIdentifiers = newLastIdentifiers;
+  };
+};
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/insertBySelector.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/insertBySelector.js ***!
+  \********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var memo = {};
+
+/* istanbul ignore next  */
+function getTarget(target) {
+  if (typeof memo[target] === "undefined") {
+    var styleTarget = document.querySelector(target);
+
+    // Special case to return head of iframe instead of iframe itself
+    if (window.HTMLIFrameElement &amp;&amp; styleTarget instanceof window.HTMLIFrameElement) {
+      try {
+        // This will throw an exception if access to iframe is blocked
+        // due to cross-origin restrictions
+        styleTarget = styleTarget.contentDocument.head;
+      } catch (e) {
+        // istanbul ignore next
+        styleTarget = null;
+      }
+    }
+    memo[target] = styleTarget;
+  }
+  return memo[target];
+}
+
+/* istanbul ignore next  */
+function insertBySelector(insert, style) {
+  var target = getTarget(insert);
+  if (!target) {
+    throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+  }
+  target.appendChild(style);
+}
+module.exports = insertBySelector;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/insertStyleElement.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/insertStyleElement.js ***!
+  \**********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function insertStyleElement(options) {
+  var element = document.createElement("style");
+  options.setAttributes(element, options.attributes);
+  options.insert(element, options.options);
+  return element;
+}
+module.exports = insertStyleElement;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js ***!
+  \**********************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function setAttributesWithoutAttributes(styleElement) {
+  var nonce =  true ? __webpack_require__.nc : 0;
+  if (nonce) {
+    styleElement.setAttribute("nonce", nonce);
+  }
+}
+module.exports = setAttributesWithoutAttributes;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/styleDomAPI.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/styleDomAPI.js ***!
+  \***************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function apply(styleElement, options, obj) {
+  var css = "";
+  if (obj.supports) {
+    css += "@supports (".concat(obj.supports, ") {");
+  }
+  if (obj.media) {
+    css += "@media ".concat(obj.media, " {");
+  }
+  var needLayer = typeof obj.layer !== "undefined";
+  if (needLayer) {
+    css += "@layer".concat(obj.layer.length > 0 ? " ".concat(obj.layer) : "", " {");
+  }
+  css += obj.css;
+  if (needLayer) {
+    css += "}";
+  }
+  if (obj.media) {
+    css += "}";
+  }
+  if (obj.supports) {
+    css += "}";
+  }
+  var sourceMap = obj.sourceMap;
+  if (sourceMap &amp;&amp; typeof btoa !== "undefined") {
+    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
+  }
+
+  // For old IE
+  /* istanbul ignore if  */
+  options.styleTagTransform(css, styleElement, options.options);
+}
+function removeStyleElement(styleElement) {
+  // istanbul ignore if
+  if (styleElement.parentNode === null) {
+    return false;
+  }
+  styleElement.parentNode.removeChild(styleElement);
+}
+
+/* istanbul ignore next  */
+function domAPI(options) {
+  if (typeof document === "undefined") {
+    return {
+      update: function update() {},
+      remove: function remove() {}
+    };
+  }
+  var styleElement = options.insertStyleElement(options);
+  return {
+    update: function update(obj) {
+      apply(styleElement, options, obj);
+    },
+    remove: function remove() {
+      removeStyleElement(styleElement);
+    }
+  };
+}
+module.exports = domAPI;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/styleTagTransform.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/styleTagTransform.js ***!
+  \*********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function styleTagTransform(css, styleElement) {
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css;
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild);
+    }
+    styleElement.appendChild(document.createTextNode(css));
+  }
+}
+module.exports = styleTagTransform;
+
+/***/ }),
+
+/***/ "./node_modules/classnames/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/classnames/index.js ***!
+  \******************************************/
+/***/ ((module, exports) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	Copyright (c) 2018 Jed Watson.
+	Licensed under the MIT License (MIT), see
+	http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = '';
+
+		for (var i = 0; i &lt; arguments.length; i++) {
+			var arg = arguments[i];
+			if (arg) {
+				classes = appendClass(classes, parseValue(arg));
+			}
+		}
+
+		return classes;
+	}
+
+	function parseValue (arg) {
+		if (typeof arg === 'string' || typeof arg === 'number') {
+			return arg;
+		}
+
+		if (typeof arg !== 'object') {
+			return '';
+		}
+
+		if (Array.isArray(arg)) {
+			return classNames.apply(null, arg);
+		}
+
+		if (arg.toString !== Object.prototype.toString &amp;&amp; !arg.toString.toString().includes('[native code]')) {
+			return arg.toString();
+		}
+
+		var classes = '';
+
+		for (var key in arg) {
+			if (hasOwn.call(arg, key) &amp;&amp; arg[key]) {
+				classes = appendClass(classes, key);
+			}
+		}
+
+		return classes;
+	}
+
+	function appendClass (value, newClass) {
+		if (!newClass) {
+			return value;
+		}
+	
+		if (value) {
+			return value + ' ' + newClass;
+		}
+	
+		return value + newClass;
+	}
+
+	if ( true &amp;&amp; module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined &amp;&amp; (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+}());
+
+
+/***/ }),
+
+/***/ "./node_modules/min-dash/dist/index.esm.js":
+/*!*************************************************!*\
+  !*** ./node_modules/min-dash/dist/index.esm.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   assign: () => (/* binding */ assign),
+/* harmony export */   bind: () => (/* binding */ bind),
+/* harmony export */   debounce: () => (/* binding */ debounce),
+/* harmony export */   ensureArray: () => (/* binding */ ensureArray),
+/* harmony export */   every: () => (/* binding */ every),
+/* harmony export */   filter: () => (/* binding */ filter),
+/* harmony export */   find: () => (/* binding */ find),
+/* harmony export */   findIndex: () => (/* binding */ findIndex),
+/* harmony export */   flatten: () => (/* binding */ flatten),
+/* harmony export */   forEach: () => (/* binding */ forEach),
+/* harmony export */   get: () => (/* binding */ get),
+/* harmony export */   groupBy: () => (/* binding */ groupBy),
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   isArray: () => (/* binding */ isArray),
+/* harmony export */   isDefined: () => (/* binding */ isDefined),
+/* harmony export */   isFunction: () => (/* binding */ isFunction),
+/* harmony export */   isNil: () => (/* binding */ isNil),
+/* harmony export */   isNumber: () => (/* binding */ isNumber),
+/* harmony export */   isObject: () => (/* binding */ isObject),
+/* harmony export */   isString: () => (/* binding */ isString),
+/* harmony export */   isUndefined: () => (/* binding */ isUndefined),
+/* harmony export */   keys: () => (/* binding */ keys),
+/* harmony export */   map: () => (/* binding */ map),
+/* harmony export */   matchPattern: () => (/* binding */ matchPattern),
+/* harmony export */   merge: () => (/* binding */ merge),
+/* harmony export */   omit: () => (/* binding */ omit),
+/* harmony export */   pick: () => (/* binding */ pick),
+/* harmony export */   reduce: () => (/* binding */ reduce),
+/* harmony export */   set: () => (/* binding */ set),
+/* harmony export */   size: () => (/* binding */ size),
+/* harmony export */   some: () => (/* binding */ some),
+/* harmony export */   sortBy: () => (/* binding */ sortBy),
+/* harmony export */   throttle: () => (/* binding */ throttle),
+/* harmony export */   unionBy: () => (/* binding */ unionBy),
+/* harmony export */   uniqueBy: () => (/* binding */ uniqueBy),
+/* harmony export */   values: () => (/* binding */ values),
+/* harmony export */   without: () => (/* binding */ without)
+/* harmony export */ });
+/**
+ * Flatten array, one level deep.
+ *
+ * @template T
+ *
+ * @param {T[][] | T[] | null} [arr]
+ *
+ * @return {T[]}
+ */
+function flatten(arr) {
+  return Array.prototype.concat.apply([], arr);
+}
+
+const nativeToString = Object.prototype.toString;
+const nativeHasOwnProperty = Object.prototype.hasOwnProperty;
+
+function isUndefined(obj) {
+  return obj === undefined;
+}
+
+function isDefined(obj) {
+  return obj !== undefined;
+}
+
+function isNil(obj) {
+  return obj == null;
+}
+
+function isArray(obj) {
+  return nativeToString.call(obj) === '[object Array]';
+}
+
+function isObject(obj) {
+  return nativeToString.call(obj) === '[object Object]';
+}
+
+function isNumber(obj) {
+  return nativeToString.call(obj) === '[object Number]';
+}
+
+/**
+ * @param {any} obj
+ *
+ * @return {boolean}
+ */
+function isFunction(obj) {
+  const tag = nativeToString.call(obj);
+
+  return (
+    tag === '[object Function]' ||
+    tag === '[object AsyncFunction]' ||
+    tag === '[object GeneratorFunction]' ||
+    tag === '[object AsyncGeneratorFunction]' ||
+    tag === '[object Proxy]'
+  );
+}
+
+function isString(obj) {
+  return nativeToString.call(obj) === '[object String]';
+}
+
+
+/**
+ * Ensure collection is an array.
+ *
+ * @param {Object} obj
+ */
+function ensureArray(obj) {
+
+  if (isArray(obj)) {
+    return;
+  }
+
+  throw new Error('must supply array');
+}
+
+/**
+ * Return true, if target owns a property with the given key.
+ *
+ * @param {Object} target
+ * @param {String} key
+ *
+ * @return {Boolean}
+ */
+function has(target, key) {
+  return nativeHasOwnProperty.call(target, key);
+}
+
+/**
+ * @template T
+ * @typedef { (
+ *   ((e: T) => boolean) |
+ *   ((e: T, idx: number) => boolean) |
+ *   ((e: T, key: string) => boolean) |
+ *   string |
+ *   number
+ * ) } Matcher
+ */
+
+/**
+ * @template T
+ * @template U
+ *
+ * @typedef { (
+ *   ((e: T) => U) | string | number
+ * ) } Extractor
+ */
+
+
+/**
+ * @template T
+ * @typedef { (val: T, key: any) => boolean } MatchFn
+ */
+
+/**
+ * @template T
+ * @typedef { T[] } ArrayCollection
+ */
+
+/**
+ * @template T
+ * @typedef { { [key: string]: T } } StringKeyValueCollection
+ */
+
+/**
+ * @template T
+ * @typedef { { [key: number]: T } } NumberKeyValueCollection
+ */
+
+/**
+ * @template T
+ * @typedef { StringKeyValueCollection&lt;T> | NumberKeyValueCollection&lt;T> } KeyValueCollection
+ */
+
+/**
+ * @template T
+ * @typedef { KeyValueCollection&lt;T> | ArrayCollection&lt;T> } Collection
+ */
+
+/**
+ * Find element in collection.
+ *
+ * @template T
+ * @param {Collection&lt;T>} collection
+ * @param {Matcher&lt;T>} matcher
+ *
+ * @return {Object}
+ */
+function find(collection, matcher) {
+
+  const matchFn = toMatcher(matcher);
+
+  let match;
+
+  forEach(collection, function(val, key) {
+    if (matchFn(val, key)) {
+      match = val;
+
+      return false;
+    }
+  });
+
+  return match;
+
+}
+
+
+/**
+ * Find element index in collection.
+ *
+ * @template T
+ * @param {Collection&lt;T>} collection
+ * @param {Matcher&lt;T>} matcher
+ *
+ * @return {number}
+ */
+function findIndex(collection, matcher) {
+
+  const matchFn = toMatcher(matcher);
+
+  let idx = isArray(collection) ? -1 : undefined;
+
+  forEach(collection, function(val, key) {
+    if (matchFn(val, key)) {
+      idx = key;
+
+      return false;
+    }
+  });
+
+  return idx;
+}
+
+
+/**
+ * Filter elements in collection.
+ *
+ * @template T
+ * @param {Collection&lt;T>} collection
+ * @param {Matcher&lt;T>} matcher
+ *
+ * @return {T[]} result
+ */
+function filter(collection, matcher) {
+
+  const matchFn = toMatcher(matcher);
+
+  let result = [];
+
+  forEach(collection, function(val, key) {
+    if (matchFn(val, key)) {
+      result.push(val);
+    }
+  });
+
+  return result;
+}
+
+
+/**
+ * Iterate over collection; returning something
+ * (non-undefined) will stop iteration.
+ *
+ * @template T
+ * @param {Collection&lt;T>} collection
+ * @param { ((item: T, idx: number) => (boolean|void)) | ((item: T, key: string) => (boolean|void)) } iterator
+ *
+ * @return {T} return result that stopped the iteration
+ */
+function forEach(collection, iterator) {
+
+  let val,
+      result;
+
+  if (isUndefined(collection)) {
+    return;
+  }
+
+  const convertKey = isArray(collection) ? toNum : identity;
+
+  for (let key in collection) {
+
+    if (has(collection, key)) {
+      val = collection[key];
+
+      result = iterator(val, convertKey(key));
+
+      if (result === false) {
+        return val;
+      }
+    }
+  }
+}
+
+/**
+ * Return collection without element.
+ *
+ * @template T
+ * @param {ArrayCollection&lt;T>} arr
+ * @param {Matcher&lt;T>} matcher
+ *
+ * @return {T[]}
+ */
+function without(arr, matcher) {
+
+  if (isUndefined(arr)) {
+    return [];
+  }
+
+  ensureArray(arr);
+
+  const matchFn = toMatcher(matcher);
+
+  return arr.filter(function(el, idx) {
+    return !matchFn(el, idx);
+  });
+
+}
+
+
+/**
+ * Reduce collection, returning a single result.
+ *
+ * @template T
+ * @template V
+ *
+ * @param {Collection&lt;T>} collection
+ * @param {(result: V, entry: T, index: any) => V} iterator
+ * @param {V} result
+ *
+ * @return {V} result returned from last iterator
+ */
+function reduce(collection, iterator, result) {
+
+  forEach(collection, function(value, idx) {
+    result = iterator(result, value, idx);
+  });
+
+  return result;
+}
+
+
+/**
+ * Return true if every element in the collection
+ * matches the criteria.
+ *
+ * @param  {Object|Array} collection
+ * @param  {Function} matcher
+ *
+ * @return {Boolean}
+ */
+function every(collection, matcher) {
+
+  return !!reduce(collection, function(matches, val, key) {
+    return matches &amp;&amp; matcher(val, key);
+  }, true);
+}
+
+
+/**
+ * Return true if some elements in the collection
+ * match the criteria.
+ *
+ * @param  {Object|Array} collection
+ * @param  {Function} matcher
+ *
+ * @return {Boolean}
+ */
+function some(collection, matcher) {
+
+  return !!find(collection, matcher);
+}
+
+
+/**
+ * Transform a collection into another collection
+ * by piping each member through the given fn.
+ *
+ * @param  {Object|Array}   collection
+ * @param  {Function} fn
+ *
+ * @return {Array} transformed collection
+ */
+function map(collection, fn) {
+
+  let result = [];
+
+  forEach(collection, function(val, key) {
+    result.push(fn(val, key));
+  });
+
+  return result;
+}
+
+
+/**
+ * Get the collections keys.
+ *
+ * @param  {Object|Array} collection
+ *
+ * @return {Array}
+ */
+function keys(collection) {
+  return collection &amp;&amp; Object.keys(collection) || [];
+}
+
+
+/**
+ * Shorthand for `keys(o).length`.
+ *
+ * @param  {Object|Array} collection
+ *
+ * @return {Number}
+ */
+function size(collection) {
+  return keys(collection).length;
+}
+
+
+/**
+ * Get the values in the collection.
+ *
+ * @param  {Object|Array} collection
+ *
+ * @return {Array}
+ */
+function values(collection) {
+  return map(collection, (val) => val);
+}
+
+
+/**
+ * Group collection members by attribute.
+ *
+ * @param {Object|Array} collection
+ * @param {Extractor} extractor
+ *
+ * @return {Object} map with { attrValue => [ a, b, c ] }
+ */
+function groupBy(collection, extractor, grouped = {}) {
+
+  extractor = toExtractor(extractor);
+
+  forEach(collection, function(val) {
+    let discriminator = extractor(val) || '_';
+
+    let group = grouped[discriminator];
+
+    if (!group) {
+      group = grouped[discriminator] = [];
+    }
+
+    group.push(val);
+  });
+
+  return grouped;
+}
+
+
+function uniqueBy(extractor, ...collections) {
+
+  extractor = toExtractor(extractor);
+
+  let grouped = {};
+
+  forEach(collections, (c) => groupBy(c, extractor, grouped));
+
+  let result = map(grouped, function(val, key) {
+    return val[0];
+  });
+
+  return result;
+}
+
+
+const unionBy = uniqueBy;
+
+
+
+/**
+ * Sort collection by criteria.
+ *
+ * @template T
+ *
+ * @param {Collection&lt;T>} collection
+ * @param {Extractor&lt;T, number | string>} extractor
+ *
+ * @return {Array}
+ */
+function sortBy(collection, extractor) {
+
+  extractor = toExtractor(extractor);
+
+  let sorted = [];
+
+  forEach(collection, function(value, key) {
+    let disc = extractor(value, key);
+
+    let entry = {
+      d: disc,
+      v: value
+    };
+
+    for (var idx = 0; idx &lt; sorted.length; idx++) {
+      let { d } = sorted[idx];
+
+      if (disc &lt; d) {
+        sorted.splice(idx, 0, entry);
+        return;
+      }
+    }
+
+    // not inserted, append (!)
+    sorted.push(entry);
+  });
+
+  return map(sorted, (e) => e.v);
+}
+
+
+/**
+ * Create an object pattern matcher.
+ *
+ * @example
+ *
+ * ```javascript
+ * const matcher = matchPattern({ id: 1 });
+ *
+ * let element = find(elements, matcher);
+ * ```
+ *
+ * @template T
+ *
+ * @param {T} pattern
+ *
+ * @return { (el: any) =>  boolean } matcherFn
+ */
+function matchPattern(pattern) {
+
+  return function(el) {
+
+    return every(pattern, function(val, key) {
+      return el[key] === val;
+    });
+
+  };
+}
+
+
+/**
+ * @param {string | ((e: any) => any) } extractor
+ *
+ * @return { (e: any) => any }
+ */
+function toExtractor(extractor) {
+
+  /**
+   * @satisfies { (e: any) => any }
+   */
+  return isFunction(extractor) ? extractor : (e) => {
+
+    // @ts-ignore: just works
+    return e[extractor];
+  };
+}
+
+
+/**
+ * @template T
+ * @param {Matcher&lt;T>} matcher
+ *
+ * @return {MatchFn&lt;T>}
+ */
+function toMatcher(matcher) {
+  return isFunction(matcher) ? matcher : (e) => {
+    return e === matcher;
+  };
+}
+
+
+function identity(arg) {
+  return arg;
+}
+
+function toNum(arg) {
+  return Number(arg);
+}
+
+/* global setTimeout clearTimeout */
+
+/**
+ * @typedef { {
+ *   (...args: any[]): any;
+ *   flush: () => void;
+ *   cancel: () => void;
+ * } } DebouncedFunction
+ */
+
+/**
+ * Debounce fn, calling it only once if the given time
+ * elapsed between calls.
+ *
+ * Lodash-style the function exposes methods to `#clear`
+ * and `#flush` to control internal behavior.
+ *
+ * @param  {Function} fn
+ * @param  {Number} timeout
+ *
+ * @return {DebouncedFunction} debounced function
+ */
+function debounce(fn, timeout) {
+
+  let timer;
+
+  let lastArgs;
+  let lastThis;
+
+  let lastNow;
+
+  function fire(force) {
+
+    let now = Date.now();
+
+    let scheduledDiff = force ? 0 : (lastNow + timeout) - now;
+
+    if (scheduledDiff > 0) {
+      return schedule(scheduledDiff);
+    }
+
+    fn.apply(lastThis, lastArgs);
+
+    clear();
+  }
+
+  function schedule(timeout) {
+    timer = setTimeout(fire, timeout);
+  }
+
+  function clear() {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = lastNow = lastArgs = lastThis = undefined;
+  }
+
+  function flush() {
+    if (timer) {
+      fire(true);
+    }
+
+    clear();
+  }
+
+  /**
+   * @type { DebouncedFunction }
+   */
+  function callback(...args) {
+    lastNow = Date.now();
+
+    lastArgs = args;
+    lastThis = this;
+
+    // ensure an execution is scheduled
+    if (!timer) {
+      schedule(timeout);
+    }
+  }
+
+  callback.flush = flush;
+  callback.cancel = clear;
+
+  return callback;
+}
+
+/**
+ * Throttle fn, calling at most once
+ * in the given interval.
+ *
+ * @param  {Function} fn
+ * @param  {Number} interval
+ *
+ * @return {Function} throttled function
+ */
+function throttle(fn, interval) {
+  let throttling = false;
+
+  return function(...args) {
+
+    if (throttling) {
+      return;
+    }
+
+    fn(...args);
+    throttling = true;
+
+    setTimeout(() => {
+      throttling = false;
+    }, interval);
+  };
+}
+
+/**
+ * Bind function against target &lt;this>.
+ *
+ * @param  {Function} fn
+ * @param  {Object}   target
+ *
+ * @return {Function} bound function
+ */
+function bind(fn, target) {
+  return fn.bind(target);
+}
+
+/**
+ * Convenience wrapper for `Object.assign`.
+ *
+ * @param {Object} target
+ * @param {...Object} others
+ *
+ * @return {Object} the target
+ */
+function assign(target, ...others) {
+  return Object.assign(target, ...others);
+}
+
+/**
+ * Sets a nested property of a given object to the specified value.
+ *
+ * This mutates the object and returns it.
+ *
+ * @template T
+ *
+ * @param {T} target The target of the set operation.
+ * @param {(string|number)[]} path The path to the nested value.
+ * @param {any} value The value to set.
+ *
+ * @return {T}
+ */
+function set(target, path, value) {
+
+  let currentTarget = target;
+
+  forEach(path, function(key, idx) {
+
+    if (typeof key !== 'number' &amp;&amp; typeof key !== 'string') {
+      throw new Error('illegal key type: ' + typeof key + '. Key should be of type number or string.');
+    }
+
+    if (key === 'constructor') {
+      throw new Error('illegal key: constructor');
+    }
+
+    if (key === '__proto__') {
+      throw new Error('illegal key: __proto__');
+    }
+
+    let nextKey = path[idx + 1];
+    let nextTarget = currentTarget[key];
+
+    if (isDefined(nextKey) &amp;&amp; isNil(nextTarget)) {
+      nextTarget = currentTarget[key] = isNaN(+nextKey) ? {} : [];
+    }
+
+    if (isUndefined(nextKey)) {
+      if (isUndefined(value)) {
+        delete currentTarget[key];
+      } else {
+        currentTarget[key] = value;
+      }
+    } else {
+      currentTarget = nextTarget;
+    }
+  });
+
+  return target;
+}
+
+
+/**
+ * Gets a nested property of a given object.
+ *
+ * @param {Object} target The target of the get operation.
+ * @param {(string|number)[]} path The path to the nested value.
+ * @param {any} [defaultValue] The value to return if no value exists.
+ *
+ * @return {any}
+ */
+function get(target, path, defaultValue) {
+
+  let currentTarget = target;
+
+  forEach(path, function(key) {
+
+    // accessing nil property yields &lt;undefined>
+    if (isNil(currentTarget)) {
+      currentTarget = undefined;
+
+      return false;
+    }
+
+    currentTarget = currentTarget[key];
+  });
+
+  return isUndefined(currentTarget) ? defaultValue : currentTarget;
+}
+
+/**
+ * Pick properties from the given target.
+ *
+ * @template T
+ * @template {any[]} V
+ *
+ * @param {T} target
+ * @param {V} properties
+ *
+ * @return Pick&lt;T, V>
+ */
+function pick(target, properties) {
+
+  let result = {};
+
+  let obj = Object(target);
+
+  forEach(properties, function(prop) {
+
+    if (prop in obj) {
+      result[prop] = target[prop];
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Pick all target properties, excluding the given ones.
+ *
+ * @template T
+ * @template {any[]} V
+ *
+ * @param {T} target
+ * @param {V} properties
+ *
+ * @return {Omit&lt;T, V>} target
+ */
+function omit(target, properties) {
+
+  let result = {};
+
+  let obj = Object(target);
+
+  forEach(obj, function(prop, key) {
+
+    if (properties.indexOf(key) === -1) {
+      result[key] = prop;
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Recursively merge `...sources` into given target.
+ *
+ * Does support merging objects; does not support merging arrays.
+ *
+ * @param {Object} target
+ * @param {...Object} sources
+ *
+ * @return {Object} the target
+ */
+function merge(target, ...sources) {
+
+  if (!sources.length) {
+    return target;
+  }
+
+  forEach(sources, function(source) {
+
+    // skip non-obj sources, i.e. null
+    if (!source || !isObject(source)) {
+      return;
+    }
+
+    forEach(source, function(sourceVal, key) {
+
+      if (key === '__proto__') {
+        return;
+      }
+
+      let targetVal = target[key];
+
+      if (isObject(sourceVal)) {
+
+        if (!isObject(targetVal)) {
+
+          // override target[key] with object
+          targetVal = {};
+        }
+
+        target[key] = merge(targetVal, sourceVal);
+      } else {
+        target[key] = sourceVal;
+      }
+
+    });
+  });
+
+  return target;
+}
+
+
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module &amp;&amp; module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) &amp;&amp; !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' &amp;&amp; Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/nonce */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nc = undefined;
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!**************************!*\
+  !*** ./client/client.js ***!
+  \**************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! camunda-modeler-plugin-helpers */ "./node_modules/camunda-modeler-plugin-helpers/index.js");
+/* harmony import */ var _properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./properties-panel */ "./client/properties-panel/index.js");
+/* harmony import */ var _styles_custom_panel_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/custom-panel.css */ "./client/styles/custom-panel.css");
+// client/client.js
+
+
+
+(0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerPlatformBpmnJSPlugin)(_properties_panel__WEBPACK_IMPORTED_MODULE_1__["default"]);
+})();
+
+/******/ })()
+;
+//# sourceMappingURL=client-bundle.js.map</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:47:37 GMT-0300 (Horário Padrão de Brasília)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>props/mapping-metadata-props.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a><ul class='members'><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li></ul></li><li></li><li><a href="module.exports_module.exports.html">exports</a></li><li></li></ul><h3>Global</h3><ul><li><a href="global.html#ActivityFieldsetProps">ActivityFieldsetProps</a></li><li><a href="global.html#BpmnFactory">BpmnFactory</a></li><li><a href="global.html#Bpmnjs">Bpmnjs</a></li><li><a href="global.html#CamundaProperties">CamundaProperties</a></li><li><a href="global.html#CamundaProperty">CamundaProperty</a></li><li><a href="global.html#CombinedEntryProps">CombinedEntryProps</a></li><li><a href="global.html#CombinedInputRadioEntryProps">CombinedInputRadioEntryProps</a></li><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#DateFieldConfig">DateFieldConfig</a></li><li><a href="global.html#Element">Element</a></li><li><a href="global.html#ElementRegistry">ElementRegistry</a></li><li><a href="global.html#EntryConfig">EntryConfig</a></li><li><a href="global.html#EntryOption">EntryOption</a></li><li><a href="global.html#EventBus">EventBus</a></li><li><a href="global.html#ExtensionElements">ExtensionElements</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#GroupsProcessor">GroupsProcessor</a></li><li><a href="global.html#IndicatorGroupConfig">IndicatorGroupConfig</a></li><li><a href="global.html#IndicatorProperty">IndicatorProperty</a></li><li><a href="global.html#IndicatorPropertyOptions">IndicatorPropertyOptions</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#Injector">Injector</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ModdleElement">ModdleElement</a></li><li><a href="global.html#Modeling">Modeling</a></li><li><a href="global.html#ModelingService">ModelingService</a></li><li><a href="global.html#MultiSelectEntryProps">MultiSelectEntryProps</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertiesPanel">PropertiesPanel</a></li><li><a href="global.html#PropertiesPanelTab">PropertiesPanelTab</a></li><li><a href="global.html#PropertyGroup">PropertyGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#PropertyItemConfig">PropertyItemConfig</a></li><li><a href="global.html#RadioEntryProps">RadioEntryProps</a></li><li><a href="global.html#RadioOption">RadioOption</a></li><li><a href="global.html#SelectOption">SelectOption</a></li><li><a href="global.html#TextFieldConfig">TextFieldConfig</a></li><li><a href="global.html#Translate">Translate</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">props/mapping-metadata-props.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Group } from '@bpmn-io/properties-panel';
+import {
+  GenericTextFieldEntry,
+  GenericTextAreaEntry,
+  GenericRadioEntry,
+  GenericDateFieldEntry
+} from './generic-entries';
+
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} Injector O injetor de dependências do Camunda Modeler.
+ */
+
+/**
+ * @typedef {Object} PropertyGroup
+ * @property {string} id - O ID único do grupo.
+ * @property {string} label - O rótulo do grupo exibido na interface.
+ * @property {Function} component - O componente React/Preact para renderizar o grupo.
+ * @property {Array&lt;EntryConfig>} entries - Lista de entradas de propriedade para o grupo.
+ */
+
+/**
+ * @typedef {Object} EntryConfig
+ * @property {string} id - ID único da entrada
+ * @property {Function} component - Função que retorna o componente React/Preact para renderizar a entrada
+ */
+
+/**
+ * @typedef {Object} EntryOption
+ * @property {string} value - O valor interno da opção
+ * @property {string} label - O rótulo exibido para o usuário
+ */
+
+/**
+ * Valida o formato do Número do OS.
+ * O formato esperado é OS&lt;numero>/&lt;ano> (ex: OS123/2023).
+ * 
+ * @param {string} value - O valor a ser validado
+ * @returns {string|null} Mensagem de erro se inválido, null se válido ou vazio
+ */
+function validateOsNumber(value) {
+  if (!value) return null; // Permite campo vazio, se for opcional
+
+  const osPattern = /^OS\d+\/\d{4}$/;
+  if (!osPattern.test(value)) {
+    return 'Formato inválido. Use OS&lt;numero>/&lt;ano> (ex: OS123/2023).';
+  }
+  return null; // Formato válido
+}
+
+/**
+ * Cria o grupo de propriedades "Metadados do Mapeamento" para o painel de propriedades.
+ * Este grupo contém campos para documentar informações sobre o mapeamento do processo, incluindo:
+ * - Número do OS
+ * - Versão do documento
+ * - Data do mapeamento
+ * - Tipo de mapeamento (AS-IS/TO-BE)
+ * - Equipe responsável pelo mapeamento
+ * 
+ * Este grupo só é exibido para elementos do tipo 'bpmn:Definitions'.
+ * 
+ * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
+ * @param {Injector} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {PropertyGroup|null} Grupo de propriedades configurado para o painel, ou null se não aplicável.
+ */
+export function MappingMetadataGroup(element, injector) {
+  const translate = injector.get('translate');
+
+  // Só exibe o grupo se o elemento for do tipo Definitions
+  if (!element || element.$type !== 'bpmn:Definitions') {
+    return null;
+  }
+
+  /**
+   * Lista de entradas (fields) exibidas no grupo "Metadados do Mapeamento".
+   * Cada entrada representa um campo ou conjunto de campos relacionados.
+   * @type {Array&lt;EntryConfig>}
+   */
+  const entries = [
+    /**
+     * Campo para o número da OS.
+     * Inclui validação de formato e tooltip explicativo.
+     */
+    {
+      id: 'mapping-osNumber',
+      component: props => GenericTextFieldEntry({
+        ...props,
+        element,
+        id: 'mapping-osNumber',
+        propertyName: 'metaMapeamento:osNumber',
+        label: 'Número do OS',
+        tooltip: 'Use o formato OS&lt;numero>/&lt;ano> (ex: OS123/2023)',
+        validate: validateOsNumber
+      })
+    },
+    /**
+     * Campo para a versão do documento de mapeamento.
+     */
+    {
+      id: 'mapping-version',
+      component: props => GenericTextFieldEntry({
+        ...props,
+        element,
+        id: 'mapping-version',
+        propertyName: 'metaMapeamento:versaoDocumento',
+        label: 'Versão do Mapeamento'
+      })
+    },
+    /**
+     * Campo de data do mapeamento.
+     * Utiliza formato brasileiro de data (DD/MM/YYYY).
+     */
+    {
+      id: 'mapping-date',
+      component: props => GenericDateFieldEntry({
+        ...props,
+        element,
+        id: 'mapping-date',
+        propertyName: 'metaMapeamento:dataDocumento',
+        label: 'Data do Mapeamento',
+        dateFormat: 'DD/MM/YYYY',
+        tooltip: 'Use o formato DD/MM/YYYY',
+        disableDebounce: true
+      })
+    },
+    /**
+     * Campo de seleção do tipo de mapeamento.
+     * Permite escolher entre mapeamento da situação atual (AS-IS) 
+     * ou situação futura (TO-BE).
+     */
+    {
+      id: 'process-mapping-type',
+      component: props => GenericRadioEntry({
+        ...props,
+        element,
+        id: 'process-mapping-type',
+        propertyName: 'metaMapeamento:tipoMapeamento',
+        label: 'Tipo de mapeamento',
+        options: [
+          { value: 'AS-IS', label: 'Situação Atual' },
+          { value: 'TO-BE', label: 'Situação Futura' }
+        ]
+      })
+    },
+    /**
+     * Campo para o gestor do processo na equipe de mapeamento.
+     */
+    {
+      id: 'team-process-manager',
+      component: props => GenericTextFieldEntry({
+        ...props,
+        element,
+        id: 'team-process-manager',
+        propertyName: 'metaMapeamento:equipeGestor',
+        label: 'Equipe de Mapeamento - Gestor de Processo'
+      })
+    },
+    /**
+     * Campo para o gerente de processos na equipe de mapeamento.
+     */
+    {
+      id: 'team-bpm-manager',
+      component: props => GenericTextFieldEntry({
+        ...props,
+        element,
+        id: 'team-bpm-manager',
+        propertyName: 'metaMapeamento:equipeGerente',
+        label: 'Equipe de Mapeamento - Gerente de Processos'
+      })
+    },
+    /**
+     * Campo de texto multilinha para listar os consultores 
+     * envolvidos no mapeamento do processo.
+     */
+    {
+      id: 'team-consultants',
+      component: props => GenericTextAreaEntry({
+        ...props,
+        element,
+        id: 'team-consultants',
+        propertyName: 'metaMapeamento:equipeConsultores',
+        label: 'Equipe de Mapeamento - Consultores'
+      })
+    }
+  ];
+
+  return {
+    id: 'mapping-metadata',
+    label: translate('Metadados do Mapeamento'),
+    component: Group,
+    entries
+  };
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:48:54 GMT-0300 (Horário Padrão de Brasília) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

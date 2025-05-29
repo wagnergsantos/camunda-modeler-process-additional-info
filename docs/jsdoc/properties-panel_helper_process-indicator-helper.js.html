@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: properties-panel/helper/process-indicator-helper.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: properties-panel/helper/process-indicator-helper.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  getExtensionElements,
+  getCamundaProperties,
+  createExtensionElements,
+  createCamundaProperties
+} from './extensions-helper';
+
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @property {string} name - Nome do elemento
+ * @property {string} value - Valor do elemento
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} IndicatorProperty
+ * @property {string} id - Identificador único do indicador
+ * @property {string} type - Tipo do indicador (geralmente 'processo:indicadores')
+ * @property {string} nome - Nome do indicador
+ * @property {string} objetivo - Objetivo do indicador
+ * @property {string} formula - Fórmula de cálculo do indicador
+ * @property {string} meta - Meta estabelecida para o indicador
+ * @property {string} ultimaMedicao - Última medição registrada
+ * @property {string} resultado - Resultado atual do indicador
+ */
+
+/**
+ * @typedef {Object} IndicatorPropertyOptions
+ * @property {string} name - Nome da propriedade
+ * @property {string} type - Tipo da propriedade
+ * @property {string} [nome=''] - Nome do indicador
+ * @property {string} [objetivo=''] - Objetivo do indicador
+ * @property {string} [formula=''] - Fórmula de cálculo
+ * @property {string} [meta=''] - Meta estabelecida
+ * @property {string} [ultimaMedicao=''] - Última medição
+ * @property {string} [resultado=''] - Resultado atual
+ */
+
+/**
+ * Verifica se uma determinada propriedade representa um indicador de processo.
+ * A verificação é feita através do padrão do nome da propriedade.
+ *
+ * @param {Object} prop - Objeto da propriedade a ser verificada
+ * @param {string} prop.name - Nome da propriedade
+ * @returns {boolean} Retorna true se a propriedade for um indicador de processo
+ * 
+ * @example
+ * if (isIndicatorProperty({ name: 'processo:indicadores:123' })) {
+ *   // tratar como indicador
+ * }
+ */
+export function isIndicatorProperty(prop) {
+  const { name } = prop;
+  return /^(processo:indicadores):/.test(name);
+}
+
+/**
+ * Tenta fazer o parse de um valor de propriedade de indicador como JSON.
+ * Se falhar, retorna um objeto vazio.
+ *
+ * @param {string} value - Valor da propriedade a ser parseado
+ * @returns {Object} Objeto parseado ou objeto vazio em caso de erro
+ */
+export function parseIndicatorPropertyValue(value) {
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return {};
+  }
+}
+
+/**
+ * Analisa uma propriedade de indicador e extrai suas informações.
+ * O formato esperado é:
+ * &lt;camunda:property name="{processo:indicadores}:$id" value="$nome;$objetivo;$formula;$meta;$ultimaMedicao;$resultado" />
+ *
+ * @param {ModdleElement} prop - Propriedade do indicador
+ * @returns {IndicatorProperty} Objeto com as informações do indicador
+ * 
+ * @example
+ * const indicator = parseIndicatorProperty(someProperty);
+ * console.log(indicator.nome, indicator.objetivo);
+ */
+export function parseIndicatorProperty(prop) {
+  const [
+    _0,
+    type,
+    name
+  ] = /^(processo:indicadores):(.*)/.exec(prop.name);
+
+  // value: nome;objetivo;formula;meta;ultimaMedicao;resultado
+  const [nome = '', objetivo = '', formula = '', meta = '', ultimaMedicao = '', resultado = ''] = (prop.value || '').split(';');
+
+  return {
+    id: name,
+    type,
+    nome,
+    objetivo,
+    formula,
+    meta,
+    ultimaMedicao,
+    resultado
+  };
+}
+
+/**
+ * Monta os campos para a propriedade do indicador.
+ * Combina todos os campos em uma string formatada adequadamente.
+ *
+ * @param {IndicatorPropertyOptions} options - Opções para construir a propriedade
+ * @returns {Object} Objeto com name e value formatados para o indicador
+ * 
+ * @example
+ * const props = getIndicatorPropertyProps({
+ *   name: '123',
+ *   type: 'processo:indicadores',
+ *   nome: 'Indicador X',
+ *   objetivo: 'Medir X'
+ * });
+ */
+export function getIndicatorPropertyProps(options) {
+  var {
+    name,
+    type,
+    nome = '',
+    objetivo = '',
+    formula = '',
+    meta = '',
+    ultimaMedicao = '',
+    resultado = ''
+  } = options;
+
+  var propertyName = `${type}:${name}`;
+  var propertyValue = [nome, objetivo, formula, meta, ultimaMedicao, resultado].join(';');
+
+  return {
+    name: propertyName,
+    value: propertyValue
+  };
+}
+
+/**
+ * Cria uma nova propriedade de indicador usando a fábrica BPMN.
+ *
+ * @param {Object} factory - Fábrica BPMN para criar elementos
+ * @param {IndicatorPropertyOptions} options - Opções para o indicador
+ * @returns {ModdleElement} Nova propriedade de indicador
+ */
+export function createIndicatorProperty(factory, options) {
+  return factory.create('camunda:Property', getIndicatorPropertyProps(options));
+}
+
+/**
+ * Atualiza uma propriedade de indicador existente.
+ * Preserva os valores existentes e aplica apenas as alterações necessárias.
+ *
+ * @param {ModdleElement} element - Elemento BPMN que contém o indicador
+ * @param {ModdleElement} property - Propriedade do indicador a ser atualizada
+ * @param {Object} newProps - Novas propriedades a serem aplicadas
+ * @param {Object} modeling - Serviço de modelagem BPMN
+ * @returns {Object} Resultado da operação de atualização
+ */
+export function updateIndicatorProperty(element, property, newProps, modeling) {
+  const currentProps = parseIndicatorProperty(property);
+
+  const props = getIndicatorPropertyProps({
+    ...currentProps,
+    ...newProps
+  });
+
+  return modeling.updateModdleProperties(element, property, props);
+}
+
+/**
+ * Garante que o elemento tenha as estruturas necessárias para propriedades Camunda.
+ * Cria extensionElements e camunda:Properties se não existirem.
+ *
+ * @param {ModdleElement} element - Elemento BPMN
+ * @param {Object} bpmnFactory - Fábrica para criar elementos BPMN
+ * @param {Object} modeling - Serviço de modelagem BPMN
+ * @returns {ModdleElement} Elemento camunda:Properties garantido
+ * 
+ * @example
+ * const camundaProps = ensureCamundaProperties(element, bpmnFactory, modeling);
+ * // Agora podemos adicionar propriedades com segurança
+ */
+export function ensureCamundaProperties(element, bpmnFactory, modeling) {
+  let extensionElements = getExtensionElements(element);
+  if (!extensionElements) {
+    extensionElements = createExtensionElements(element, bpmnFactory);
+    modeling.updateModdleProperties(element, element, { extensionElements });
+  }
+  let camundaProperties = getCamundaProperties(element);
+  if (!camundaProperties) {
+    camundaProperties = createCamundaProperties(extensionElements, bpmnFactory, { values: [] });
+    extensionElements.values.push(camundaProperties);
+    modeling.updateModdleProperties(element, extensionElements, { values: extensionElements.get('values') });
+  }
+  return camundaProperties;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:47:37 GMT-0300 (Horário Padrão de Brasília)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

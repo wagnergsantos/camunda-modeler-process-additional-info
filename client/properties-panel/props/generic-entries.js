@@ -7,23 +7,72 @@ import { Description, Tooltip } from '@bpmn-io/properties-panel';
 import classNames from 'classnames';
 
 /**
- * Cria um campo de texto genérico para o painel de propriedades.
- * @param {Object} params
- * @param {ModdleElement} params.element - Elemento BPMN.
- * @param {string} params.id - Identificador único do campo.
- * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
- * @param {string} params.label - Rótulo exibido.
- * @param {Function} [params.validate] - Função de validação opcional.
- * @param {string} [params.tooltip] - Texto de ajuda opcional.
- * @param {boolean} [params.onlyInt] - Se verdadeiro, permite apenas números inteiros.
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
  */
-export function GenericTextFieldEntry({ element, id, propertyName, label, validate, tooltip, onlyInt, disableDebounce, enableStandardDebounce, description }) { // Adicione tooltip e description
+
+/**
+ * @typedef {Object} EntryOption
+ * @property {string} value - O valor interno da opção
+ * @property {string} label - O rótulo exibido para o usuário
+ */
+
+/**
+ * @typedef {Object} TextFieldConfig
+ * @property {ModdleElement} element - Elemento BPMN
+ * @property {string} id - Identificador único do campo
+ * @property {string} propertyName - Nome da propriedade a ser manipulada
+ * @property {string|Object} label - Rótulo exibido (string ou componente React/Preact)
+ * @property {Function} [validate] - Função de validação opcional
+ * @property {string} [tooltip] - Texto de ajuda opcional
+ * @property {boolean} [onlyInt] - Se verdadeiro, permite apenas números inteiros
+ * @property {boolean} [disableDebounce] - Se verdadeiro, desativa o debounce
+ * @property {boolean} [enableStandardDebounce] - Se verdadeiro, usa o debounce padrão
+ * @property {string} [description] - Descrição adicional do campo
+ */
+
+/**
+ * @typedef {Object} DateFieldConfig
+ * @property {ModdleElement} element - Elemento BPMN
+ * @property {string} id - Identificador único do campo
+ * @property {string} propertyName - Nome da propriedade a ser manipulada
+ * @property {string} label - Rótulo exibido
+ * @property {boolean} [disabled] - Se verdadeiro, desabilita o campo
+ * @property {string} [tooltip] - Texto de ajuda opcional
+ * @property {string} [description] - Descrição opcional
+ * @property {string} [dateFormat] - Formato da data (ex: 'DD/MM/YYYY')
+ */
+
+/**
+ * Cria um campo de texto genérico para o painel de propriedades.
+ * Suporta validação, formatação de números inteiros e tooltips.
+ * 
+ * @param {TextFieldConfig} params - Configurações do campo de texto
+ * @returns {Object} Componente de campo de texto configurado
+ */
+export function GenericTextFieldEntry({ 
+  element, 
+  id, 
+  propertyName, 
+  label, 
+  validate, 
+  tooltip, 
+  onlyInt, 
+  disableDebounce, 
+  enableStandardDebounce, 
+  description 
+}) {
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounceInputService = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // ... (lógica do internalSetValue e debounceFunctionToUse) ...
+  /**
+   * Função interna para manipular a atualização do valor,
+   * incluindo validação de números inteiros se necessário.
+   * 
+   * @param {string} value - Valor a ser definido
+   */
   const internalSetValue = (value) => {
     let v = value;
     if (onlyInt) v = v.replace(/\D/g, '');
@@ -38,9 +87,8 @@ export function GenericTextFieldEntry({ element, id, propertyName, label, valida
   } else if (enableStandardDebounce) {
     debounceFunctionToUse = debounceInputService;
   } else {
-    debounceFunctionToUse = debounceInputService; // Ou sua lógica de debounce customizado
+    debounceFunctionToUse = debounceInputService;
   }
-
 
   return TextFieldEntry({
     element,
@@ -53,20 +101,25 @@ export function GenericTextFieldEntry({ element, id, propertyName, label, valida
       const error = validate(value);
       return error ? translate(error) : null;
     } : undefined,
-    tooltip: tooltip ? translate(tooltip) : undefined, // Passe o tooltip traduzido
-    description: description ? translate(description) : undefined // Passe a descrição traduzida
+    tooltip: tooltip ? translate(tooltip) : undefined,
+    description: description ? translate(description) : undefined
   });
 }
 
 /**
  * Cria um campo de área de texto genérico para o painel de propriedades.
- * @param {Object} params
- * @param {ModdleElement} params.element - Elemento BPMN.
- * @param {string} params.id - Identificador único do campo.
- * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
- * @param {string} params.label - Rótulo exibido.
+ * Suporta múltiplas linhas de texto com tooltips e descrições.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {string} [params.tooltip] - Texto de ajuda opcional
+ * @param {string} [params.description] - Descrição adicional opcional
+ * @returns {Object} Componente de área de texto configurado
  */
-export function GenericTextAreaEntry({ element, id, propertyName, label, tooltip, description }) { // Adicione tooltip e description aqui
+export function GenericTextAreaEntry({ element, id, propertyName, label, tooltip, description }) {
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounceInput = useService('debounceInput');
@@ -79,19 +132,22 @@ export function GenericTextAreaEntry({ element, id, propertyName, label, tooltip
     getValue: () => getFixedProperty(element, propertyName),
     setValue: value => setFixedProperty(element, propertyName, value, modeling, bpmnFactory),
     debounce: debounceInput,
-    tooltip: tooltip ? translate(tooltip) : undefined, // Passe o tooltip traduzido
-    description: description ? translate(description) : undefined // Passe a descrição traduzida
+    tooltip: tooltip ? translate(tooltip) : undefined,
+    description: description ? translate(description) : undefined
   });
 }
 
 /**
  * Cria um campo de seleção por rádio genérico para o painel de propriedades.
- * @param {Object} params
- * @param {ModdleElement} params.element - Elemento BPMN.
- * @param {string} params.id - Identificador único do campo.
- * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
- * @param {string} params.label - Rótulo exibido.
- * @param {Array<{value: string, label: string}>} params.options - Opções disponíveis.
+ * Permite selecionar uma única opção entre várias disponíveis.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {Array<EntryOption>} params.options - Opções disponíveis
+ * @returns {Object} Componente de radio button configurado
  */
 export function GenericRadioEntry({ element, id, propertyName, label, options }) {
   const modeling = useService('modeling');
@@ -101,7 +157,7 @@ export function GenericRadioEntry({ element, id, propertyName, label, options })
   return RadioEntry({
     element,
     id,
-    label: label ? translate(label) : '', // <-- Evita erro se label for undefined
+    label: label ? translate(label) : '',
     getValue: () => getFixedProperty(element, propertyName),
     setValue: value => setFixedProperty(element, propertyName, value, modeling, bpmnFactory),
     getOptions: () => options.map(opt => ({ value: opt.value, label: translate(opt.label) }))
@@ -110,12 +166,15 @@ export function GenericRadioEntry({ element, id, propertyName, label, options })
 
 /**
  * Cria um campo de seleção (dropdown) genérico para o painel de propriedades.
- * @param {Object} params
- * @param {ModdleElement} params.element - Elemento BPMN.
- * @param {string} params.id - Identificador único do campo.
- * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
- * @param {string} params.label - Rótulo exibido.
- * @param {Array<{value: string, label: string}>} params.options - Opções disponíveis.
+ * Permite selecionar uma opção de uma lista suspensa.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {Array<EntryOption>} params.options - Opções disponíveis
+ * @returns {Object} Componente de select configurado
  */
 export function GenericSelectEntry({ element, id, propertyName, label, options }) {
   const modeling = useService('modeling');
@@ -136,18 +195,36 @@ export function GenericSelectEntry({ element, id, propertyName, label, options }
 
 /**
  * Cria um campo de seleção múltipla genérico para o painel de propriedades.
+ * Permite selecionar múltiplas opções de uma lista.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {Array<EntryOption>} params.options - Opções disponíveis
+ * @param {string} [params.description] - Descrição adicional opcional
+ * @returns {Object} Componente de seleção múltipla configurado
  */
 export function GenericMultiSelectEntry({ element, id, propertyName, label, options, description }) {
   const modeling = useService('modeling');
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
 
+  /**
+   * Obtém os valores selecionados como um array.
+   * @returns {Array<string>} Array de valores selecionados
+   */
   const getValue = () => {
     const rawValue = getFixedProperty(element, propertyName);
     if (!rawValue) return [];
     return rawValue.split(',').map(v => v.trim()).filter(Boolean);
   };
 
+  /**
+   * Define os valores selecionados, convertendo o array em string.
+   * @param {Array<string>} selected - Array de valores selecionados
+   */
   const setValue = (selected) => {
     setFixedProperty(element, propertyName, selected.join(','), modeling, bpmnFactory);
   };
@@ -184,6 +261,15 @@ export function GenericMultiSelectEntry({ element, id, propertyName, label, opti
 
 /**
  * Cria um grupo de opções com radio buttons dentro de um fieldset.
+ * Permite agrupar múltiplas opções sim/não em um único conjunto.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome base da propriedade
+ * @param {string} params.label - Rótulo do grupo
+ * @param {Array<EntryOption>} params.options - Opções disponíveis
+ * @returns {Object} Componente de grupo de radio buttons configurado
  */
 export function GenericMultiRadioButtonEntry({ element, id, propertyName, label, options }) {
   const modeling = useService('modeling');
@@ -234,19 +320,20 @@ export function GenericMultiRadioButtonEntry({ element, id, propertyName, label,
 }
 
 /**
- * Cria um campo de data usando HTML5 date input.
- * @param {Object} params
- * @param {ModdleElement} params.element - Elemento BPMN.
- * @param {string} params.id - Identificador único do campo.
- * @param {string} params.propertyName - Nome da propriedade a ser manipulada.
- * @param {string} params.label - Rótulo exibido.
- * @param {boolean} [params.disabled] - Se verdadeiro, desabilita o campo.
- * @param {string} [params.tooltip] - Texto de ajuda opcional.
- * @param {string} [params.description] - Descrição opcional.
+ * Cria um campo de data usando HTML5 date input com validação de formato.
+ * 
+ * @param {DateFieldConfig} params - Configurações do campo de data
+ * @returns {Object} Componente de campo de data configurado
  */
 export function GenericDateFieldEntry({ element, id, propertyName, label, disabled, tooltip, description, dateFormat, ...rest }) {
   const translate = useService('translate');
-  // Apenas validação de formato, sem conversão!
+
+  /**
+   * Valida o formato da data inserida.
+   * 
+   * @param {string} value - Valor da data a ser validado
+   * @returns {string|null} Mensagem de erro ou null se válido
+   */
   const validate = value => {
     if (!value) return null; // Campo opcional
     if (dateFormat === 'DD/MM/YYYY') {
@@ -263,6 +350,7 @@ export function GenericDateFieldEntry({ element, id, propertyName, label, disabl
     }
     return null;
   };
+
   return GenericTextFieldEntry({
     element,
     id,

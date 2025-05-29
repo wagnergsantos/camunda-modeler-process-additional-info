@@ -6,16 +6,38 @@ import { IndicatorsGroup } from './props/process-indicators-props';
 import { MappingMetadataGroup } from './props/mapping-metadata-props';
 
 /**
- * @typedef {import('bpmn-js/lib/model/Types').Element} Element
- * @typedef {import('bpmn-js/lib/model/Types').ModdleElement} ModdleElement
- * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
- * @typedef {import('bpmn-js/lib/features/modeling/Modeling').default} Modeling
- * @typedef {import('bpmn-js-properties-panel/lib/PropertiesPanel').default} PropertiesPanel
- * @typedef {import('didi').Injector} Injector
- * @typedef {import('bpmn-js/lib/features/translate/Translate').default} Translate
- * @typedef {import('bpmn-js/lib/features/modeling/BpmnFactory').default} BpmnFactory
- * @typedef {import('bpmn-js/lib/BaseModeler').default} Bpmnjs
- * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
+* @typedef {Object} Element - Represents a BPMN diagram element.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+/**
+ * @typedef {Object} ModdleElement - Represents an element in the underlying BPMN model (moddle).
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+/**
+ * @typedef {Object} EventBus - The diagram-js event bus.
+ * @see {@link https://github.com/bpmn-io/diagram-js/blob/develop/lib/core/EventBus.js}
+ */
+/**
+ * @typedef {Object} Modeling - The bpmn-js modeling service.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/features/modeling/Modeling.js}
+ */
+/**
+ * @typedef {Object} PropertiesPanel - The properties panel instance.
+ */
+/**
+ * @typedef {Object} Injector - The didi dependency injector.
+ */
+/**
+ * @typedef {Object} Translate - The bpmn-js translation service.
+ */
+/**
+ * @typedef {Object} BpmnFactory - The bpmn-js factory for creating BPMN elements.
+ */
+/**
+ * @typedef {Object} Bpmnjs - The BpmnJS instance.
+ */
+/**
+ * @typedef {Object} ElementRegistry - The diagram-js element registry.
  */
 
 /**
@@ -24,14 +46,20 @@ import { MappingMetadataGroup } from './props/mapping-metadata-props';
  * @property {string} label - O rótulo do grupo exibido na interface.
  * @property {Array<Object>} [entries] - Uma lista de entradas de propriedade para o grupo.
  * @property {Function} [component] - O componente React/Preact para renderizar o grupo.
- * @property {Array<PropertyGroup>} [groups] - Subgrupos, se aplicável (usado em abas).
+ * @property {Array} [groups] - Subgrupos, se aplicável (usado em abas).
  */
 
 /**
  * @typedef {Object} PropertiesPanelTab
  * @property {string} id - O ID único da aba.
  * @property {string} label - O rótulo da aba exibido na interface.
- * @property {Array<PropertyGroup>} groups - Os grupos de propriedades contidos nesta aba.
+ * @property {Array} groups - Os grupos de propriedades contidos nesta aba.
+ */
+
+/**
+ * @callback GroupsProcessor
+ * @param {Array} groups - A lista de grupos de propriedades existente.
+ * @returns {Array} A lista de grupos de propriedades modificada.
  */
 
 
@@ -87,7 +115,7 @@ export default class ProcessDocumentationPropertiesProvider {
    * Situação Atual e Indicadores.
    *
    * @param {Element} element - O elemento BPMN selecionado.
-   * @returns {(groups: Array<PropertyGroup>) => Array<PropertyGroup>} Uma função que recebe e retorna uma lista de grupos.
+   * @returns {GroupsProcessor} Uma função que recebe e retorna uma lista de grupos.
    */
   getGroups(element) {
     return (groups) => {

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: properties-panel/helper/fixed-properties-helper.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: properties-panel/helper/fixed-properties-helper.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// client/properties-panel/helper/fixed-properties-helper.js
+import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import {
+  createExtensionElements,
+  createCamundaProperties,
+  getExtensionElements,
+  getCamundaProperties
+} from './extensions-helper';
+
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @property {string} $type - Tipo do elemento BPMN
+ * @property {ModdleElement} $parent - Referência ao elemento pai
+ * @property {ModdleElement} businessObject - Objeto de negócio associado
+ * @property {Function} get - Função para acessar propriedades
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} BpmnFactory Fábrica para criar elementos BPMN.
+ * @property {Function} create - Função para criar novos elementos BPMN
+ */
+
+/**
+ * @typedef {Object} ModelingService Serviço de modelagem do bpmn-js.
+ * @property {Function} updateModdleProperties - Função para atualizar propriedades de elementos
+ */
+
+/**
+ * @typedef {Object} CamundaProperty
+ * @property {string} name - Nome da propriedade
+ * @property {string} value - Valor da propriedade
+ * @property {string} $type - Tipo do elemento ('camunda:Property')
+ */
+
+/**
+ * Sobe na hierarquia do modelo BPMN até encontrar o elemento definitions.
+ * Este helper é fundamental para garantir que as propriedades sejam sempre
+ * armazenadas no nível correto da hierarquia.
+ * 
+ * @param {ModdleElement} element - Elemento BPMN para iniciar a busca
+ * @returns {ModdleElement|null} Elemento definitions ou null se não encontrado
+ * 
+ * @example
+ * const definitions = getDefinitionsElement(someElement);
+ * if (definitions) {
+ *   // manipular o elemento definitions
+ * }
+ */
+function getDefinitionsElement(element) {
+  if (!element) return null;
+  const bo = element.businessObject || element;
+  if (bo.$type === 'bpmn:Definitions') return bo;
+  let current = bo;
+  while (current &amp;&amp; current.$type !== 'bpmn:Definitions') {
+    current = current.$parent;
+  }
+  return current;
+}
+
+/**
+ * Obtém o valor de uma propriedade camunda:property específica.
+ * Este helper navega através da estrutura de extensões do BPMN para
+ * encontrar e retornar o valor de uma propriedade específica.
+ * 
+ * @param {ModdleElement} element - O elemento definitions do diagrama
+ * @param {string} propertyName - O nome da propriedade (ex: 'processo:codigo')
+ * @returns {string} O valor da propriedade ou string vazia se não encontrada
+ * 
+ * @example
+ * const codigo = getFixedProperty(element, 'processo:codigo');
+ * console.log('Código do processo:', codigo);
+ */
+export function getFixedProperty(element, propertyName) {
+  if (!element) return '';
+  const definitions = getDefinitionsElement(element);
+  if (!definitions) return '';
+  const extensionElements = definitions.get('extensionElements');
+  if (!extensionElements) return '';
+  const camundaProperties = extensionElements.get('values')
+    .find(v => v.$type === 'camunda:Properties');
+  if (!camundaProperties || !camundaProperties.values) return '';
+  const property = camundaProperties.values.find(p => p.name === propertyName);
+  return property ? property.value : '';
+}
+
+/**
+ * Define o valor de uma propriedade camunda:property específica.
+ * Este helper gerencia todo o ciclo de vida de uma propriedade:
+ * - Cria as estruturas necessárias se não existirem
+ * - Atualiza o valor se a propriedade já existir
+ * - Remove a propriedade se o valor for vazio/undefined/null
+ * 
+ * @param {ModdleElement} element - O elemento definitions do diagrama
+ * @param {string} propertyName - O nome da propriedade
+ * @param {string} propertyValue - O valor da propriedade
+ * @param {ModelingService} modeling - Serviço de modelagem do bpmn-js
+ * @param {BpmnFactory} bpmnFactory - Fábrica de elementos BPMN
+ * 
+ * @example
+ * setFixedProperty(
+ *   element,
+ *   'processo:codigo',
+ *   'ABC123',
+ *   modeling,
+ *   bpmnFactory
+ * );
+ */
+export function setFixedProperty(element, propertyName, propertyValue, modeling, bpmnFactory) {
+  if (!element) return;
+  const definitions = getDefinitionsElement(element);
+  if (!definitions) return;
+
+  let extensionElements = definitions.get('extensionElements');
+  // Garante bpmn:ExtensionElements
+  if (!extensionElements) {
+    extensionElements = bpmnFactory.create('bpmn:ExtensionElements', { values: [] });
+    modeling.updateModdleProperties(definitions, definitions, {
+      extensionElements: extensionElements
+    });
+  }
+
+  // Garante camunda:Properties
+  let camundaProperties = extensionElements.get('values').find(v => v.$type === 'camunda:Properties');
+  if (!camundaProperties) {
+    camundaProperties = bpmnFactory.create('camunda:Properties', { values: [] });
+    modeling.updateModdleProperties(definitions, extensionElements, {
+      values: [...extensionElements.get('values'), camundaProperties]
+    });
+  }
+
+  // Atualiza, cria ou remove a propriedade
+  let targetProperty = camundaProperties.values?.find(p => p.name === propertyName);
+
+  if (shouldRemoveProperty(propertyValue)) {
+    if (targetProperty) {
+      const newValues = camundaProperties.values.filter(p => p.name !== propertyName);
+      modeling.updateModdleProperties(definitions, camundaProperties, { values: newValues });
+    }
+  } else {
+    if (targetProperty) {
+      modeling.updateModdleProperties(definitions, targetProperty, { value: propertyValue });
+    } else {
+      const newProperty = bpmnFactory.create('camunda:Property', {
+        name: propertyName,
+        value: propertyValue
+      });
+      const newValues = [...(camundaProperties.values || []), newProperty];
+      modeling.updateModdleProperties(definitions, camundaProperties, { values: newValues });
+    }
+  }
+}
+
+/**
+ * Verifica se um valor deve resultar na remoção da propriedade.
+ * Valores vazios, undefined ou null indicam que a propriedade
+ * deve ser removida do modelo.
+ * 
+ * @param {any} value - Valor a ser verificado
+ * @returns {boolean} True se o valor indicar que a propriedade deve ser removida
+ * 
+ * @example
+ * if (shouldRemoveProperty(value)) {
+ *   // remover a propriedade
+ * }
+ */
+function shouldRemoveProperty(value) {
+  return value === undefined || value === null || value === '';
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:47:37 GMT-0300 (Horário Padrão de Brasília)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

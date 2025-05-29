@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: properties-panel/ProcessDocumentationPropertiesProvider.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: properties-panel/ProcessDocumentationPropertiesProvider.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// client/properties-panel/ProcessDocumentationPropertiesProvider.js
+import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { ProcessDocumentationGroup } from './props/process-documentation-props';
+import { CurrentSituationGroup } from './props/current-situation-props';
+import { IndicatorsGroup } from './props/process-indicators-props';
+import { MappingMetadataGroup } from './props/mapping-metadata-props';
+
+/**
+* @typedef {Object} Element - Represents a BPMN diagram element.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+/**
+ * @typedef {Object} ModdleElement - Represents an element in the underlying BPMN model (moddle).
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+/**
+ * @typedef {Object} EventBus - The diagram-js event bus.
+ * @see {@link https://github.com/bpmn-io/diagram-js/blob/develop/lib/core/EventBus.js}
+ */
+/**
+ * @typedef {Object} Modeling - The bpmn-js modeling service.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/features/modeling/Modeling.js}
+ */
+/**
+ * @typedef {Object} PropertiesPanel - The properties panel instance.
+ */
+/**
+ * @typedef {Object} Injector - The didi dependency injector.
+ */
+/**
+ * @typedef {Object} Translate - The bpmn-js translation service.
+ */
+/**
+ * @typedef {Object} BpmnFactory - The bpmn-js factory for creating BPMN elements.
+ */
+/**
+ * @typedef {Object} Bpmnjs - The BpmnJS instance.
+ */
+/**
+ * @typedef {Object} ElementRegistry - The diagram-js element registry.
+ */
+
+/**
+ * @typedef {Object} PropertyGroup
+ * @property {string} id - O ID único do grupo.
+ * @property {string} label - O rótulo do grupo exibido na interface.
+ * @property {Array&lt;Object>} [entries] - Uma lista de entradas de propriedade para o grupo.
+ * @property {Function} [component] - O componente React/Preact para renderizar o grupo.
+ * @property {Array} [groups] - Subgrupos, se aplicável (usado em abas).
+ */
+
+/**
+ * @typedef {Object} PropertiesPanelTab
+ * @property {string} id - O ID único da aba.
+ * @property {string} label - O rótulo da aba exibido na interface.
+ * @property {Array} groups - Os grupos de propriedades contidos nesta aba.
+ */
+
+/**
+ * @callback GroupsProcessor
+ * @param {Array} groups - A lista de grupos de propriedades existente.
+ * @returns {Array} A lista de grupos de propriedades modificada.
+ */
+
+
+/**
+ * Um provedor de painel de propriedades que adiciona abas e grupos personalizados
+ * para documentação de processo, situação atual, indicadores e metadados de mapeamento.
+ *
+ * @class ProcessDocumentationPropertiesProvider
+ */
+export default class ProcessDocumentationPropertiesProvider {
+  /**
+   * @constructor
+   * @param {PropertiesPanel} propertiesPanel - A instância do painel de propriedades.
+   * @param {Injector} injector - O injetor de dependências.
+   */
+  constructor(propertiesPanel, injector) {
+    this._injector = injector;
+    propertiesPanel.registerProvider(this);
+  }
+
+  /**
+   * Retorna as abas a serem adicionadas ao painel de propriedades.
+   * Atualmente, adiciona uma aba "Informações gerais".
+   *
+   * @param {Element} element - O elemento BPMN selecionado.
+   * @returns {Array&lt;PropertiesPanelTab>} Uma lista de definições de abas.
+   */
+  getTabs(element) {
+    // Sempre exibe a aba, independente do tipo de elemento
+    const groups = [];
+    // Embora ProcessDocumentationGroup seja chamado aqui, ele só é realmente usado
+    // se o elemento for bpmn:Definitions. No entanto, a estrutura getTabs
+    // espera grupos. Para uma aba estática, isso pode ser simplificado ou
+    // os grupos podem ser condicionalmente adicionados aqui também.
+    const processDocumentationGroup = ProcessDocumentationGroup(element, this._injector);
+    
+    if (processDocumentationGroup) {
+      groups.push(processDocumentationGroup);
+    }
+
+    return [
+      {
+        id: 'generalInfo',
+        label: 'Informações gerais', // Idealmente, usar translate aqui
+        groups
+      }
+    ];
+  }
+
+  /**
+   * Retorna uma função que modifica a lista de grupos de propriedades.
+   * Adiciona grupos para Metadados do Mapeamento, Documentação do Processo,
+   * Situação Atual e Indicadores.
+   *
+   * @param {Element} element - O elemento BPMN selecionado.
+   * @returns {GroupsProcessor} Uma função que recebe e retorna uma lista de grupos.
+   */
+  getGroups(element) {
+    return (groups) => {
+      groups = groups.slice();
+
+      const definitionsElement = findDefinitionsElement(this._injector);
+
+      if (!definitionsElement) {
+        // Se não houver definitionsElement, não podemos adicionar os grupos que dependem dele.
+        // O IndicatorsGroup ainda pode ser adicionado se não depender estritamente do definitionsElement
+        // para sua lógica principal, mas sim do 'element' fornecido.
+        // No entanto, a lógica atual em IndicatorsGroup usa getDefinitions(element),
+        // que pode ou não ser o mesmo que o definitionsElement global.
+        // Por segurança e consistência, é melhor retornar os grupos originais se definitionsElement não for encontrado.
+        console.warn('Elemento bpmn:Definitions não encontrado. Alguns grupos de propriedades podem não ser exibidos.');
+        
+        // Adiciona o grupo de Indicadores se ele for aplicável ao 'element' atual
+        // e não depender exclusivamente do 'definitionsElement' global.
+        // A função IndicatorsGroup já lida com a obtenção das definições a partir do 'element'.
+        const indicatorsGroup = IndicatorsGroup(element, this._injector);
+        if (indicatorsGroup) {
+          groups.push(indicatorsGroup);
+        }
+        return groups;
+      }
+
+      // Grupo de Metadados do Mapeamento (aplicado ao bpmn:Definitions)
+      const metadataGroup = MappingMetadataGroup(definitionsElement, this._injector);
+      if (metadataGroup) {
+        groups.push(metadataGroup);
+      }
+
+      // Grupo de Documentação do Processo (aplicado ao bpmn:Definitions)
+      const processDocumentationGroup = ProcessDocumentationGroup(definitionsElement, this._injector);
+      if (processDocumentationGroup) {
+        // Nota: ProcessDocumentationGroup retorna um grupo completo, não apenas entradas.
+        // Se a intenção era adicionar suas entradas a um grupo 'generalInfo' existente,
+        // a lógica precisaria ser ajustada.
+        // Atualmente, ele será adicionado como um grupo separado.
+        groups.push(processDocumentationGroup);
+      }
+
+      // Grupo de Situação Atual (aplicado ao bpmn:Definitions)
+      const currentSituationGroup = CurrentSituationGroup(definitionsElement, this._injector);
+      if (currentSituationGroup) {
+        groups.push(currentSituationGroup);
+      }
+      
+      // Grupo de Indicadores (aplicado ao 'element' selecionado, mas armazena dados em bpmn:Definitions)
+      // É importante que IndicatorsGroup seja chamado com o 'element' correto
+      // para o qual os indicadores são relevantes, mesmo que os dados sejam armazenados globalmente.
+      const indicatorsGroupInstance = IndicatorsGroup(element, this._injector);
+      if (indicatorsGroupInstance) {
+        groups.push(indicatorsGroupInstance);
+      }
+
+      return groups;
+    };
+  }
+}
+
+/**
+ * @static
+ * @type {Array&lt;string>}
+ * @description Lista de dependências a serem injetadas na classe.
+ */
+ProcessDocumentationPropertiesProvider.$inject = [
+  'propertiesPanel',
+  'injector'
+];
+
+/**
+ * Função utilitária para encontrar o primeiro elemento bpmn:Process no diagrama.
+ * Nota: Esta função parece não estar sendo utilizada ativamente no fluxo principal de `getGroups` ou `getTabs`.
+ *
+ * @param {Element} _element - O elemento BPMN atual (não usado diretamente na lógica de busca do processo).
+ * @param {Injector} injector - O injetor de dependências.
+ * @returns {ModdleElement|null} O elemento bpmn:Process encontrado ou null.
+ */
+// eslint-disable-next-line no-unused-vars
+function findProcessElement(_element, injector) {
+  const elementRegistry = injector.get('elementRegistry', false);
+  if (!elementRegistry) return null;
+
+  const allElements = elementRegistry.getAll();
+  const processElement = allElements.find(el => is(el, 'bpmn:Process'));
+  return processElement ? getBusinessObject(processElement) : null;
+}
+
+/**
+ * Função utilitária para obter a referência `processRef` de um elemento,
+ * tipicamente de um `bpmn:Participant`.
+ * Nota: Esta função parece não estar sendo utilizada ativamente.
+ *
+ * @param {Element} element - O elemento BPMN.
+ * @returns {ModdleElement|undefined} A referência ao processo ou undefined.
+ */
+// eslint-disable-next-line no-unused-vars
+function getProcessRef(element) {
+  const bo = getBusinessObject(element);
+  return bo.processRef;
+}
+
+/**
+ * Encontra o elemento raiz `bpmn:Definitions` do diagrama.
+ *
+ * @param {Injector} injector - O injetor de dependências.
+ * @returns {ModdleElement|null} O elemento `bpmn:Definitions` ou null se não encontrado.
+ */
+function findDefinitionsElement(injector) {
+  const modeler = injector.get('bpmnjs', false);
+  if (!modeler) {
+    console.error('Serviço bpmnjs não encontrado no injetor.');
+    return null;
+  }
+
+  const definitions = modeler.getDefinitions();
+  // console.debug('definitions type:', definitions &amp;&amp; definitions.$type); // DEBUG
+  if (!definitions || !is(definitions, 'bpmn:Definitions')) {
+     console.warn('Elemento bpmn:Definitions não é do tipo esperado ou não foi encontrado:', definitions);
+     return null;
+  }
+  return definitions;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:47:37 GMT-0300 (Horário Padrão de Brasília)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

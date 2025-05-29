@@ -6,9 +6,52 @@ import { GenericTextFieldEntry } from './generic-entries';
 import { setFixedProperty, getFixedProperty } from '../helper/fixed-properties-helper';
 import Ids from 'ids';
 
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} Element Representa um elemento do diagrama BPMN.
+ */
+
+/**
+ * @typedef {Object} Injector O injetor de dependências do Camunda Modeler.
+ */
+
+/**
+ * @typedef {Object} PropertyItemConfig
+ * @property {string} id - ID único do item de propriedade
+ * @property {string} label - Rótulo exibido para o item
+ * @property {Function} remove - Função para remover o item
+ * @property {Array<EntryConfig>} entries - Lista de entradas do item
+ * @property {string} autoFocusEntry - ID da entrada que deve receber foco automático
+ */
+
+/**
+ * @typedef {Object} EntryConfig
+ * @property {string} id - ID único da entrada
+ * @property {Function} component - Componente React/Preact para renderizar a entrada
+ */
+
+/**
+ * @typedef {Object} IndicatorGroupConfig
+ * @property {string} id - ID do grupo de indicadores
+ * @property {string} label - Rótulo do grupo
+ * @property {Function} component - Componente para renderizar o grupo
+ * @property {Function} add - Função para adicionar novo indicador
+ * @property {Array<PropertyItemConfig>} items - Lista de itens de indicadores
+ */
+
 const ids = new Ids([16, 36, 1]);
 
-// Helper robusto para encontrar o elemento <definitions>
+/**
+ * Helper robusto para encontrar o elemento <definitions> na hierarquia do modelo BPMN.
+ * Percorre a árvore de elementos até encontrar o elemento raiz bpmn:Definitions.
+ * 
+ * @param {Element} element - Elemento BPMN a partir do qual iniciar a busca
+ * @returns {ModdleElement|null} Elemento bpmn:Definitions ou null se não encontrado
+ */
 function getDefinitions(element) {
     const bo = getBusinessObject(element);
     if (!bo) return null;
@@ -19,7 +62,14 @@ function getDefinitions(element) {
     return current;
 }
 
-// Helper para extrair os IDs dos indicadores existentes
+/**
+ * Helper para extrair os IDs dos indicadores existentes no elemento BPMN.
+ * Analisa as propriedades Camunda do elemento para encontrar IDs de indicadores
+ * usando um padrão regex específico.
+ * 
+ * @param {Element} element - Elemento BPMN para extrair os IDs dos indicadores
+ * @returns {Array<string>} Lista de IDs únicos dos indicadores encontrados
+ */
 function getIndicatorIds(element) {
     const definitions = getDefinitions(element);
     if (!definitions) return [];
@@ -38,12 +88,29 @@ function getIndicatorIds(element) {
     return Array.from(indicatorIds);
 }
 
+/**
+ * Cria o grupo de indicadores do processo para o painel de propriedades.
+ * Este grupo permite gerenciar indicadores do processo, incluindo:
+ * - Adicionar novos indicadores
+ * - Remover indicadores existentes
+ * - Editar propriedades dos indicadores (nome, objetivo, fórmula, etc.)
+ * 
+ * @param {Element} element - Elemento BPMN (tipicamente bpmn:Definitions)
+ * @param {Injector} injector - Injetor de dependências do Camunda Modeler
+ * @returns {IndicatorGroupConfig} Configuração do grupo de indicadores
+ */
 export function IndicatorsGroup(element, injector) {
     const translate = injector.get('translate');
     const modeling = injector.get('modeling');
     const bpmnFactory = injector.get('bpmnFactory');
     const eventBus = injector.get('eventBus');
 
+    /**
+     * Manipulador para adicionar um novo indicador.
+     * Gera um novo ID único e cria um indicador com nome padrão.
+     * 
+     * @param {Event} event - Evento do DOM
+     */
     function add(event) {
         event.stopPropagation();
         const newId = ids.next();
@@ -68,19 +135,36 @@ export function IndicatorsGroup(element, injector) {
     };
 }
 
+/**
+ * Cria um item de propriedade para um indicador específico.
+ * Cada item contém campos para editar as propriedades do indicador:
+ * - Nome (obrigatório)
+ * - Objetivo
+ * - Fórmula
+ * - Meta
+ * - Última Medição
+ * - Resultado
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {Element} props.element - Elemento BPMN
+ * @param {string} props.indicatorId - ID do indicador
+ * @param {Injector} props.injector - Injetor de dependências
+ * @returns {PropertyItemConfig} Configuração do item de propriedade
+ */
 function PropertyItem(props) {
     const { element, indicatorId, injector } = props;
     const modeling = injector.get('modeling');
     const eventBus = injector.get('eventBus');
     
     const nameProp = `processo:indicadores:${indicatorId}:nome`;
-    // Get the actual name of the indicator. This could be the user-defined name,
-    // "[Novo Indicador]" for new items, or an empty string if cleared by the user.
     const actualIndicatorName = getFixedProperty(element, nameProp);
-    // The label should be in the format: "Name of indicator (Indicator #$id)"
-    // If the actualIndicatorName is null/undefined, use an empty string for the name part to avoid "null" in the label.
     const label = `${actualIndicatorName || ''} (Indicador #${indicatorId})`;
 
+    /**
+     * Remove o indicador e todas as suas propriedades associadas.
+     * 
+     * @param {Event} event - Evento do DOM
+     */
     function remove(event) {
         event.stopPropagation();
         const definitions = getDefinitions(element);
@@ -96,15 +180,27 @@ function PropertyItem(props) {
         }
     }
 
-    // Função de validação para o nome do indicador
+    /**
+     * Valida o nome do indicador.
+     * 
+     * @param {string} value - Valor do campo nome
+     * @returns {string|null} Mensagem de erro ou null se válido
+     */
     const validateName = (value) => {
         if (!value || !value.trim()) {
-            // Esta mensagem será passada para o serviço de tradução pelo GenericTextFieldEntry
             return 'O nome do indicador é obrigatório.';
         }
-        return null; // Sem erros
+        return null;
     };
 
+    /**
+     * Cria uma entrada de propriedade com configurações específicas.
+     * 
+     * @param {string} field - Nome do campo
+     * @param {string} labelText - Texto do rótulo
+     * @param {Function} [validateFn] - Função de validação opcional
+     * @returns {EntryConfig} Configuração da entrada
+     */
     const createEntry = (field, labelText, validateFn) => {
         const id = `indicator-${indicatorId}-${field}`;
         const propertyName = `processo:indicadores:${indicatorId}:${field}`;
@@ -117,7 +213,7 @@ function PropertyItem(props) {
                 id, 
                 propertyName, 
                 label: labelText,
-                validate: validateFn // Adiciona a função de validação aqui
+                validate: validateFn
             }),
         };
     };
@@ -127,7 +223,7 @@ function PropertyItem(props) {
         label,
         remove,
         entries: [
-            createEntry('nome', 'Nome', validateName), // Passa a função de validação para o campo 'nome'
+            createEntry('nome', 'Nome', validateName),
             createEntry('objetivo', 'Objetivo'),
             createEntry('formula', 'Fórmula'),
             createEntry('meta', 'Meta'),

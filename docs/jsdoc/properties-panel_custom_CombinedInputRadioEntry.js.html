@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: properties-panel/custom/CombinedInputRadioEntry.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: properties-panel/custom/CombinedInputRadioEntry.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { h } from 'preact';
+import {
+  TextFieldEntry,
+  Description
+} from '@bpmn-io/properties-panel';
+import RadioEntry from '../custom/RadioEntry';
+import { useService } from 'bpmn-js-properties-panel';
+import { getFixedProperty, setFixedProperty } from '../helper/fixed-properties-helper';
+import classNames from 'classnames';
+
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} EntryOption
+ * @property {string} value - Valor interno da opção
+ * @property {string} label - Rótulo exibido para o usuário
+ */
+
+/**
+ * @typedef {Object} CombinedInputRadioEntryProps
+ * @property {ModdleElement} element - Elemento BPMN associado
+ * @property {string} id - Identificador único do componente combinado
+ * @property {string} label - Rótulo do grupo combinado
+ * @property {string} textFieldId - ID do campo de texto
+ * @property {string} textFieldPropertyName - Nome da propriedade para o campo de texto
+ * @property {string} radioId - ID do grupo de radio buttons
+ * @property {string} radioPropertyName - Nome da propriedade para os radio buttons
+ * @property {Array&lt;EntryOption>} radioOptions - Opções para os radio buttons
+ * @property {string} [description] - Descrição adicional do campo
+ * @property {Object} injector - Injetor de dependências do Camunda Modeler
+ */
+
+/**
+ * Componente combinado que renderiza um campo de texto e um grupo de radio buttons lado a lado.
+ * Usado para entradas que possuem um valor textual e uma seleção entre opções mutuamente exclusivas.
+ * 
+ * Características:
+ * - Suporta debounce para o campo de texto
+ * - Sincroniza valores com o modelo BPMN usando fixed-properties-helper
+ * - Suporta tradução dos rótulos das opções de radio
+ * - Exibe descrição opcional abaixo dos campos
+ * 
+ * @param {CombinedInputRadioEntryProps} props - Propriedades do componente
+ * @returns {Object} Elemento virtual do Preact
+ * 
+ * @example
+ * &lt;CombinedInputRadioEntry
+ *   element={element}
+ *   id="combined-entry"
+ *   label="Tempo de execução do processo"
+ *   textFieldId="time-execution-textfield"
+ *   textFieldPropertyName="processo:situacao:tempoExecucao"
+ *   radioId="time-execution-type-radio"
+ *   radioPropertyName="processo:situacao:tempoExecucaoTipo"
+ *   radioOptions={[
+ *     { value: 'estimado', label: 'Estimado' },
+ *     { value: 'mensurado', label: 'Mensurado' }
+ *   ]}
+ *   injector={injector}
+ * />
+ */
+export default function CombinedInputRadioEntry(props) {
+  const {
+    element,
+    id,
+    label,
+    textFieldId,
+    textFieldPropertyName,
+    radioId,
+    radioPropertyName,
+    radioOptions,
+    description,
+    injector
+  } = props;
+
+  const translate = useService('translate');
+  const modeling = useService('modeling');
+  const bpmnFactory = useService('bpmnFactory');
+  const debounce = useService('debounceInput');
+
+  const textFieldGetValue = () => getFixedProperty(element, textFieldPropertyName);
+  const textFieldSetValue = (value) => {
+    setFixedProperty(element, textFieldPropertyName, value, modeling, bpmnFactory);
+  };
+
+  const radioGetValue = () => getFixedProperty(element, radioPropertyName);
+  const radioSetValue = (value) => {
+    setFixedProperty(element, radioPropertyName, value, modeling, bpmnFactory);
+  };
+
+  return (
+    h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry'), 'data-entry-id': id },
+      h('fieldset', { class: 'bio-properties-panel-fieldset custom-thin-rounded-fieldset' },
+        h('legend', { class: 'bio-properties-panel-legend custom-thin-rounded-legend' }, translate(label)),
+        h('div', { class: 'bio-properties-panel-panel' },
+            h(TextFieldEntry, {
+              element,
+              id: textFieldId,
+              label: '',
+              getValue: textFieldGetValue,
+              setValue: textFieldSetValue,
+              debounce,
+              description: '',
+            }),
+            h(RadioEntry, {
+              element,
+              id: radioId,
+              label: '',
+              getValue: radioGetValue,
+              setValue: radioSetValue,
+              getOptions: () => radioOptions.map(opt => ({ ...opt, label: translate(opt.label) })),
+              description: '',
+            })
+          ,
+          description &amp;&amp; h(Description, { forId: id, element: element, value: description })
+        )
+      )
+    )
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:47:37 GMT-0300 (Horário Padrão de Brasília)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

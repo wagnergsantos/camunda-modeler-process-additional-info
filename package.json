@@ -6,7 +6,8 @@
   "scripts": {
     "all": "run-s bundle",
     "bundle": "webpack",
-    "bundle:watch": "webpack --watch"
+    "bundle:watch": "webpack --watch",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,8 @@
     "camunda-modeler-plugin-helpers": "^5.0.0",
     "camunda-modeler-webpack-plugin": "^0.1.0",
     "css-loader": "^7.1.2",
+    "docdash": "^2.0.2",
+    "jsdoc": "^4.0.4",
     "npm-run-all2": "^6.1.1",
     "style-loader": "^4.0.0",
     "webpack": "^5.90.0",

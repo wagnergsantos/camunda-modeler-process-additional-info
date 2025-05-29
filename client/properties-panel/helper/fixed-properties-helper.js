@@ -8,9 +8,44 @@ import {
 } from './extensions-helper';
 
 /**
- * Sobe na hierarquia até encontrar o definitions.
- * @param {ModdleElement} element
- * @returns {ModdleElement|null}
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @property {string} $type - Tipo do elemento BPMN
+ * @property {ModdleElement} $parent - Referência ao elemento pai
+ * @property {ModdleElement} businessObject - Objeto de negócio associado
+ * @property {Function} get - Função para acessar propriedades
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} BpmnFactory Fábrica para criar elementos BPMN.
+ * @property {Function} create - Função para criar novos elementos BPMN
+ */
+
+/**
+ * @typedef {Object} ModelingService Serviço de modelagem do bpmn-js.
+ * @property {Function} updateModdleProperties - Função para atualizar propriedades de elementos
+ */
+
+/**
+ * @typedef {Object} CamundaProperty
+ * @property {string} name - Nome da propriedade
+ * @property {string} value - Valor da propriedade
+ * @property {string} $type - Tipo do elemento ('camunda:Property')
+ */
+
+/**
+ * Sobe na hierarquia do modelo BPMN até encontrar o elemento definitions.
+ * Este helper é fundamental para garantir que as propriedades sejam sempre
+ * armazenadas no nível correto da hierarquia.
+ * 
+ * @param {ModdleElement} element - Elemento BPMN para iniciar a busca
+ * @returns {ModdleElement|null} Elemento definitions ou null se não encontrado
+ * 
+ * @example
+ * const definitions = getDefinitionsElement(someElement);
+ * if (definitions) {
+ *   // manipular o elemento definitions
+ * }
  */
 function getDefinitionsElement(element) {
   if (!element) return null;
@@ -25,9 +60,16 @@ function getDefinitionsElement(element) {
 
 /**
  * Obtém o valor de uma propriedade camunda:property específica.
- * @param {object} element O elemento definitions do diagrama.
- * @param {string} propertyName O nome da propriedade (ex: 'processo:codigo').
- * @returns {string} O valor da propriedade ou string vazia.
+ * Este helper navega através da estrutura de extensões do BPMN para
+ * encontrar e retornar o valor de uma propriedade específica.
+ * 
+ * @param {ModdleElement} element - O elemento definitions do diagrama
+ * @param {string} propertyName - O nome da propriedade (ex: 'processo:codigo')
+ * @returns {string} O valor da propriedade ou string vazia se não encontrada
+ * 
+ * @example
+ * const codigo = getFixedProperty(element, 'processo:codigo');
+ * console.log('Código do processo:', codigo);
  */
 export function getFixedProperty(element, propertyName) {
   if (!element) return '';
@@ -44,13 +86,25 @@ export function getFixedProperty(element, propertyName) {
 
 /**
  * Define o valor de uma propriedade camunda:property específica.
- * Cria extensionElements/camunda:Properties se necessário.
- * Remove a propriedade se o valor for vazio/undefined/null.
- * @param {object} element O elemento definitions do diagrama.
- * @param {string} propertyName O nome da propriedade.
- * @param {string} propertyValue O valor da propriedade.
- * @param {object} modeling Serviço de modelagem do bpmn-js.
- * @param {object} bpmnFactory Fábrica de elementos BPMN do bpmn-js.
+ * Este helper gerencia todo o ciclo de vida de uma propriedade:
+ * - Cria as estruturas necessárias se não existirem
+ * - Atualiza o valor se a propriedade já existir
+ * - Remove a propriedade se o valor for vazio/undefined/null
+ * 
+ * @param {ModdleElement} element - O elemento definitions do diagrama
+ * @param {string} propertyName - O nome da propriedade
+ * @param {string} propertyValue - O valor da propriedade
+ * @param {ModelingService} modeling - Serviço de modelagem do bpmn-js
+ * @param {BpmnFactory} bpmnFactory - Fábrica de elementos BPMN
+ * 
+ * @example
+ * setFixedProperty(
+ *   element,
+ *   'processo:codigo',
+ *   'ABC123',
+ *   modeling,
+ *   bpmnFactory
+ * );
  */
 export function setFixedProperty(element, propertyName, propertyValue, modeling, bpmnFactory) {
   if (!element) return;
@@ -98,9 +152,17 @@ export function setFixedProperty(element, propertyName, propertyValue, modeling,
 }
 
 /**
- * Retorna true se o valor for vazio, undefined ou null.
- * @param {any} value
- * @returns {boolean}
+ * Verifica se um valor deve resultar na remoção da propriedade.
+ * Valores vazios, undefined ou null indicam que a propriedade
+ * deve ser removida do modelo.
+ * 
+ * @param {any} value - Valor a ser verificado
+ * @returns {boolean} True se o valor indicar que a propriedade deve ser removida
+ * 
+ * @example
+ * if (shouldRemoveProperty(value)) {
+ *   // remover a propriedade
+ * }
  */
 function shouldRemoveProperty(value) {
   return value === undefined || value === null || value === '';

@@ -8,6 +8,55 @@ import { useService } from 'bpmn-js-properties-panel';
 import { getFixedProperty, setFixedProperty } from '../helper/fixed-properties-helper';
 import classNames from 'classnames';
 
+/**
+ * @typedef {Object} ModdleElement
+ * @description Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} RadioOption
+ * @property {string} value - Valor interno da opção
+ * @property {string} label - Rótulo exibido para o usuário
+ */
+
+/**
+ * @typedef {Object} CombinedInputRadioEntryProps
+ * @property {ModdleElement} element - Elemento BPMN associado
+ * @property {string} id - Identificador único do componente combinado
+ * @property {string} label - Rótulo do grupo combinado
+ * @property {string} textFieldId - ID do campo de texto
+ * @property {string} textFieldPropertyName - Nome da propriedade para o campo de texto
+ * @property {string} radioId - ID do grupo de radio buttons
+ * @property {string} radioPropertyName - Nome da propriedade para os radio buttons
+ * @property {Array<RadioOption>} radioOptions - Opções para os radio buttons
+ * @property {string} [description] - Descrição adicional do campo
+ * @property {Object} injector - Injetor de dependências do Camunda Modeler
+ */
+
+/**
+ * Componente combinado que renderiza um campo de texto e um grupo de radio buttons lado a lado.
+ * Usado para entradas que possuem um valor textual e uma seleção entre opções mutuamente exclusivas.
+ * 
+ * @param {CombinedInputRadioEntryProps} props - Propriedades do componente
+ * @returns {Object} Elemento virtual do Preact
+ * 
+ * @example
+ * <CombinedInputRadioEntry
+ *   element={element}
+ *   id="combined-entry"
+ *   label="Tempo de execução do processo"
+ *   textFieldId="time-execution-textfield"
+ *   textFieldPropertyName="processo:situacao:tempoExecucao"
+ *   radioId="time-execution-type-radio"
+ *   radioPropertyName="processo:situacao:tempoExecucaoTipo"
+ *   radioOptions={[
+ *     { value: 'estimado', label: 'Estimado' },
+ *     { value: 'mensurado', label: 'Mensurado' }
+ *   ]}
+ *   injector={injector}
+ * />
+ */
 export default function CombinedInputRadioEntry(props) {
   const {
     element,
@@ -27,12 +76,30 @@ export default function CombinedInputRadioEntry(props) {
   const bpmnFactory = useService('bpmnFactory');
   const debounce = useService('debounceInput');
 
+  /**
+   * Obtém o valor atual do campo de texto.
+   * @returns {string} Valor atual do campo
+   */
   const textFieldGetValue = () => getFixedProperty(element, textFieldPropertyName);
+
+  /**
+   * Define o novo valor do campo de texto.
+   * @param {string} value - Novo valor
+   */
   const textFieldSetValue = (value) => {
     setFixedProperty(element, textFieldPropertyName, value, modeling, bpmnFactory);
   };
 
+  /**
+   * Obtém o valor atual do radio button.
+   * @returns {string} Valor atual selecionado
+   */
   const radioGetValue = () => getFixedProperty(element, radioPropertyName);
+
+  /**
+   * Define o novo valor do radio button.
+   * @param {string} value - Novo valor selecionado
+   */
   const radioSetValue = (value) => {
     setFixedProperty(element, radioPropertyName, value, modeling, bpmnFactory);
   };

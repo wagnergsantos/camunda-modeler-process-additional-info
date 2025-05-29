@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>props/generic-entries.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProcessDocumentationPropertiesProvider.html">ProcessDocumentationPropertiesProvider</a><ul class='members'><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li><li data-type='member' style='display: none;'><a href="ProcessDocumentationPropertiesProvider.html#.$inject">$inject</a></li></ul></li><li></li><li><a href="module.exports_module.exports.html">exports</a></li><li></li></ul><h3>Global</h3><ul><li><a href="global.html#ActivityFieldsetProps">ActivityFieldsetProps</a></li><li><a href="global.html#BpmnFactory">BpmnFactory</a></li><li><a href="global.html#Bpmnjs">Bpmnjs</a></li><li><a href="global.html#CamundaProperties">CamundaProperties</a></li><li><a href="global.html#CamundaProperty">CamundaProperty</a></li><li><a href="global.html#CombinedEntryProps">CombinedEntryProps</a></li><li><a href="global.html#CombinedInputRadioEntryProps">CombinedInputRadioEntryProps</a></li><li><a href="global.html#CurrentSituationGroup">CurrentSituationGroup</a></li><li><a href="global.html#DateFieldConfig">DateFieldConfig</a></li><li><a href="global.html#Element">Element</a></li><li><a href="global.html#ElementRegistry">ElementRegistry</a></li><li><a href="global.html#EntryConfig">EntryConfig</a></li><li><a href="global.html#EntryOption">EntryOption</a></li><li><a href="global.html#EventBus">EventBus</a></li><li><a href="global.html#ExtensionElements">ExtensionElements</a></li><li><a href="global.html#GenericDateFieldEntry">GenericDateFieldEntry</a></li><li><a href="global.html#GenericMultiRadioButtonEntry">GenericMultiRadioButtonEntry</a></li><li><a href="global.html#GenericMultiSelectEntry">GenericMultiSelectEntry</a></li><li><a href="global.html#GenericRadioEntry">GenericRadioEntry</a></li><li><a href="global.html#GenericSelectEntry">GenericSelectEntry</a></li><li><a href="global.html#GenericTextAreaEntry">GenericTextAreaEntry</a></li><li><a href="global.html#GenericTextFieldEntry">GenericTextFieldEntry</a></li><li><a href="global.html#GroupsProcessor">GroupsProcessor</a></li><li><a href="global.html#IndicatorGroupConfig">IndicatorGroupConfig</a></li><li><a href="global.html#IndicatorProperty">IndicatorProperty</a></li><li><a href="global.html#IndicatorPropertyOptions">IndicatorPropertyOptions</a></li><li><a href="global.html#IndicatorsGroup">IndicatorsGroup</a></li><li><a href="global.html#Injector">Injector</a></li><li><a href="global.html#MappingMetadataGroup">MappingMetadataGroup</a></li><li><a href="global.html#ModdleElement">ModdleElement</a></li><li><a href="global.html#Modeling">Modeling</a></li><li><a href="global.html#ModelingService">ModelingService</a></li><li><a href="global.html#MultiSelectEntryProps">MultiSelectEntryProps</a></li><li><a href="global.html#ProcessDocumentationGroup">ProcessDocumentationGroup</a></li><li><a href="global.html#PropertiesPanel">PropertiesPanel</a></li><li><a href="global.html#PropertiesPanelTab">PropertiesPanelTab</a></li><li><a href="global.html#PropertyGroup">PropertyGroup</a></li><li><a href="global.html#PropertyItem">PropertyItem</a></li><li><a href="global.html#PropertyItemConfig">PropertyItemConfig</a></li><li><a href="global.html#RadioEntryProps">RadioEntryProps</a></li><li><a href="global.html#RadioOption">RadioOption</a></li><li><a href="global.html#SelectOption">SelectOption</a></li><li><a href="global.html#TextFieldConfig">TextFieldConfig</a></li><li><a href="global.html#Translate">Translate</a></li><li><a href="global.html#createCamundaProperties">createCamundaProperties</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createExtensionElements">createExtensionElements</a></li><li><a href="global.html#createIndicatorProperty">createIndicatorProperty</a></li><li><a href="global.html#ensureCamundaProperties">ensureCamundaProperties</a></li><li><a href="global.html#findDefinitionsElement">findDefinitionsElement</a></li><li><a href="global.html#findExtensions">findExtensions</a></li><li><a href="global.html#findProcessElement">findProcessElement</a></li><li><a href="global.html#getCamundaProperties">getCamundaProperties</a></li><li><a href="global.html#getDefinitions">getDefinitions</a></li><li><a href="global.html#getDefinitionsElement">getDefinitionsElement</a></li><li><a href="global.html#getExtensionElements">getExtensionElements</a></li><li><a href="global.html#getFixedProperty">getFixedProperty</a></li><li><a href="global.html#getGroups">getGroups</a></li><li><a href="global.html#getIndicatorIds">getIndicatorIds</a></li><li><a href="global.html#getIndicatorPropertyProps">getIndicatorPropertyProps</a></li><li><a href="global.html#getProcessRef">getProcessRef</a></li><li><a href="global.html#getTabs">getTabs</a></li><li><a href="global.html#isIndicatorProperty">isIndicatorProperty</a></li><li><a href="global.html#parseIndicatorProperty">parseIndicatorProperty</a></li><li><a href="global.html#parseIndicatorPropertyValue">parseIndicatorPropertyValue</a></li><li><a href="global.html#setFixedProperty">setFixedProperty</a></li><li><a href="global.html#shouldRemoveProperty">shouldRemoveProperty</a></li><li><a href="global.html#updateIndicatorProperty">updateIndicatorProperty</a></li><li><a href="global.html#validateOsNumber">validateOsNumber</a></li><li><a href="global.html#validateProcessCode">validateProcessCode</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">props/generic-entries.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { TextFieldEntry, TextAreaEntry, SelectEntry } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
+import RadioEntry from '../custom/RadioEntry';
+import { getFixedProperty, setFixedProperty } from '../helper/fixed-properties-helper';
+import { h } from 'preact';
+import { Description, Tooltip } from '@bpmn-io/properties-panel';
+import classNames from 'classnames';
+
+/**
+ * @typedef {Object} ModdleElement Representa um elemento no modelo BPMN subjacente.
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} EntryOption
+ * @property {string} value - O valor interno da opção
+ * @property {string} label - O rótulo exibido para o usuário
+ */
+
+/**
+ * @typedef {Object} TextFieldConfig
+ * @property {ModdleElement} element - Elemento BPMN
+ * @property {string} id - Identificador único do campo
+ * @property {string} propertyName - Nome da propriedade a ser manipulada
+ * @property {string|Object} label - Rótulo exibido (string ou componente React/Preact)
+ * @property {Function} [validate] - Função de validação opcional
+ * @property {string} [tooltip] - Texto de ajuda opcional
+ * @property {boolean} [onlyInt] - Se verdadeiro, permite apenas números inteiros
+ * @property {boolean} [disableDebounce] - Se verdadeiro, desativa o debounce
+ * @property {boolean} [enableStandardDebounce] - Se verdadeiro, usa o debounce padrão
+ * @property {string} [description] - Descrição adicional do campo
+ */
+
+/**
+ * @typedef {Object} DateFieldConfig
+ * @property {ModdleElement} element - Elemento BPMN
+ * @property {string} id - Identificador único do campo
+ * @property {string} propertyName - Nome da propriedade a ser manipulada
+ * @property {string} label - Rótulo exibido
+ * @property {boolean} [disabled] - Se verdadeiro, desabilita o campo
+ * @property {string} [tooltip] - Texto de ajuda opcional
+ * @property {string} [description] - Descrição opcional
+ * @property {string} [dateFormat] - Formato da data (ex: 'DD/MM/YYYY')
+ */
+
+/**
+ * Cria um campo de texto genérico para o painel de propriedades.
+ * Suporta validação, formatação de números inteiros e tooltips.
+ * 
+ * @param {TextFieldConfig} params - Configurações do campo de texto
+ * @returns {Object} Componente de campo de texto configurado
+ */
+export function GenericTextFieldEntry({ 
+  element, 
+  id, 
+  propertyName, 
+  label, 
+  validate, 
+  tooltip, 
+  onlyInt, 
+  disableDebounce, 
+  enableStandardDebounce, 
+  description 
+}) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const debounceInputService = useService('debounceInput');
+  const bpmnFactory = useService('bpmnFactory');
+
+  /**
+   * Função interna para manipular a atualização do valor,
+   * incluindo validação de números inteiros se necessário.
+   * 
+   * @param {string} value - Valor a ser definido
+   */
+  const internalSetValue = (value) => {
+    let v = value;
+    if (onlyInt) v = v.replace(/\D/g, '');
+    setFixedProperty(element, propertyName, v, modeling, bpmnFactory);
+  };
+
+  const noDebounceImplementation = (setter) => (value) => setter(value);
+
+  let debounceFunctionToUse;
+  if (disableDebounce) {
+    debounceFunctionToUse = noDebounceImplementation;
+  } else if (enableStandardDebounce) {
+    debounceFunctionToUse = debounceInputService;
+  } else {
+    debounceFunctionToUse = debounceInputService;
+  }
+
+  return TextFieldEntry({
+    element,
+    id,
+    label: typeof label === 'string' ? translate(label) : label,
+    getValue: () => getFixedProperty(element, propertyName),
+    setValue: internalSetValue,
+    debounce: debounceFunctionToUse,
+    validate: validate ? (value) => {
+      const error = validate(value);
+      return error ? translate(error) : null;
+    } : undefined,
+    tooltip: tooltip ? translate(tooltip) : undefined,
+    description: description ? translate(description) : undefined
+  });
+}
+
+/**
+ * Cria um campo de área de texto genérico para o painel de propriedades.
+ * Suporta múltiplas linhas de texto com tooltips e descrições.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {string} [params.tooltip] - Texto de ajuda opcional
+ * @param {string} [params.description] - Descrição adicional opcional
+ * @returns {Object} Componente de área de texto configurado
+ */
+export function GenericTextAreaEntry({ element, id, propertyName, label, tooltip, description }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const debounceInput = useService('debounceInput');
+  const bpmnFactory = useService('bpmnFactory');
+
+  return TextAreaEntry({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => getFixedProperty(element, propertyName),
+    setValue: value => setFixedProperty(element, propertyName, value, modeling, bpmnFactory),
+    debounce: debounceInput,
+    tooltip: tooltip ? translate(tooltip) : undefined,
+    description: description ? translate(description) : undefined
+  });
+}
+
+/**
+ * Cria um campo de seleção por rádio genérico para o painel de propriedades.
+ * Permite selecionar uma única opção entre várias disponíveis.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {Array&lt;EntryOption>} params.options - Opções disponíveis
+ * @returns {Object} Componente de radio button configurado
+ */
+export function GenericRadioEntry({ element, id, propertyName, label, options }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+
+  return RadioEntry({
+    element,
+    id,
+    label: label ? translate(label) : '',
+    getValue: () => getFixedProperty(element, propertyName),
+    setValue: value => setFixedProperty(element, propertyName, value, modeling, bpmnFactory),
+    getOptions: () => options.map(opt => ({ value: opt.value, label: translate(opt.label) }))
+  });
+}
+
+/**
+ * Cria um campo de seleção (dropdown) genérico para o painel de propriedades.
+ * Permite selecionar uma opção de uma lista suspensa.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {Array&lt;EntryOption>} params.options - Opções disponíveis
+ * @returns {Object} Componente de select configurado
+ */
+export function GenericSelectEntry({ element, id, propertyName, label, options }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const debounce = useService('debounceInput');
+  const bpmnFactory = useService('bpmnFactory');
+
+  return SelectEntry({
+    element,
+    id,
+    label: translate(label),
+    getValue: () => getFixedProperty(element, propertyName),
+    setValue: value => setFixedProperty(element, propertyName, value, modeling, bpmnFactory),
+    getOptions: () => options.map(opt => ({ value: opt.value, label: translate(opt.label) })),
+    debounce
+  });
+}
+
+/**
+ * Cria um campo de seleção múltipla genérico para o painel de propriedades.
+ * Permite selecionar múltiplas opções de uma lista.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome da propriedade a ser manipulada
+ * @param {string} params.label - Rótulo exibido
+ * @param {Array&lt;EntryOption>} params.options - Opções disponíveis
+ * @param {string} [params.description] - Descrição adicional opcional
+ * @returns {Object} Componente de seleção múltipla configurado
+ */
+export function GenericMultiSelectEntry({ element, id, propertyName, label, options, description }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+
+  /**
+   * Obtém os valores selecionados como um array.
+   * @returns {Array&lt;string>} Array de valores selecionados
+   */
+  const getValue = () => {
+    const rawValue = getFixedProperty(element, propertyName);
+    if (!rawValue) return [];
+    return rawValue.split(',').map(v => v.trim()).filter(Boolean);
+  };
+
+  /**
+   * Define os valores selecionados, convertendo o array em string.
+   * @param {Array&lt;string>} selected - Array de valores selecionados
+   */
+  const setValue = (selected) => {
+    setFixedProperty(element, propertyName, selected.join(','), modeling, bpmnFactory);
+  };
+
+  const handleChange = (event) => {
+    const selected = Array.from(event.target.selectedOptions).map(opt => opt.value);
+    setValue(selected);
+  };
+
+  const selectedValues = getValue();
+
+  return h('div', { class: classNames('bio-properties-panel-entry'), 'data-entry-id': id },
+    h('label', { class: 'bio-properties-panel-label' },
+      translate(label)
+    ),
+    h('select', {
+      id,
+      name: id,
+      class: 'bio-properties-panel-input',
+      multiple: true,
+      onChange: handleChange,
+      size: Math.min(options.length, 5)
+    },
+      options.map((option) =>
+        h('option', {
+          value: option.value,
+          selected: selectedValues.includes(option.value)
+        }, translate(option.label))
+      )
+    ),
+    description &amp;&amp; h(Description, { forId: id, element, value: description })
+  );
+}
+
+/**
+ * Cria um grupo de opções com radio buttons dentro de um fieldset.
+ * Permite agrupar múltiplas opções sim/não em um único conjunto.
+ * 
+ * @param {Object} params - Parâmetros do campo
+ * @param {ModdleElement} params.element - Elemento BPMN
+ * @param {string} params.id - Identificador único do campo
+ * @param {string} params.propertyName - Nome base da propriedade
+ * @param {string} params.label - Rótulo do grupo
+ * @param {Array&lt;EntryOption>} params.options - Opções disponíveis
+ * @returns {Object} Componente de grupo de radio buttons configurado
+ */
+export function GenericMultiRadioButtonEntry({ element, id, propertyName, label, options }) {
+  const modeling = useService('modeling');
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+
+  const getValue = (optionValue) => {
+    return getFixedProperty(element, `${propertyName}:${optionValue}`) || '';
+  };
+
+  const setValue = (optionValue, value) => {
+    setFixedProperty(
+      element, 
+      `${propertyName}:${optionValue}`, 
+      value, 
+      modeling, 
+      bpmnFactory
+    );
+  };
+
+  return h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
+    h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
+      h('legend', { class: 'custom-thin-rounded-legend' }, translate(label)),
+      options.map((option) => 
+        h('div', { class: 'bio-properties-panel-radio-wrapper', style: 'margin-bottom: 10px;' },
+          h('label', { class: 'bio-properties-panel-label' }, translate(option.label)),
+          h('div', { class: 'bio-properties-panel-radio-group' },
+            [
+              { value: 'sim', label: 'Sim' },
+              { value: 'nao', label: 'Não' }
+            ].map(radio => 
+              h('span', { style: 'margin-right: 15px;' },
+                h('input', {
+                  type: 'radio',
+                  name: `${id}_${option.value}`,
+                  value: radio.value,
+                  checked: getValue(option.value) === radio.value,
+                  onChange: (e) => setValue(option.value, e.target.value)
+                }),
+                h('label', { style: 'margin-left: 5px;' }, radio.label)
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+/**
+ * Cria um campo de data usando HTML5 date input com validação de formato.
+ * 
+ * @param {DateFieldConfig} params - Configurações do campo de data
+ * @returns {Object} Componente de campo de data configurado
+ */
+export function GenericDateFieldEntry({ element, id, propertyName, label, disabled, tooltip, description, dateFormat, ...rest }) {
+  const translate = useService('translate');
+
+  /**
+   * Valida o formato da data inserida.
+   * 
+   * @param {string} value - Valor da data a ser validado
+   * @returns {string|null} Mensagem de erro ou null se válido
+   */
+  const validate = value => {
+    if (!value) return null; // Campo opcional
+    if (dateFormat === 'DD/MM/YYYY') {
+      const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+      if (!regex.test(value)) {
+        return translate('Use o formato DD/MM/YYYY');
+      }
+      // Valida se é uma data real
+      const [day, month, year] = value.split('/').map(Number);
+      const date = new Date(year, month - 1, day);
+      if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        return translate('Data inválida');
+      }
+    }
+    return null;
+  };
+
+  return GenericTextFieldEntry({
+    element,
+    id,
+    propertyName,
+    label,
+    validate,
+    disabled,
+    tooltip,
+    description,
+    ...rest
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Thu May 29 2025 16:48:54 GMT-0300 (Horário Padrão de Brasília) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

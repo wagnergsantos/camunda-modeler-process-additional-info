@@ -9,20 +9,82 @@ import {
 } from './generic-entries';
 import CombinedInputRadioEntry from '../custom/CombinedInputRadioEntry';
 
-// Entradas do grupo
+/**
+ * @typedef {Object} ModdleElement Represents an element in the underlying BPMN model (moddle).
+ * @see {@link https://github.com/bpmn-io/bpmn-js/blob/develop/lib/model/Types.js}
+ */
+
+/**
+ * @typedef {Object} Injector The didi dependency injector.
+ */
+
+/**
+ * @typedef {Object} PropertyGroup
+ * @property {string} id - O ID único do grupo.
+ * @property {string} label - O rótulo do grupo exibido na interface.
+ * @property {Array<Object>} [entries] - Uma lista de entradas de propriedade para o grupo.
+ * @property {Function} [component] - O componente React/Preact para renderizar o grupo.
+ * @property {Array} [groups] - Subgrupos, se aplicável (usado em abas).
+ */
+
+/**
+ * @typedef {Object} Translate The bpmn-js translation service.
+ */
+
+/**
+ * @typedef {Object} EntryOption
+ * @property {string} value - O valor interno da opção
+ * @property {string} label - O rótulo exibido para o usuário
+ */
+
+/**
+ * @typedef {Object} CombinedEntryProps
+ * @property {string} id - ID único do componente combinado
+ * @property {string} label - Rótulo do campo
+ * @property {string} textFieldId - ID do campo de texto
+ * @property {string} textFieldPropertyName - Nome da propriedade para o campo de texto
+ * @property {string} radioId - ID do grupo de radio buttons
+ * @property {string} radioPropertyName - Nome da propriedade para os radio buttons
+ * @property {Array<EntryOption>} radioOptions - Opções para os radio buttons
+ * @property {Injector} injector - Injetor de dependências
+ */
+
+/**
+ * @typedef {Object} ActivityFieldsetProps
+ * @property {ModdleElement} element - Elemento BPMN
+ * @property {string} id - ID do fieldset
+ * @property {string} propertyName - Nome da propriedade
+ * @property {string} label - Rótulo do campo
+ */
 
 /**
  * Cria o grupo de propriedades "Dados da situação atual" para o painel de propriedades.
- * @param {ModdleElement} element - Elemento BPMN ao qual as propriedades pertencem.
- * @param {Object} injector - Injetor de dependências do Camunda Modeler.
- * @returns {Object} Grupo de propriedades configurado para o painel.
+ * Este grupo contém campos para documentar a situação atual do processo, incluindo:
+ * - Periodicidade do processo
+ * - Tempo de execução
+ * - Quantidade de demandas
+ * - Capacidade de execução
+ * - Informações sobre executores
+ * - Contagem de atividades por tipo
+ * - Indicador de desempenho
+ *
+ * @param {ModdleElement} element - Elemento BPMN (espera-se `bpmn:Definitions`).
+ * @param {Injector} injector - Injetor de dependências do Camunda Modeler.
+ * @returns {PropertyGroup} Grupo de propriedades configurado para o painel.
  */
 export function CurrentSituationGroup(element, injector) {
   const translate = injector.get('translate');
 
-  // Lista de entradas (fields) exibidas no grupo "Dados da situação atual"
+  /**
+   * Lista de entradas (fields) exibidas no grupo "Dados da situação atual".
+   * Cada entrada representa um campo ou conjunto de campos relacionados.
+   * @type {Array<Object>}
+   */
   const entries = [
-    // Periodicidade do processo (dropdown)
+    /**
+     * Campo de seleção para a periodicidade do processo.
+     * Permite escolher entre diferentes intervalos de tempo ou sob demanda.
+     */
     {
       id: 'process-periodicity',
       component: props => GenericSelectEntry({
@@ -46,7 +108,10 @@ export function CurrentSituationGroup(element, injector) {
         ]
       })
     },
-    // Tempo de execução do processo (input + radio)
+    /**
+     * Campo combinado para tempo de execução do processo.
+     * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
+     */
     {
       id: 'time-execution-combined',
       component: props => (
@@ -67,7 +132,10 @@ export function CurrentSituationGroup(element, injector) {
         })
       ),
     },
-    // Quantidade de demandas recebidas (input + radio)
+    /**
+     * Campo combinado para quantidade de demandas recebidas.
+     * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
+     */
     {
       id: 'demands-combined',
       component: props => (
@@ -88,7 +156,10 @@ export function CurrentSituationGroup(element, injector) {
         })
       ),
     },
-    // Capacidade aproximada de execução (input + radio)
+    /**
+     * Campo combinado para capacidade aproximada de execução.
+     * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
+     */
     {
       id: 'capacity-combined',
       component: props => (
@@ -109,7 +180,10 @@ export function CurrentSituationGroup(element, injector) {
         })
       ),
     },
-    // Quantidade de executores (campo texto, apenas inteiros)
+    /**
+     * Campo de texto para quantidade de executores.
+     * Aceita apenas números inteiros.
+     */
     {
       id: 'executors-quantity',
       component: props => GenericTextFieldEntry({
@@ -121,7 +195,9 @@ export function CurrentSituationGroup(element, injector) {
         onlyInt: true
       })
     },
-    // Perfil dos executores (área de texto)
+    /**
+     * Campo de texto multilinha para descrição do perfil dos executores.
+     */
     {
       id: 'executors-profile',
       component: props => GenericTextAreaEntry({
@@ -132,7 +208,10 @@ export function CurrentSituationGroup(element, injector) {
         label: 'Perfil'
       })
     },
-    // Quantidade de atividades manuais, usuário e automatizadas agrupadas em um fieldset
+    /**
+     * Grupo de campos para contagem de atividades por tipo.
+     * Inclui campos para atividades manuais, de usuário e automatizadas.
+     */
     {
       id: 'activities-group-fieldset',
       component: props => (
@@ -190,7 +269,9 @@ export function CurrentSituationGroup(element, injector) {
         )
       )
     },
-    // Indicador de desempenho (radio)
+    /**
+     * Campo de seleção para indicar se o processo possui indicador de desempenho.
+     */
     {
       id: 'performance-indicator',
       component: props => GenericRadioEntry({
