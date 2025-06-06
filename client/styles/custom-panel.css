@@ -1,34 +1,5 @@
 /* client/styles/custom-panel.css */
 
-.bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
-  display: flex;
-  flex-direction: column; /* Garante que input e radio fiquem em coluna */
-  align-items: flex-start; /* Alinha à esquerda */
-  gap: 0px;
-  width: auto; /* Remove o width: 100% para não ocupar espaço extra */
-  min-width: 0;
-  max-width: 100%;
-}
-
-.bio-properties-panel-combined-entry .bio-properties-panel-textfield {
-  flex: 0 0 180px; /* reduzido */
-  min-width: 160px; /* reduzido */
-  max-width: 220px; /* reduzido */
-  margin-bottom: 0;
-  align-self: center; /* Centraliza na linha */
-}
-
-.bio-properties-panel-combined-entry .bio-properties-panel-radio-group {
-  margin-top: 0 !important; /* Remove margem superior se houver */
-  margin-left: 0; /* Remove margem esquerda */
-  margin-bottom: 0 !important;
-  padding-left: 0;
-  display: flex; /* Alinha os botões de rádio em linha */
-  flex-direction: row; /* <-- alterado de column para row */
-  gap: 12px; /* Espaço entre os botões de rádio */
-  align-items: center;
-}
-
 .bio-properties-panel-panel {
   border: 1px solid #d4d4d4;
   border-radius: 6px;
@@ -54,24 +25,16 @@
   box-sizing: border-box;
 }
 
+/* Style for fieldsets around separated text and radio entries */
+.bio-properties-panel-entry.combined-fieldset-entry fieldset {
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+}
+
 .custom-thin-rounded-legend {
   color: #666;
   font-size: 1em;
   padding: 0 8px;
-}
-
-/* Responsividade: radio embaixo do input em telas pequenas */
-@media (max-width: 600px) {
-  .bio-properties-panel-combined-entry .bio-properties-panel-combined-input-radio-wrapper {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-  }
-  .bio-properties-panel-combined-entry .bio-properties-panel-textfield {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-  }
 }
 
 /* Aumenta altura padrão dos textareas dos campos customizados para ~4 linhas */

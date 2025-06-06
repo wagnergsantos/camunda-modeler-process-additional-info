@@ -109,76 +109,107 @@ export function CurrentSituationGroup(element, injector) {
       })
     },
     /**
-     * Campo combinado para tempo de execução do processo.
-     * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
+     * Fieldset para Tempo de execução do processo.
      */
     {
-      id: 'time-execution-combined',
+      id: 'time-execution-fieldset',
       component: props => (
-        h(CombinedInputRadioEntry, {
-          ...props,
-          element: element,
-          id: "time-execution-combined-entry",
-          label: "Tempo de execução do processo",
-          textFieldId: "time-execution-textfield",
-          textFieldPropertyName: "processo:situacao:tempoExecucao",
-          radioId: "time-execution-type-radio",
-          radioPropertyName: "processo:situacao:tempoExecucaoTipo",
-          radioOptions: [
-            { value: 'estimado', label: 'Estimado' },
-            { value: 'mensurado', label: 'Mensurado' }
-          ],
-          injector: injector
-        })
-      ),
+        h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
+          h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
+            h('legend', { class: 'custom-thin-rounded-legend' }, 'Tempo de execução do processo'),
+            h(GenericTextFieldEntry, {
+              ...props,
+              element,
+              id: 'time-execution-textfield',
+              propertyName: 'processo:situacao:tempoExecucao',
+              label: 'Valor',
+            }),
+            h(GenericRadioEntry, {
+              ...props,
+              element,
+              id: 'time-execution-type-radio',
+              propertyName: 'processo:situacao:tempoExecucaoTipo',
+              label: '',
+              options: [
+                { value: 'estimado', label: 'Estimado' },
+                { value: 'mensurado', label: 'Mensurado' }
+              ]
+            })
+          )
+        )
+      )
     },
     /**
-     * Campo combinado para quantidade de demandas recebidas.
-     * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
+     * Fieldset para Quantidade de demandas recebidas.
      */
     {
-      id: 'demands-combined',
+      id: 'demands-fieldset',
       component: props => (
-        h(CombinedInputRadioEntry, {
-          ...props,
-          element: element,
-          id: "demands-combined-entry",
-          label: "Quantidade de demandas recebidas",
-          textFieldId: "demands-textfield",
-          textFieldPropertyName: "processo:situacao:quantidadeDemandas",
-          radioId: "demands-type-radio",
-          radioPropertyName: "processo:situacao:quantidadeDemandasTipo",
-          radioOptions: [
-            { value: 'estimado', label: 'Estimado' },
-            { value: 'mensurado', label: 'Mensurado' }
-          ],
-          injector: injector
-        })
-      ),
+        h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
+          h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
+            h('legend', { class: 'custom-thin-rounded-legend' }, 'Quantidade de demandas recebidas'),
+            h(GenericTextFieldEntry, {
+              ...props,
+              element,
+              id: 'demands-textfield',
+              propertyName: 'processo:situacao:quantidadeDemandas',
+              label: 'Valor',
+            }),
+            h(GenericRadioEntry, {
+              ...props,
+              element,
+              id: 'demands-type-radio',
+              propertyName: 'processo:situacao:quantidadeDemandasTipo',
+              label: '',
+              options: [
+                { value: 'estimado', label: 'Estimado' },
+                { value: 'mensurado', label: 'Mensurado' }
+              ]
+            })
+          )
+        )
+      )
     },
     /**
-     * Campo combinado para capacidade aproximada de execução.
+     * Fieldset para Capacidade aproximada de execução.
+     */
+    {
+      id: 'capacity-fieldset',
+      component: props => (
+        h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
+          h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
+            h('legend', { class: 'custom-thin-rounded-legend' }, 'Capacidade aproximada de execução do processo'),
+            h(GenericTextFieldEntry, {
+              ...props,
+              element,
+              id: 'capacity-textfield',
+              propertyName: 'processo:situacao:capacidadeExecucao',
+              label: 'Valor',
+            }),
+            h(GenericRadioEntry, {
+              ...props,
+              element,
+              id: 'capacity-type-radio',
+              propertyName: 'processo:situacao:capacidadeExecucaoTipo',
+              label: '',
+              options: [
+                { value: 'estimado', label: 'Estimado' },
+                { value: 'mensurado', label: 'Mensurado' }
+              ]
+            })
+          )
+        )
+      )
+    },
+    /**
+     * Campo de texto para quantidade de executores.
      * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
      */
     {
       id: 'capacity-combined',
-      component: props => (
-        h(CombinedInputRadioEntry, {
-          ...props,
-          element: element,
-          id: "capacity-combined-entry",
-          label: "Capacidade aproximada de execução do processo",
-          textFieldId: "capacity-textfield",
-          textFieldPropertyName: "processo:situacao:capacidadeExecucao",
-          radioId: "capacity-type-radio",
-          radioPropertyName: "processo:situacao:capacidadeExecucaoTipo",
-          radioOptions: [
-            { value: 'estimado', label: 'Estimado' },
-            { value: 'mensurado', label: 'Mensurado' }
-          ],
-          injector: injector
-        })
-      ),
+      component: props => GenericTextFieldEntry({
+        ...props,
+      })
     },
     /**
      * Campo de texto para quantidade de executores.
