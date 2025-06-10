@@ -246,8 +246,8 @@ export function CurrentSituationGroup(element, injector) {
      * Usando ListGroup como em process-indicators-props.js
      */
     {
-      id: 'demands-list-group',
-      label: translate('Quantidade de demandas recebidas'),
+      id: 'demands-info-group',
+      label: translate('Informação das demandas'),
       component: ListGroup,
       add: addDemand,
       items: getDemandIds(element).map(demandId => DemandPropertyItem({
@@ -255,37 +255,6 @@ export function CurrentSituationGroup(element, injector) {
         demandId,
         injector
       }))
-    },
-    /**
-     * Fieldset para Capacidade aproximada de execução.
-     */
-    {
-      id: 'capacity-fieldset',
-      component: props => (
-        h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
-          h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
-            h('legend', { class: 'custom-thin-rounded-legend' }, 'Capacidade aproximada de execução do processo'),
-            h(GenericTextFieldEntry, {
-              ...props,
-              element,
-              id: 'capacity-textfield',
-              propertyName: 'processo:situacao:capacidadeExecucao',
-              label: 'Valor',
-            }),
-            h(GenericRadioEntry, {
-              ...props,
-              element,
-              id: 'capacity-type-radio',
-              propertyName: 'processo:situacao:capacidadeExecucaoTipo',
-              label: '',
-              options: [
-                { value: 'estimado', label: 'Estimado' },
-                { value: 'mensurado', label: 'Mensurado' }
-              ]
-            })
-          )
-        )
-      )
     },
     /**
      * Campo de texto para quantidade de executores.
@@ -332,7 +301,13 @@ export function CurrentSituationGroup(element, injector) {
               propertyName: 'processo:situacao:atividadeManualQtd',
               label: h('span', { style: 'display: flex; align-items: center; gap: 4px;' },
                 'Atividade manual (Qtd)',
-                h('svg', { width: 16, height: 16, viewBox: 'vertical-align:middle;', xmlns: 'http://www.w3.org/2000/svg' },
+                h('svg', { 
+                  width: 16, 
+                  height: 16, 
+                  viewBox: '0 0 17 17', // Fixed: Added proper viewBox values
+                  style: 'vertical-align:middle;', 
+                  xmlns: 'http://www.w3.org/2000/svg' 
+                },
                   h('g', { fill: 'none', 'fill-rule': 'evenodd' },
                     h('path', {
                       fill: '#434343',
@@ -423,19 +398,24 @@ function DemandPropertyItem(props) {
   const translate = injector.get('translate');
   const bpmnFactory = injector.get('bpmnFactory');
 
-  const valuePropName = `processo:situacao:demandas:${demandId}:valor`;
-  const typePropName = `processo:situacao:demandas:${demandId}:tipo`;
+  const valueDemandaPropName = `processo:situacao:demandas:${demandId}:valor`;
+  const typeDemandaPropName = `processo:situacao:demandas:${demandId}:tipo`;
+  const valueCapacidadePropName = `processo:situacao:capacidades:${demandId}:valor`;
+  const typeCapacidadePropName = `processo:situacao:capacidades:${demandId}:tipo`;
   
   const definitions = getDefinitions(element) || element;
-  const actualDemandValue = getFixedProperty(definitions, valuePropName) || '0';
-  const itemLabel = `${translate('Demanda')} #${demandId}`;
+  const itemLabel = `${translate('Item')} #${demandId}`;
 
   function handleRemove(event) {
     event.stopPropagation();
     const camundaProps = getCamundaProperties(definitions);
     if (camundaProps && camundaProps.get('values')) {
-      const prefix = `processo:situacao:demandas:${demandId}:`;
-      const values = camundaProps.get('values').filter(p => !p.name.startsWith(prefix));
+      const prefixDemanda = `processo:situacao:demandas:${demandId}:`;
+      const prefixCapacidade = `processo:situacao:capacidades:${demandId}:`;
+      const values = camundaProps.get('values').filter(p => 
+        !p.name.startsWith(prefixDemanda) && 
+        !p.name.startsWith(prefixCapacidade)
+      );
       modeling.updateModdleProperties(definitions, camundaProps, { values });
       eventBus.fire('elements.changed', { elements: [definitions] });
     }
@@ -493,11 +473,10 @@ function DemandPropertyItem(props) {
           ...entryProps,
           element: definitions,
           id: `demand-value-${demandId}`,
-          propertyName: valuePropName,
-          label: translate('Valor'),
-          // removed onlyInt: true
-          getValue: () => getFixedProperty(definitions, valuePropName) || '',
-          setValue: (value) => updateProperty(valuePropName, value)
+          propertyName: valueDemandaPropName,
+          label: translate('Quantidade de demandas recebidas'),
+          getValue: () => getFixedProperty(definitions, valueDemandaPropName) || '',
+          setValue: (value) => updateProperty(valueDemandaPropName, value)
         })
       },
       {
@@ -506,14 +485,42 @@ function DemandPropertyItem(props) {
           ...entryProps,
           element: definitions,
           id: `demand-type-${demandId}`,
-          propertyName: typePropName,
+          propertyName: typeDemandaPropName,
           label: '',
           options: [
             { value: 'estimado', label: translate('Estimado') },
             { value: 'mensurado', label: translate('Mensurado') }
           ],
-          getValue: () => getFixedProperty(definitions, typePropName) || 'estimado',
-          setValue: (value) => updateProperty(typePropName, value)
+          getValue: () => getFixedProperty(definitions, typeDemandaPropName) || 'estimado',
+          setValue: (value) => updateProperty(typeDemandaPropName, value)
+        })
+      },
+      {
+        id: `capacity-value-${demandId}`,
+        component: (entryProps) => GenericTextFieldEntry({
+          ...entryProps,
+          element: definitions,
+          id: `capacity-value-${demandId}`,
+          propertyName: valueCapacidadePropName,
+          label: translate('Capacidade aproximada de execução'),
+          getValue: () => getFixedProperty(definitions, valueCapacidadePropName) || '',
+          setValue: (value) => updateProperty(valueCapacidadePropName, value)
+        })
+      },
+      {
+        id: `capacity-type-${demandId}`,
+        component: (entryProps) => GenericRadioEntry({
+          ...entryProps,
+          element: definitions,
+          id: `capacity-type-${demandId}`,
+          propertyName: typeCapacidadePropName,
+          label: '',
+          options: [
+            { value: 'estimado', label: translate('Estimado') },
+            { value: 'mensurado', label: translate('Mensurado') }
+          ],
+          getValue: () => getFixedProperty(definitions, typeCapacidadePropName) || 'estimado',
+          setValue: (value) => updateProperty(typeCapacidadePropName, value)
         })
       }
     ],
