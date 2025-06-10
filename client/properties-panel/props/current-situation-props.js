@@ -150,7 +150,7 @@ export function CurrentSituationGroup(element, injector) {
     // Create new property objects using bpmnFactory
     const valorProp = bpmnFactory.create('camunda:Property', {
       name: `processo:situacao:demandas:${newId}:valor`,
-      value: '0'
+      value: '' // Changed from '0' to empty string
     });
     
     const tipoProp = bpmnFactory.create('camunda:Property', {
@@ -224,7 +224,7 @@ export function CurrentSituationGroup(element, injector) {
               element,
               id: 'time-execution-textfield',
               propertyName: 'processo:situacao:tempoExecucao',
-              label: 'Valor',
+              label: '',
             }),
             h(GenericRadioEntry, {
               ...props,
@@ -428,7 +428,7 @@ function DemandPropertyItem(props) {
   
   const definitions = getDefinitions(element) || element;
   const actualDemandValue = getFixedProperty(definitions, valuePropName) || '0';
-  const itemLabel = `${translate('Demanda')} #${demandId}${actualDemandValue ? ' - ' + actualDemandValue : ''}`;
+  const itemLabel = `${translate('Demanda')} #${demandId}`;
 
   function handleRemove(event) {
     event.stopPropagation();
@@ -495,8 +495,8 @@ function DemandPropertyItem(props) {
           id: `demand-value-${demandId}`,
           propertyName: valuePropName,
           label: translate('Valor'),
-          onlyInt: true,
-          getValue: () => getFixedProperty(definitions, valuePropName) || '0',
+          // removed onlyInt: true
+          getValue: () => getFixedProperty(definitions, valuePropName) || '',
           setValue: (value) => updateProperty(valuePropName, value)
         })
       },
