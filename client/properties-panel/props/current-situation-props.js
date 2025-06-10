@@ -136,7 +136,6 @@ export function CurrentSituationGroup(element, injector) {
     const definitions = getDefinitions(element) || element;
     const bpmnFactory = injector.get('bpmnFactory');
     
-    // Get or create camunda:Properties
     let camundaProps = getCamundaProperties(definitions);
     if (!camundaProps) {
       const extensionElements = bpmnFactory.create('bpmn:ExtensionElements');
@@ -147,29 +146,38 @@ export function CurrentSituationGroup(element, injector) {
       });
     }
 
-    // Create new property objects using bpmnFactory
-    const valorProp = bpmnFactory.create('camunda:Property', {
+    // Create demand properties
+    const valorDemandaProp = bpmnFactory.create('camunda:Property', {
       name: `processo:situacao:demandas:${newId}:valor`,
-      value: '' // Changed from '0' to empty string
+      value: ''
     });
     
-    const tipoProp = bpmnFactory.create('camunda:Property', {
+    const tipoDemandaProp = bpmnFactory.create('camunda:Property', {
       name: `processo:situacao:demandas:${newId}:tipo`,
       value: 'estimado'
     });
 
-    // Update properties
-    const currentValues = camundaProps.get('values') || [];
-    modeling.updateModdleProperties(definitions, camundaProps, {
-      values: [...currentValues, valorProp, tipoProp]
+    // Create capacity properties
+    const valorCapacidadeProp = bpmnFactory.create('camunda:Property', {
+      name: `processo:situacao:capacidades:${newId}:valor`,
+      value: ''
+    });
+    
+    const tipoCapacidadeProp = bpmnFactory.create('camunda:Property', {
+      name: `processo:situacao:capacidades:${newId}:tipo`,
+      value: 'estimado'
     });
 
-    // Force panel update by firing multiple events
+    // Update all properties at once
+    const currentValues = camundaProps.get('values') || [];
+    modeling.updateModdleProperties(definitions, camundaProps, {
+      values: [...currentValues, valorDemandaProp, tipoDemandaProp, valorCapacidadeProp, tipoCapacidadeProp]
+    });
+
+    // Force panel update
     eventBus.fire('elements.changed', { elements: [definitions] });
     eventBus.fire('propertiesPanel.changed');
-    // Force element selection refresh to trigger panel update
     const selection = injector.get('selection');
-    const elementRegistry = injector.get('elementRegistry');
     const currentSelection = selection.get();
     selection.select(null);
     setTimeout(() => {
