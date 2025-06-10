@@ -1,4 +1,4 @@
-import { Group } from '@bpmn-io/properties-panel';
+import { Group, ListGroup } from '@bpmn-io/properties-panel';
 import { h } from 'preact';
 import classNames from 'classnames';
 import {
@@ -7,7 +7,11 @@ import {
   GenericRadioEntry,
   GenericSelectEntry
 } from './generic-entries';
-import CombinedInputRadioEntry from '../custom/CombinedInputRadioEntry';
+import Ids from 'ids';
+import { getFixedProperty, setFixedProperty } from '../helper/fixed-properties-helper';
+import { getCamundaProperties } from '../helper/extensions-helper';
+import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+
 
 /**
  * @typedef {Object} ModdleElement Represents an element in the underlying BPMN model (moddle).
@@ -58,6 +62,49 @@ import CombinedInputRadioEntry from '../custom/CombinedInputRadioEntry';
  */
 
 /**
+ * Instância para gerar IDs únicos para as demandas.
+ */
+const demandIds = new Ids([16, 36, 2]); // Usando um seed diferente para evitar colisões com indicadores
+
+/**
+ * Helper para encontrar o elemento <definitions> na hierarquia do modelo BPMN.
+ * @param {ModdleElement} el - Elemento BPMN a partir do qual iniciar a busca
+ * @returns {ModdleElement|null} Elemento bpmn:Definitions ou null se não encontrado
+ */
+function getDefinitions(el) {
+  const bo = getBusinessObject(el);
+  if (!bo) return null;
+  let current = bo;
+  while (current.$parent && current.$type !== 'bpmn:Definitions') {
+    current = current.$parent;
+  }
+  return current.$type === 'bpmn:Definitions' ? current : null;
+}
+
+/**
+ * Extrai os IDs das demandas existentes no elemento BPMN (Definitions).
+ * @param {ModdleElement} el - Elemento bpmn:Definitions
+ * @returns {Array<string>} Lista de IDs únicos das demandas encontradas
+ */
+function getDemandIds(el) {
+  const definitions = getDefinitions(el) || el;
+  if (!definitions || definitions.$type !== 'bpmn:Definitions') return [];
+
+  const camundaProps = getCamundaProperties(definitions);
+  if (!camundaProps || !camundaProps.get('values')) return [];
+
+  const regex = /^processo:situacao:demandas:(.*?):/; // Mudança aqui - removido ':valor'
+  const demandIdsSet = new Set();
+  for (const prop of camundaProps.get('values')) {
+    const match = prop.name.match(regex);
+    if (match && match[1]) {
+      demandIdsSet.add(match[1]);
+    }
+  }
+  return Array.from(demandIdsSet);
+}
+
+/**
  * Cria o grupo de propriedades "Dados da situação atual" para o painel de propriedades.
  * Este grupo contém campos para documentar a situação atual do processo, incluindo:
  * - Periodicidade do processo
@@ -73,7 +120,62 @@ import CombinedInputRadioEntry from '../custom/CombinedInputRadioEntry';
  * @returns {PropertyGroup} Grupo de propriedades configurado para o painel.
  */
 export function CurrentSituationGroup(element, injector) {
+  const modeling = injector.get('modeling');
+  const bpmnFactory = injector.get('bpmnFactory');
+  const eventBus = injector.get('eventBus');
   const translate = injector.get('translate');
+
+  /**
+   * Manipulador para adicionar uma nova demanda.
+   * @param {Event} event - Evento do DOM
+   */
+  function addDemand(event) {
+    event.stopPropagation();
+    const newId = demandIds.next();
+    
+    const definitions = getDefinitions(element) || element;
+    const bpmnFactory = injector.get('bpmnFactory');
+    
+    // Get or create camunda:Properties
+    let camundaProps = getCamundaProperties(definitions);
+    if (!camundaProps) {
+      const extensionElements = bpmnFactory.create('bpmn:ExtensionElements');
+      camundaProps = bpmnFactory.create('camunda:Properties');
+      extensionElements.get('values').push(camundaProps);
+      modeling.updateProperties(definitions, {
+        extensionElements: extensionElements
+      });
+    }
+
+    // Create new property objects using bpmnFactory
+    const valorProp = bpmnFactory.create('camunda:Property', {
+      name: `processo:situacao:demandas:${newId}:valor`,
+      value: '0'
+    });
+    
+    const tipoProp = bpmnFactory.create('camunda:Property', {
+      name: `processo:situacao:demandas:${newId}:tipo`,
+      value: 'estimado'
+    });
+
+    // Update properties
+    const currentValues = camundaProps.get('values') || [];
+    modeling.updateModdleProperties(definitions, camundaProps, {
+      values: [...currentValues, valorProp, tipoProp]
+    });
+
+    // Force panel update by firing multiple events
+    eventBus.fire('elements.changed', { elements: [definitions] });
+    eventBus.fire('propertiesPanel.changed');
+    // Force element selection refresh to trigger panel update
+    const selection = injector.get('selection');
+    const elementRegistry = injector.get('elementRegistry');
+    const currentSelection = selection.get();
+    selection.select(null);
+    setTimeout(() => {
+      selection.select(currentSelection);
+    }, 0);
+  }
 
   /**
    * Lista de entradas (fields) exibidas no grupo "Dados da situação atual".
@@ -141,34 +243,18 @@ export function CurrentSituationGroup(element, injector) {
     },
     /**
      * Fieldset para Quantidade de demandas recebidas.
+     * Usando ListGroup como em process-indicators-props.js
      */
     {
-      id: 'demands-fieldset',
-      component: props => (
-        h('div', { class: classNames('bio-properties-panel-entry', 'bio-properties-panel-combined-entry') },
-          h('fieldset', { class: 'custom-thin-rounded-fieldset', style: 'margin-bottom: 12px;' },
-            h('legend', { class: 'custom-thin-rounded-legend' }, 'Quantidade de demandas recebidas'),
-            h(GenericTextFieldEntry, {
-              ...props,
-              element,
-              id: 'demands-textfield',
-              propertyName: 'processo:situacao:quantidadeDemandas',
-              label: 'Valor',
-            }),
-            h(GenericRadioEntry, {
-              ...props,
-              element,
-              id: 'demands-type-radio',
-              propertyName: 'processo:situacao:quantidadeDemandasTipo',
-              label: '',
-              options: [
-                { value: 'estimado', label: 'Estimado' },
-                { value: 'mensurado', label: 'Mensurado' }
-              ]
-            })
-          )
-        )
-      )
+      id: 'demands-list-group',
+      label: translate('Quantidade de demandas recebidas'),
+      component: ListGroup,
+      add: addDemand,
+      items: getDemandIds(element).map(demandId => DemandPropertyItem({
+        element,
+        demandId,
+        injector
+      }))
     },
     /**
      * Fieldset para Capacidade aproximada de execução.
@@ -200,16 +286,6 @@ export function CurrentSituationGroup(element, injector) {
           )
         )
       )
-    },
-    /**
-     * Campo de texto para quantidade de executores.
-     * Inclui um campo de texto para o valor e radio buttons para indicar se é estimado ou mensurado.
-     */
-    {
-      id: 'capacity-combined',
-      component: props => GenericTextFieldEntry({
-        ...props,
-      })
     },
     /**
      * Campo de texto para quantidade de executores.
@@ -256,7 +332,7 @@ export function CurrentSituationGroup(element, injector) {
               propertyName: 'processo:situacao:atividadeManualQtd',
               label: h('span', { style: 'display: flex; align-items: center; gap: 4px;' },
                 'Atividade manual (Qtd)',
-                h('svg', { width: 16, height: 16, viewBox: '0 -0.5 17 17', style: 'vertical-align:middle;', xmlns: 'http://www.w3.org/2000/svg' },
+                h('svg', { width: 16, height: 16, viewBox: 'vertical-align:middle;', xmlns: 'http://www.w3.org/2000/svg' },
                   h('g', { fill: 'none', 'fill-rule': 'evenodd' },
                     h('path', {
                       fill: '#434343',
@@ -325,5 +401,122 @@ export function CurrentSituationGroup(element, injector) {
     label: translate('Dados da situação atual'),
     component: Group,
     entries
+  };
+}
+
+/**
+ * Cria um item de propriedade para uma demanda específica.
+ * Cada item contém campos para editar as propriedades da demanda:
+ * - Valor (numérico)
+ * - Tipo (Estimado/Mensurado)
+ *
+ * @param {Object} props - Propriedades do componente
+ * @param {ModdleElement} props.element - Elemento BPMN (bpmn:Definitions)
+ * @param {string} props.demandId - ID da demanda
+ * @param {Injector} props.injector - Injetor de dependências
+ * @returns {Object} Configuração do item de propriedade para ListGroup
+ */
+function DemandPropertyItem(props) {
+  const { element, demandId, injector } = props;
+  const modeling = injector.get('modeling');
+  const eventBus = injector.get('eventBus');
+  const translate = injector.get('translate');
+  const bpmnFactory = injector.get('bpmnFactory');
+
+  const valuePropName = `processo:situacao:demandas:${demandId}:valor`;
+  const typePropName = `processo:situacao:demandas:${demandId}:tipo`;
+  
+  const definitions = getDefinitions(element) || element;
+  const actualDemandValue = getFixedProperty(definitions, valuePropName) || '0';
+  const itemLabel = `${translate('Demanda')} #${demandId}${actualDemandValue ? ' - ' + actualDemandValue : ''}`;
+
+  function handleRemove(event) {
+    event.stopPropagation();
+    const camundaProps = getCamundaProperties(definitions);
+    if (camundaProps && camundaProps.get('values')) {
+      const prefix = `processo:situacao:demandas:${demandId}:`;
+      const values = camundaProps.get('values').filter(p => !p.name.startsWith(prefix));
+      modeling.updateModdleProperties(definitions, camundaProps, { values });
+      eventBus.fire('elements.changed', { elements: [definitions] });
+    }
+  }
+
+  function updateProperty(propertyName, value) {
+    const definitions = getDefinitions(element) || element;
+    const bpmnFactory = injector.get('bpmnFactory');
+    
+    let camundaProps = getCamundaProperties(definitions);
+    if (!camundaProps) {
+      const extensionElements = bpmnFactory.create('bpmn:ExtensionElements');
+      camundaProps = bpmnFactory.create('camunda:Properties');
+      extensionElements.get('values').push(camundaProps);
+      modeling.updateProperties(definitions, {
+        extensionElements: extensionElements
+      });
+    }
+
+    const currentValues = camundaProps.get('values') || [];
+    const existingPropIndex = currentValues.findIndex(p => p.name === propertyName);
+    
+    if (existingPropIndex >= 0) {
+      // Update existing property
+      const updatedValues = [...currentValues];
+      updatedValues[existingPropIndex] = bpmnFactory.create('camunda:Property', {
+        name: propertyName,
+        value: value
+      });
+      modeling.updateModdleProperties(definitions, camundaProps, {
+        values: updatedValues
+      });
+    } else {
+      // Add new property
+      const newProp = bpmnFactory.create('camunda:Property', {
+        name: propertyName,
+        value: value
+      });
+      modeling.updateModdleProperties(definitions, camundaProps, {
+        values: [...currentValues, newProp]
+      });
+    }
+
+    eventBus.fire('elements.changed', { elements: [definitions] });
+  }
+
+  return {
+    id: `demand-item-${demandId}`,
+    label: itemLabel,
+    remove: handleRemove,
+    entries: [
+      {
+        id: `demand-value-${demandId}`,
+        component: (entryProps) => GenericTextFieldEntry({
+          ...entryProps,
+          element: definitions,
+          id: `demand-value-${demandId}`,
+          propertyName: valuePropName,
+          label: translate('Valor'),
+          onlyInt: true,
+          getValue: () => getFixedProperty(definitions, valuePropName) || '0',
+          setValue: (value) => updateProperty(valuePropName, value)
+        })
+      },
+      {
+        id: `demand-type-${demandId}`,
+        component: (entryProps) => GenericRadioEntry({
+          ...entryProps,
+          element: definitions,
+          id: `demand-type-${demandId}`,
+          propertyName: typePropName,
+          label: '',
+          options: [
+            { value: 'estimado', label: translate('Estimado') },
+            { value: 'mensurado', label: translate('Mensurado') }
+          ],
+          getValue: () => getFixedProperty(definitions, typePropName) || 'estimado',
+          setValue: (value) => updateProperty(typePropName, value)
+        })
+      }
+    ],
+    autoFocusEntry: `demand-value-${demandId}`
   };
 }
